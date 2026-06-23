@@ -261,9 +261,14 @@ export default function VirtualTryOnPage() {
         <div className="previewCard">
           <div className="previewScreen">
             {/* Background elements */}
-            {mode === 'camera' && (
-              <video ref={videoRef} className="videoStream" playsInline muted />
-            )}
+              <video 
+              ref={videoRef} 
+              className="videoStream" 
+              playsInline 
+              muted 
+              autoPlay
+              style={{ display: mode === 'camera' ? 'block' : 'none' }}
+            />
 
             {mode === 'model' && (
               <div className="modelContainer">

@@ -6,11 +6,35 @@ export default function Newsletter() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email) {
+    if (!email) return;
+    
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to subscribe');
+      }
+
       setSubmitted(true);
       setEmail('');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,20 +63,24 @@ export default function Newsletter() {
             <span className="text-white font-semibold">Thanks for subscribing!</span>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email address"
-              required
-              className="flex-1 px-5 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:bg-white/20 transition-all"
-            />
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto relative">
+            <div className="flex-1">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                required
+                className="w-full px-5 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:bg-white/20 transition-all"
+              />
+              {error && <div className="absolute -bottom-6 left-0 text-red-300 text-xs">{error}</div>}
+            </div>
             <button
               type="submit"
-              className="px-7 py-3.5 rounded-xl bg-white text-accent font-semibold text-sm hover:bg-white/90 hover:-translate-y-0.5 transition-all duration-300 shadow-lg"
+              disabled={loading}
+              className="px-7 py-3.5 rounded-xl bg-white text-accent font-semibold text-sm hover:bg-white/90 hover:-translate-y-0.5 transition-all duration-300 shadow-lg disabled:opacity-70 disabled:hover:-translate-y-0"
             >
-              Subscribe
+              {loading ? 'Subscribing...' : 'Subscribe'}
             </button>
           </form>
         )}

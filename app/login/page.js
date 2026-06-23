@@ -2,55 +2,115 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-
 import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { loginUser } = useAuth();
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loginUser(email, password)) {
-      router.push('/account/profile');
+    setError('');
+    setLoading(true);
+    try {
+      await loginUser(email, password);
+      router.push('/account');
+    } catch (err) {
+      setError(err.message || 'Failed to sign in. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="">
-      <div className="">
-        <h1 className="">Welcome Back</h1>
-        <p className="">Sign in to your Optic Zone account</p>
-        <form className="" onSubmit={handleSubmit}>
-          <div className="">
-            <label htmlFor="email">Email Address</label>
-            <input 
-              type="email" 
-              id="email" 
-              required 
-              placeholder="you@example.com" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-soft-white via-pastel-blue-light/30 to-pastel-lavender-light/20 pt-24 pb-12 px-4">
+      {/* Decorative Blobs */}
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-pastel-blue/20 rounded-full blur-[100px] animate-pulse-soft" />
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-pastel-lavender/20 rounded-full blur-[100px] animate-pulse-soft" />
+      
+      <div className="relative z-10 w-full max-w-md animate-fade-in-up">
+        <div className="glass p-10 sm:p-12 rounded-3xl shadow-2xl shadow-accent/10 border border-white/50 relative overflow-hidden">
+          {/* subtle top highlight */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent to-transparent opacity-50" />
+          
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-pastel-blue mx-auto flex items-center justify-center mb-6 shadow-lg shadow-accent/20 rotate-3 hover:rotate-0 transition-transform">
+              <span className="text-3xl block -rotate-3 hover:rotate-0 transition-transform">👋</span>
+            </div>
+            <h1 className="text-3xl font-bold font-heading text-charcoal mb-2 tracking-tight">Welcome Back</h1>
+            <p className="text-dark-gray/80 font-medium">Sign in to your Optic Zone account</p>
           </div>
-          <div className="">
-            <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              required 
-              placeholder="••••••••" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+
+          {error && (
+            <div className="mb-6 p-4 bg-red-50/80 backdrop-blur-sm text-red-600 text-sm font-semibold rounded-xl border border-red-200/50 flex items-center gap-3 animate-fade-in">
+              <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label htmlFor="email" className="block text-sm font-bold text-charcoal/90 mb-2 pl-1">Email Address</label>
+              <div className="relative">
+                <input 
+                  type="email" 
+                  id="email" 
+                  required 
+                  placeholder="you@example.com" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-5 py-3.5 rounded-xl bg-white/70 backdrop-blur-md border border-white/50 focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all outline-none text-charcoal placeholder-dark-gray/50 shadow-inner"
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2 pl-1 pr-1">
+                <label htmlFor="password" className="block text-sm font-bold text-charcoal/90">Password</label>
+                <Link href="/login" className="text-xs text-accent font-semibold hover:text-accent-dark transition-colors">Forgot password?</Link>
+              </div>
+              <div className="relative">
+                <input 
+                  type="password" 
+                  id="password" 
+                  required 
+                  placeholder="••••••••" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-5 py-3.5 rounded-xl bg-white/70 backdrop-blur-md border border-white/50 focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all outline-none text-charcoal placeholder-dark-gray/50 shadow-inner"
+                />
+              </div>
+            </div>
+            
+            <button 
+              type="submit" 
+              disabled={loading}
+              className={`w-full mt-2 py-4 rounded-xl text-white font-bold text-sm tracking-wide uppercase transition-all duration-300 relative overflow-hidden ${loading ? "bg-mid-gray cursor-not-allowed" : "bg-gradient-to-r from-accent to-accent-dark hover:shadow-xl hover:shadow-accent/30 hover:-translate-y-0.5"}`}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Authenticating...
+                </span>
+              ) : 'Sign In'}
+            </button>
+          </form>
+
+          <div className="mt-8 text-center text-sm font-medium text-dark-gray/80">
+            Don't have an account?{' '}
+            <Link href="/register" className="text-accent font-bold hover:text-accent-dark transition-colors border-b border-accent/30 hover:border-accent pb-0.5">
+              Register here
+            </Link>
           </div>
-          <button type="submit" className="">Sign In</button>
-        </form>
-        <p className="">
-          Don't have an account? <Link href="/register">Register</Link>
-        </p>
+        </div>
       </div>
     </div>
   );

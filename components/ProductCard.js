@@ -1,14 +1,32 @@
 'use client';
+import { useState } from 'react';
+import { useCart } from '@/context/CartContext';
+import { useRouter } from 'next/navigation';
 
 export default function ProductCard({ product }) {
+  const { addItem } = useCart();
+  const [showToast, setShowToast] = useState(false);
+  const router = useRouter();
+  
   const badgeColors = {
     'Best Seller': 'bg-accent text-white',
     'New': 'bg-green-500 text-white',
     'Sale': 'bg-red-500 text-white',
   };
 
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem(product);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
+  };
+
   return (
-    <div className="group bg-white rounded-2xl border border-mid-gray/30 overflow-hidden hover-lift">
+    <div 
+      onClick={() => router.push(`/product/${product.id}`)}
+      className="group bg-white rounded-2xl border border-mid-gray/30 overflow-hidden hover-lift block cursor-pointer"
+    >
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-light-gray">
         <img
@@ -28,12 +46,6 @@ export default function ProductCard({ product }) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
             </svg>
           </button>
-          <button className="w-9 h-9 rounded-xl glass flex items-center justify-center text-charcoal hover:text-accent transition-colors" aria-label="Quick view">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </button>
         </div>
       </div>
 
@@ -49,7 +61,7 @@ export default function ProductCard({ product }) {
             {[...Array(5)].map((_, i) => (
               <svg
                 key={i}
-                className={`w-3.5 h-3.5 ${i < Math.floor(product.rating) ? 'text-gold' : 'text-mid-gray'}`}
+                className={`w-3.5 h-3.5 ${i < Math.floor(product.rating || 5) ? 'text-gold' : 'text-mid-gray'}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -57,7 +69,7 @@ export default function ProductCard({ product }) {
               </svg>
             ))}
           </div>
-          <span className="text-xs text-dark-gray/60">({product.reviews})</span>
+          <span className="text-xs text-dark-gray/60">({product.reviews || 0})</span>
         </div>
 
         {/* Price */}
@@ -69,8 +81,16 @@ export default function ProductCard({ product }) {
         </div>
 
         {/* Add to Cart */}
-        <button className="w-full mt-4 px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-dark text-white text-sm font-semibold hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300">
-          Add to Cart
+        <button 
+          onClick={handleAddToCart}
+          className="w-full mt-4 px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-dark text-white text-sm font-semibold hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 relative overflow-hidden"
+        >
+          <span className={`block transition-all duration-300 ${showToast ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            Add to Cart
+          </span>
+          <span className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+            Added! ✓
+          </span>
         </button>
       </div>
     </div>

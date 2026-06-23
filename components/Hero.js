@@ -36,7 +36,7 @@ export default function Hero() {
                 </svg>
               </Link>
               <Link
-                href="/about"
+                href="/products"
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white/80 text-charcoal font-semibold text-sm border border-mid-gray/50 shadow-sm hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
               >
                 Learn More

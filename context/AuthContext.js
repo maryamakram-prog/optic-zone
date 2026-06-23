@@ -1,78 +1,99 @@
 'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
 const AuthContext = createContext(null);
-
-const STORAGE_KEY = 'opticzone_auth_v1';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [admin, setAdmin] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const { user, admin } = JSON.parse(stored);
-        if (user) setUser(user);
-        if (admin) setAdmin(admin);
+    const initSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        // Fetch profile to get role and details
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        if (profile?.role === 'admin') {
+          setAdmin(profile);
+        } else {
+          setUser(profile || session.user);
+        }
       }
-    } catch {}
+      setLoading(false);
+    };
+
+    initSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        if (profile?.role === 'admin') {
+          setAdmin(profile);
+          setUser(null);
+        } else {
+          setUser(profile || session.user);
+          setAdmin(null);
+        }
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setAdmin(null);
+      }
+    });
+
+    return () => { subscription.unsubscribe(); };
   }, []);
 
-  const saveToStorage = (u, a) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ user: u, admin: a }));
-    } catch {}
+  const loginUser = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    // The auth state listener will update user/admin state
+    return data.user;
   };
 
-  const loginUser = (email, password) => {
-    // Mock login
-    const mockUser = { id: 1, name: 'Demo Customer', email };
-    setUser(mockUser);
-    saveToStorage(mockUser, admin);
+  const registerUser = async (userData) => {
+    const { data, error } = await supabase.auth.signUp({
+      email: userData.email,
+      password: userData.password,
+      options: {
+        data: {
+          first_name: userData.firstName,
+          last_name: userData.lastName,
+          role: 'customer'
+        }
+      }
+    });
+    if (error) throw error;
+    return data.user;
+  };
+
+  const logoutUser = async () => {
+    await supabase.auth.signOut();
+  };
+
+  const updateUser = async (userData) => {
+    if (!user?.id) return;
+    const { error } = await supabase.from('profiles').update(userData).eq('id', user.id);
+    if (error) throw error;
+    setUser({ ...user, ...userData });
     return true;
   };
 
-  const registerUser = (userData) => {
-    // Mock register
-    const newUser = { id: Date.now(), ...userData };
-    setUser(newUser);
-    saveToStorage(newUser, admin);
-    return true;
+  const loginAdmin = async (email, password) => {
+    // Admin login is the same under the hood, but we can verify role afterwards
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return data.user;
   };
 
-  const logoutUser = () => {
-    setUser(null);
-    saveToStorage(null, admin);
-  };
-
-  const updateUser = (userData) => {
-    const updated = { ...user, ...userData };
-    setUser(updated);
-    saveToStorage(updated, admin);
-    return true;
-  };
-
-  const loginAdmin = (username, password) => {
-    // Mock admin login
-    if (username === 'admin' && password === 'admin') {
-      const mockAdmin = { id: 1, username };
-      setAdmin(mockAdmin);
-      saveToStorage(user, mockAdmin);
-      return true;
-    }
-    return false;
-  };
-
-  const logoutAdmin = () => {
-    setAdmin(null);
-    saveToStorage(user, null);
+  const logoutAdmin = async () => {
+    await supabase.auth.signOut();
   };
 
   return (
     <AuthContext.Provider value={{
-      user, admin, loginUser, registerUser, logoutUser, updateUser, loginAdmin, logoutAdmin
+      user, admin, loading, loginUser, registerUser, logoutUser, updateUser, loginAdmin, logoutAdmin
     }}>
       {children}
     </AuthContext.Provider>

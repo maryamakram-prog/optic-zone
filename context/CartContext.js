@@ -1,10 +1,13 @@
 'use client';
-import { createContext, useContext, useReducer, useState } from 'react';
+import { createContext, useContext, useReducer, useState, useEffect } from 'react';
 
 const CartContext = createContext(null);
+const CART_STORAGE_KEY = 'opticzone_cart_v1';
 
 function cartReducer(state, action) {
   switch (action.type) {
+    case 'INIT':
+      return { ...state, items: action.payload || [] };
     case 'ADD_ITEM': {
       const existing = state.items.find(i => i.id === action.payload.id);
       if (existing) {
@@ -28,6 +31,23 @@ function cartReducer(state, action) {
 export function CartProvider({ children }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [] });
   const [coupon, setCoupon] = useState(null); // { code, type, value }
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(CART_STORAGE_KEY);
+      if (stored) {
+        dispatch({ type: 'INIT', payload: JSON.parse(stored) });
+      }
+    } catch (err) {}
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.items));
+    }
+  }, [state.items, isInitialized]);
 
   const addItem = product => dispatch({ type: 'ADD_ITEM', payload: product });
   const removeItem = id => dispatch({ type: 'REMOVE_ITEM', payload: id });
@@ -60,9 +80,7 @@ export function CartProvider({ children }) {
   return (
     <CartContext.Provider value={{
       items: state.items, addItem, removeItem, updateQty, clearCart,
-      subtotal, total, count, shipping, tax, discount, coupon, applyCoupon, removeCoupon,
-      // backward compat
-      total: total,
+      subtotal, total, count, shipping, tax, discount, coupon, applyCoupon, removeCoupon
     }}>
       {children}
     </CartContext.Provider>

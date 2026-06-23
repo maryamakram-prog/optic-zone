@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import { AuthProvider } from '@/context/AuthContext';
 import { StoreProvider } from '@/context/StoreContext';
 import { CartProvider } from '@/context/CartContext';
+import LiveChat from '@/components/LiveChat';
 
 export const metadata = {
   title: 'Optic Zone — Premium Eyewear & Sunglasses',
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
               <Navbar />
               <main className="min-h-screen">{children}</main>
               <Footer />
+              <LiveChat />
             </CartProvider>
           </StoreProvider>
         </AuthProvider>
