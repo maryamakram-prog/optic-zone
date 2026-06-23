@@ -1,6 +1,7 @@
 'use client';
 import { useStore } from '@/context/StoreContext';
 import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 
 const EMPTY_FORM = {
@@ -16,12 +17,58 @@ export default function AdminProductsPage() {
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [imagePreview, setImagePreview] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   const handleEdit = (product) => {
     setFormData({ ...EMPTY_FORM, ...product });
     setImagePreview(product.imageUrl || '');
     setEditingId(product.id);
     setShowForm(true);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      // Check if supabase is configured
+      const isSupabaseConfigured = 
+        process.env.NEXT_PUBLIC_SUPABASE_URL && 
+        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+
+      if (!isSupabaseConfigured) {
+        alert('Supabase is not configured yet. Using local fallback file URL.');
+        const mockUrl = URL.createObjectURL(file);
+        setFormData(prev => ({ ...prev, imageUrl: mockUrl }));
+        setImagePreview(mockUrl);
+        return;
+      }
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+      const filePath = `products/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('product_images')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('product_images')
+        .getPublicUrl(filePath);
+
+      setFormData(prev => ({ ...prev, imageUrl: publicUrl }));
+      setImagePreview(publicUrl);
+      alert('Image uploaded successfully!');
+    } catch (err) {
+      console.error('Upload Error:', err);
+      alert(`Upload failed: ${err.message}`);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleDelete = (id) => {
@@ -125,8 +172,8 @@ export default function AdminProductsPage() {
               </FormField>
             </div>
 
-            {/* Image URL */}
-            <div style={{ marginBottom: '1rem' }}>
+            {/* Image URL & File Upload */}
+            <div style={{ marginBottom: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <FormField label="Product Image URL">
                 <input
                   style={inputStyle}
@@ -135,18 +182,31 @@ export default function AdminProductsPage() {
                   placeholder="https://example.com/image.jpg"
                 />
               </FormField>
-              {imagePreview && (
-                <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)' }}
-                    onError={e => { e.target.style.display = 'none'; }}
-                  />
-                  <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>Image preview</span>
-                </div>
-              )}
+              <FormField label={uploading ? "Uploading..." : "Or Upload Image to Storage"}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  style={{
+                    ...inputStyle,
+                    padding: '0.45rem 0.8rem',
+                    cursor: uploading ? 'not-allowed' : 'pointer'
+                  }}
+                />
+              </FormField>
             </div>
+            {imagePreview && (
+              <div style={{ marginBottom: '1rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)' }}
+                  onError={e => { e.target.style.display = 'none'; }}
+                />
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>Image preview</span>
+              </div>
+            )}
 
             <div style={{ marginBottom: '1rem' }}>
               <FormField label="Description">
