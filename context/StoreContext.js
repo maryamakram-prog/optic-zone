@@ -135,6 +135,83 @@ export function StoreProvider({ children }) {
     toggleWishlist,
     addRecentlyViewed,
     addReview,
+    addOrder: async (orderData) => {
+      const isSupabaseConfigured = 
+        process.env.NEXT_PUBLIC_SUPABASE_URL && 
+        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+
+      const localPayload = {
+        id: `ord-${Math.random().toString(36).substring(2, 9)}`,
+        created_at: new Date().toISOString(),
+        status: 'pending',
+        total_amount: orderData.total,
+        shipping_address: orderData.customer.address,
+        order_items: orderData.items.map(i => ({
+          product_id: i.id,
+          quantity: i.qty,
+          price_at_time: i.price,
+          products: { name: i.name, brand: i.brand }
+        }))
+      };
+
+      if (!isSupabaseConfigured) {
+        setState(prev => ({
+          ...prev,
+          orders: [localPayload, ...prev.orders]
+        }));
+        return { data: localPayload, error: null };
+      }
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const { data: newOrder, error: orderError } = await supabase
+          .from('orders')
+          .insert([{
+            user_id: session?.user?.id || null,
+            total_amount: orderData.total,
+            status: 'pending',
+            shipping_address: orderData.customer.address
+          }])
+          .select()
+          .single();
+
+        if (orderError) throw orderError;
+
+        const orderItemsPayload = orderData.items.map(item => ({
+          order_id: newOrder.id,
+          product_id: item.id,
+          quantity: item.qty,
+          price_at_time: item.price
+        }));
+
+        const { error: itemsError } = await supabase
+          .from('order_items')
+          .insert(orderItemsPayload);
+
+        if (itemsError) throw itemsError;
+
+        // Fetch full order with items
+        const { data: fullOrder } = await supabase
+          .from('orders')
+          .select('*, order_items(*)')
+          .eq('id', newOrder.id)
+          .single();
+
+        setState(prev => ({
+          ...prev,
+          orders: [fullOrder || newOrder, ...prev.orders]
+        }));
+
+        return { data: fullOrder || newOrder, error: null };
+      } catch (err) {
+        console.error('Error inserting order:', err);
+        setState(prev => ({
+          ...prev,
+          orders: [localPayload, ...prev.orders]
+        }));
+        return { data: localPayload, error: err };
+      }
+    },
     addProduct: async (product) => {
       const { data, error } = await supabase.from('products').insert([product]).select();
       if (!error && data) setState(prev => ({ ...prev, products: [...prev.products, data[0]] }));
