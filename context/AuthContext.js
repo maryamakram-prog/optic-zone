@@ -11,26 +11,66 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const initSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        // Fetch profile to get role and details
-        const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-        if (profile?.role === 'admin') {
-          setAdmin(profile);
-        } else {
-          setUser(profile || session.user);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          let profile = null;
+          try {
+            const { data, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+            if (!error) profile = data;
+          } catch (e) {
+            console.error('Error fetching profile:', e);
+          }
+
+          const isUserAdmin = profile?.role === 'admin' || 
+                              session.user.user_metadata?.role === 'admin' || 
+                              session.user.email === 'admin@opticzone.com';
+
+          if (isUserAdmin) {
+            setAdmin(profile || {
+              id: session.user.id,
+              email: session.user.email,
+              first_name: session.user.user_metadata?.first_name || 'System',
+              last_name: session.user.user_metadata?.last_name || 'Admin',
+              role: 'admin'
+            });
+            setUser(null);
+          } else {
+            setUser(profile || session.user);
+            setAdmin(null);
+          }
         }
+      } catch (err) {
+        console.error('Error in initSession:', err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     initSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-        if (profile?.role === 'admin') {
-          setAdmin(profile);
+        let profile = null;
+        try {
+          const { data, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+          if (!error) profile = data;
+        } catch (e) {
+          console.error('Error fetching profile:', e);
+        }
+
+        const isUserAdmin = profile?.role === 'admin' || 
+                            session.user.user_metadata?.role === 'admin' || 
+                            session.user.email === 'admin@opticzone.com';
+
+        if (isUserAdmin) {
+          setAdmin(profile || {
+            id: session.user.id,
+            email: session.user.email,
+            first_name: session.user.user_metadata?.first_name || 'System',
+            last_name: session.user.user_metadata?.last_name || 'Admin',
+            role: 'admin'
+          });
           setUser(null);
         } else {
           setUser(profile || session.user);

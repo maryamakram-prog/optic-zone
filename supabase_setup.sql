@@ -66,8 +66,15 @@ CREATE TABLE IF NOT EXISTS public.orders (
     total_amount DECIMAL(10, 2) NOT NULL,
     status TEXT DEFAULT 'pending',
     shipping_address TEXT,
+    customer_name TEXT,
+    customer_email TEXT,
+    customer_phone TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS customer_name TEXT;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS customer_email TEXT;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS customer_phone TEXT;
 
 -- Order Items
 CREATE TABLE IF NOT EXISTS public.order_items (
@@ -100,6 +107,16 @@ CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Coupons
+CREATE TABLE IF NOT EXISTS public.coupons (
+    id SERIAL PRIMARY KEY,
+    code TEXT UNIQUE NOT NULL,
+    type TEXT NOT NULL DEFAULT 'percent', -- 'percent' or 'fixed'
+    value DECIMAL(10, 2) NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
 -- Reviews
 CREATE TABLE IF NOT EXISTS public.reviews (
     id SERIAL PRIMARY KEY,
@@ -122,6 +139,7 @@ ALTER TABLE public.carts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cart_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
 
 -- Drop existing policies
 DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
@@ -130,7 +148,13 @@ DROP POLICY IF EXISTS "Admins can view all profiles" ON public.profiles;
 DROP POLICY IF EXISTS "Users can manage own cart" ON public.carts;
 DROP POLICY IF EXISTS "Users can manage own cart items" ON public.cart_items;
 DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
+DROP POLICY IF EXISTS "Admins can view all orders" ON public.orders;
+DROP POLICY IF EXISTS "Anyone can insert orders" ON public.orders;
+DROP POLICY IF EXISTS "Admins can update orders" ON public.orders;
+DROP POLICY IF EXISTS "Admins can delete orders" ON public.orders;
 DROP POLICY IF EXISTS "Allow public inserts" ON public.newsletter_subscribers;
+DROP POLICY IF EXISTS "Allow public read of coupons" ON public.coupons;
+DROP POLICY IF EXISTS "Admins can manage coupons" ON public.coupons;
 
 -- Apply policies
 CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
@@ -143,8 +167,27 @@ CREATE POLICY "Users can manage own cart" ON public.carts FOR ALL USING (auth.ui
 CREATE POLICY "Users can manage own cart items" ON public.cart_items FOR ALL USING (
   cart_id IN (SELECT id FROM public.carts WHERE user_id = auth.uid())
 );
+
+-- Orders Policies
 CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Admins can view all orders" ON public.orders FOR SELECT USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+);
+CREATE POLICY "Anyone can insert orders" ON public.orders FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins can update orders" ON public.orders FOR UPDATE USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+);
+CREATE POLICY "Admins can delete orders" ON public.orders FOR DELETE USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+);
+
 CREATE POLICY "Allow public inserts" ON public.newsletter_subscribers FOR INSERT WITH CHECK (true);
+
+-- Coupons Policies
+CREATE POLICY "Allow public read of coupons" ON public.coupons FOR SELECT USING (true);
+CREATE POLICY "Admins can manage coupons" ON public.coupons FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+);
 
 -- ==========================================
 -- 3. Trigger for Automatic Profile Sync
