@@ -134,60 +134,129 @@ CREATE TABLE IF NOT EXISTS public.reviews (
 -- 2. Row Level Security & Policies
 -- ==========================================
 
+-- Enable Row Level Security on all tables
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.carts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cart_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 
 -- Drop existing policies
 DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Admins can view all profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Admins can manage profiles" ON public.profiles;
+
+DROP POLICY IF EXISTS "Allow public read of products" ON public.products;
+DROP POLICY IF EXISTS "Admins can manage products" ON public.products;
+
 DROP POLICY IF EXISTS "Users can manage own cart" ON public.carts;
 DROP POLICY IF EXISTS "Users can manage own cart items" ON public.cart_items;
+
 DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
 DROP POLICY IF EXISTS "Admins can view all orders" ON public.orders;
 DROP POLICY IF EXISTS "Anyone can insert orders" ON public.orders;
 DROP POLICY IF EXISTS "Admins can update orders" ON public.orders;
 DROP POLICY IF EXISTS "Admins can delete orders" ON public.orders;
+
+DROP POLICY IF EXISTS "Anyone can insert order items" ON public.order_items;
+DROP POLICY IF EXISTS "Anyone can view own order items" ON public.order_items;
+DROP POLICY IF EXISTS "Admins can manage order items" ON public.order_items;
+
+DROP POLICY IF EXISTS "Users can view own appointments" ON public.appointments;
+DROP POLICY IF EXISTS "Anyone can book appointments" ON public.appointments;
+DROP POLICY IF EXISTS "Admins can manage appointments" ON public.appointments;
+
 DROP POLICY IF EXISTS "Allow public inserts" ON public.newsletter_subscribers;
+DROP POLICY IF EXISTS "Admins can view subscribers" ON public.newsletter_subscribers;
+
 DROP POLICY IF EXISTS "Allow public read of coupons" ON public.coupons;
 DROP POLICY IF EXISTS "Admins can manage coupons" ON public.coupons;
 
--- Apply policies
-CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Admins can view all profiles" ON public.profiles FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+DROP POLICY IF EXISTS "Allow public read of reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Authenticated users can insert reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Users and admins can manage reviews" ON public.reviews;
 
-CREATE POLICY "Users can manage own cart" ON public.carts FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Users can manage own cart items" ON public.cart_items FOR ALL USING (
-  cart_id IN (SELECT id FROM public.carts WHERE user_id = auth.uid())
-);
+-- 1. Profiles Policies (Recursion-free check via JWT metadata)
+CREATE POLICY "Users can view own profile" ON public.profiles 
+  FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON public.profiles 
+  FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Admins can manage profiles" ON public.profiles 
+  FOR ALL USING (((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
 
--- Orders Policies
-CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Admins can view all orders" ON public.orders FOR SELECT USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
-CREATE POLICY "Anyone can insert orders" ON public.orders FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admins can update orders" ON public.orders FOR UPDATE USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
-CREATE POLICY "Admins can delete orders" ON public.orders FOR DELETE USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+-- 2. Products Policies (Public select, admin write)
+CREATE POLICY "Allow public read of products" ON public.products 
+  FOR SELECT USING (true);
+CREATE POLICY "Admins can manage products" ON public.products 
+  FOR ALL USING (((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
 
-CREATE POLICY "Allow public inserts" ON public.newsletter_subscribers FOR INSERT WITH CHECK (true);
+-- 3. Carts Policies
+CREATE POLICY "Users can manage own cart" ON public.carts 
+  FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage own cart items" ON public.cart_items 
+  FOR ALL USING (
+    cart_id IN (SELECT id FROM public.carts WHERE user_id = auth.uid())
+  );
 
--- Coupons Policies
-CREATE POLICY "Allow public read of coupons" ON public.coupons FOR SELECT USING (true);
-CREATE POLICY "Admins can manage coupons" ON public.coupons FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+-- 4. Orders Policies (Check role via JWT to avoid profiles select recursion)
+CREATE POLICY "Users can view own orders" ON public.orders 
+  FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Admins can view all orders" ON public.orders 
+  FOR SELECT USING (((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+CREATE POLICY "Anyone can insert orders" ON public.orders 
+  FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins can update orders" ON public.orders 
+  FOR UPDATE USING (((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+CREATE POLICY "Admins can delete orders" ON public.orders 
+  FOR DELETE USING (((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+
+-- 5. Order Items Policies
+CREATE POLICY "Anyone can insert order items" ON public.order_items 
+  FOR INSERT WITH CHECK (true);
+CREATE POLICY "Anyone can view own order items" ON public.order_items 
+  FOR SELECT USING (
+    order_id IN (SELECT id FROM public.orders WHERE user_id = auth.uid()) OR
+    ((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text
+  );
+CREATE POLICY "Admins can manage order items" ON public.order_items 
+  FOR ALL USING (((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+
+-- 6. Appointments Policies
+CREATE POLICY "Users can view own appointments" ON public.appointments 
+  FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Anyone can book appointments" ON public.appointments 
+  FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins can manage appointments" ON public.appointments 
+  FOR ALL USING (((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+
+-- 7. Newsletter Subscribers Policies
+CREATE POLICY "Allow public inserts" ON public.newsletter_subscribers 
+  FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins can view subscribers" ON public.newsletter_subscribers 
+  FOR SELECT USING (((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+
+-- 8. Coupons Policies
+CREATE POLICY "Allow public read of coupons" ON public.coupons 
+  FOR SELECT USING (true);
+CREATE POLICY "Admins can manage coupons" ON public.coupons 
+  FOR ALL USING (((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+
+-- 9. Reviews Policies
+CREATE POLICY "Allow public read of reviews" ON public.reviews 
+  FOR SELECT USING (true);
+CREATE POLICY "Authenticated users can insert reviews" ON public.reviews 
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND auth.uid() = user_id);
+CREATE POLICY "Users and admins can manage reviews" ON public.reviews 
+  FOR ALL USING (
+    auth.uid() = user_id OR 
+    ((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text
+  );
 
 -- ==========================================
 -- 3. Trigger for Automatic Profile Sync

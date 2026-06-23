@@ -88,11 +88,20 @@ export default function AdminProductsPage() {
       price: parseFloat(formData.price) || 0,
       originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
     };
+    
+    let res;
     if (editingId) {
-      await updateProduct({ ...payload, id: editingId });
+      res = await updateProduct({ ...payload, id: editingId });
     } else {
-      await addProduct({ ...payload, rating: 5, reviews: 0 });
+      res = await addProduct({ ...payload, rating: 5, reviews: 0 });
     }
+    
+    if (res && res.error) {
+      console.error('Failed to save product:', res.error);
+      alert(`Failed to save product: ${res.error.message || JSON.stringify(res.error)}`);
+      return;
+    }
+    
     setShowForm(false);
     setFormData(EMPTY_FORM);
     setImagePreview('');

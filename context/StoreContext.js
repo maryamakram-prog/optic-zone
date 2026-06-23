@@ -362,14 +362,16 @@ export function StoreProvider({ children }) {
         process.env.NEXT_PUBLIC_SUPABASE_URL && 
         !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
+      const { id, created_at, ...cleanProduct } = product;
+
       if (!isSupabaseConfigured) {
-        const newProduct = { id: Date.now(), ...product };
+        const newProduct = { id: Date.now(), ...cleanProduct };
         setState(prev => ({ ...prev, products: [...prev.products, newProduct] }));
         return { data: [newProduct], error: null };
       }
 
       try {
-        const { data, error } = await supabase.from('products').insert([product]).select();
+        const { data, error } = await supabase.from('products').insert([cleanProduct]).select();
         if (!error && data) {
           setState(prev => ({ ...prev, products: [...prev.products, data[0]] }));
         }
@@ -393,7 +395,7 @@ export function StoreProvider({ children }) {
       }
 
       try {
-        const { id, ...updates } = product;
+        const { id, created_at, ...updates } = product;
         const { data, error } = await supabase.from('products').update(updates).eq('id', id).select();
         if (!error && data) {
           setState(prev => ({ ...prev, products: prev.products.map(p => p.id === id ? data[0] : p) }));

@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { navLinks } from '@/data/siteData';
 import { useCart } from '@/context/CartContext';
 import { useStore } from '@/context/StoreContext';
 
 export default function Navbar() {
+  const pathname = usePathname();
+  if (pathname?.startsWith('/admin')) return null;
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
