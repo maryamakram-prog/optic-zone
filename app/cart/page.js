@@ -167,15 +167,20 @@ export default function StandaloneCartPage() {
               <div className="mb-8 p-5 bg-light-gray/50 rounded-2xl border border-mid-gray/50">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal mb-3">Apply Coupon</h3>
                 {!coupon ? (
-                  <form onSubmit={handleApplyCoupon} className="flex flex-col sm:flex-row gap-2">
+                  <form onSubmit={handleApplyCoupon} className="relative flex items-center w-full">
                     <input
                       type="text"
                       placeholder="Coupon Code"
                       value={couponInput}
                       onChange={e => setCouponInput(e.target.value)}
-                      className="flex-1 min-w-0 px-4 py-2.5 rounded-xl border border-mid-gray/50 focus:outline-none focus:ring-2 focus:ring-accent/50 text-sm"
+                      className="w-full pl-4 pr-24 py-3 text-sm rounded-xl border border-mid-gray/50 focus:outline-none focus:ring-2 focus:ring-accent/50 bg-white text-charcoal placeholder-dark-gray/50"
                     />
-                    <button type="submit" className="px-5 py-2.5 bg-charcoal text-white rounded-xl text-sm font-semibold hover:bg-black transition-colors w-full sm:w-auto text-center">Apply</button>
+                    <button 
+                      type="submit" 
+                      className="absolute right-1.5 px-4 py-1.5 bg-charcoal hover:bg-black text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                    >
+                      Apply
+                    </button>
                   </form>
                 ) : (
                   <div className="flex items-center justify-between bg-green-50 px-4 py-3 rounded-xl border border-green-200">

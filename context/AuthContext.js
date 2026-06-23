@@ -39,6 +39,22 @@ export function AuthProvider({ children }) {
             setUser(profile || session.user);
             setAdmin(null);
           }
+        } else {
+          // Restore mock session from sessionStorage if offline
+          const isSupabaseConfigured = 
+            process.env.NEXT_PUBLIC_SUPABASE_URL && 
+            !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+          if (!isSupabaseConfigured && typeof window !== 'undefined') {
+            const savedAdmin = sessionStorage.getItem('opticzone_mock_admin');
+            const savedUser = sessionStorage.getItem('opticzone_mock_user');
+            if (savedAdmin) {
+              setAdmin(JSON.parse(savedAdmin));
+              setUser(null);
+            } else if (savedUser) {
+              setUser(JSON.parse(savedUser));
+              setAdmin(null);
+            }
+          }
         }
       } catch (err) {
         console.error('Error in initSession:', err);
@@ -104,6 +120,10 @@ export function AuthProvider({ children }) {
         };
         setAdmin(mockAdmin);
         setUser(null);
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('opticzone_mock_admin', JSON.stringify(mockAdmin));
+          sessionStorage.removeItem('opticzone_mock_user');
+        }
         return mockAdmin;
       }
       if (lowerEmail === 'john@opticzone.com' && (password === 'password123' || password === 'john123')) {
@@ -116,6 +136,10 @@ export function AuthProvider({ children }) {
         };
         setUser(mockUser);
         setAdmin(null);
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('opticzone_mock_user', JSON.stringify(mockUser));
+          sessionStorage.removeItem('opticzone_mock_admin');
+        }
         return mockUser;
       }
       if (lowerEmail === 'jane@opticzone.com' && (password === 'password123' || password === 'jane123')) {
@@ -128,6 +152,10 @@ export function AuthProvider({ children }) {
         };
         setUser(mockUser);
         setAdmin(null);
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('opticzone_mock_user', JSON.stringify(mockUser));
+          sessionStorage.removeItem('opticzone_mock_admin');
+        }
         return mockUser;
       }
       return null;
@@ -179,6 +207,10 @@ export function AuthProvider({ children }) {
     }
     setUser(null);
     setAdmin(null);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('opticzone_mock_admin');
+      sessionStorage.removeItem('opticzone_mock_user');
+    }
   };
 
   const updateUser = async (userData) => {

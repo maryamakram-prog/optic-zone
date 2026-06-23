@@ -56,6 +56,7 @@ export default function CheckoutPage() {
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvv, setCardCvv] = useState('');
   const [cardBrand, setCardBrand] = useState('unknown');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Autofill address when dropdown changes
   const handleAddressChange = (addrId) => {
@@ -105,39 +106,44 @@ export default function CheckoutPage() {
 
   const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    const customer = {
-      name: `${form.firstName} ${form.lastName}`,
-      email: form.email,
-      phone: form.phone,
-      address: `${form.address}, ${form.city}, ${form.country} ${form.postalCode}`
-    };
+    try {
+      const customer = {
+        name: `${form.firstName} ${form.lastName}`,
+        email: form.email,
+        phone: form.phone,
+        address: `${form.address}, ${form.city}, ${form.country} ${form.postalCode}`
+      };
 
-    const orderItems = items.map(i => ({
-      id: i.id,
-      name: i.name,
-      brand: i.brand,
-      price: i.price,
-      qty: i.qty
-    }));
+      const orderItems = items.map(i => ({
+        id: i.id,
+        name: i.name,
+        brand: i.brand,
+        price: i.price,
+        qty: i.qty
+      }));
 
-    addOrder({
-      customer,
-      items: orderItems,
-      total,
-      couponApplied: coupon ? coupon.code : null,
-      paymentMethod,
-      shippingCost: shipping,
-      taxAmount: tax,
-      subtotalAmount: subtotal
-    });
+      await addOrder({
+        customer,
+        items: orderItems,
+        total,
+        couponApplied: coupon ? coupon.code : null,
+        paymentMethod,
+        shippingCost: shipping,
+        taxAmount: tax,
+        subtotalAmount: subtotal
+      });
 
-    clearCart();
-    
-    // Directing to confirmation page
-    router.push('/order-confirmation');
+      clearCart();
+      router.push('/order-confirmation');
+    } catch (err) {
+      console.error('Checkout error:', err);
+      setIsSubmitting(false);
+    }
   };
 
   if (items.length === 0) {
@@ -296,8 +302,12 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            <button type="submit" className="w-full py-4 bg-gradient-to-r from-accent to-pastel-blue text-white rounded-xl font-bold text-lg hover:shadow-lg hover:-translate-y-0.5 transition-all">
-              Complete Secure Payment - ${total.toFixed(2)}
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="w-full py-4 bg-gradient-to-r from-accent to-pastel-blue text-white rounded-xl font-bold text-lg hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-75 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Processing Payment...' : `Complete Secure Payment - $${total.toFixed(2)}`}
             </button>
           </form>
 

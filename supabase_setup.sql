@@ -299,3 +299,11 @@ VALUES
 (11, 'Kids FlexiRound Durable', 'Polaroid', 69.99, 89.99, 'kids', 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=600&q=80', 'Flexible, hypoallergenic memory frames designed for active play without breaking.', false, false, true, 4.9, 95),
 (12, 'SportJunior Anti-Slip', 'Nike', 79.99, null, 'kids', 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80', 'Durable sports frames for kids with non-slip templates and elastic strap option.', false, true, false, 4.6, 43)
 ON CONFLICT (id) DO NOTHING;
+
+-- Seed sample coupons
+INSERT INTO public.coupons (code, type, value, active)
+VALUES 
+('WELCOME10', 'percent', 10.00, true),
+('SUMMER20', 'percent', 20.00, true),
+('OP15X', 'fixed', 15.00, true)
+ON CONFLICT (code) DO NOTHING;

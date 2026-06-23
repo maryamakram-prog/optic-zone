@@ -3,7 +3,6 @@ import { useStore } from '@/context/StoreContext';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
-
 const EMPTY_FORM = {
   name: '', brand: '', price: '', originalPrice: '', category: '',
   description: '', imageUrl: '', frameShape: '', frameMaterial: '',
@@ -18,12 +17,15 @@ export default function AdminProductsPage() {
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [imagePreview, setImagePreview] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
 
   const handleEdit = (product) => {
     setFormData({ ...EMPTY_FORM, ...product });
     setImagePreview(product.imageUrl || '');
     setEditingId(product.id);
     setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleImageUpload = async (e) => {
@@ -32,7 +34,6 @@ export default function AdminProductsPage() {
 
     setUploading(true);
     try {
-      // Check if supabase is configured
       const isSupabaseConfigured = 
         process.env.NEXT_PUBLIC_SUPABASE_URL && 
         !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
@@ -55,14 +56,12 @@ export default function AdminProductsPage() {
 
       if (error) throw error;
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('product_images')
         .getPublicUrl(filePath);
 
       setFormData(prev => ({ ...prev, imageUrl: publicUrl }));
       setImagePreview(publicUrl);
-      alert('Image uploaded successfully!');
     } catch (err) {
       console.error('Upload Error:', err);
       alert(`Upload failed: ${err.message}`);
@@ -82,7 +81,7 @@ export default function AdminProductsPage() {
     setImagePreview(val);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
       ...formData,
@@ -90,9 +89,9 @@ export default function AdminProductsPage() {
       originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
     };
     if (editingId) {
-      updateProduct({ ...payload, id: editingId });
+      await updateProduct({ ...payload, id: editingId });
     } else {
-      addProduct({ ...payload, rating: 5, reviews: 0 });
+      await addProduct({ ...payload, rating: 5, reviews: 0 });
     }
     setShowForm(false);
     setFormData(EMPTY_FORM);
@@ -102,13 +101,23 @@ export default function AdminProductsPage() {
 
   const f = (key, val) => setFormData(prev => ({ ...prev, [key]: val }));
 
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || 
+                          p.brand.toLowerCase().includes(search.toLowerCase());
+    const matchesCat = categoryFilter === '' || p.category === categoryFilter;
+    return matchesSearch && matchesCat;
+  });
+
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h1 className="" style={{ marginBottom: 0 }}>Product Management</h1>
+    <div className="space-y-8 animate-fade-in-up">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-black font-heading text-charcoal tracking-tight">Product Management</h1>
+          <p className="text-sm text-dark-gray mt-1">Catalog and inventory details</p>
+        </div>
         <button
-          className=""
-          style={{ background: 'var(--primary)' }}
+          className="px-5 py-2.5 bg-charcoal text-white rounded-xl text-sm font-semibold hover:bg-black transition-all hover:-translate-y-0.5 shadow-md shadow-black/10 cursor-pointer"
           onClick={() => {
             setShowForm(!showForm);
             setEditingId(null);
@@ -120,168 +129,215 @@ export default function AdminProductsPage() {
         </button>
       </div>
 
+      {/* Edit/Add Form */}
       {showForm && (
-        <div className="" style={{ padding: '2rem', marginBottom: '2rem' }}>
-          <h3 style={{ marginBottom: '1.5rem', fontFamily: 'Playfair Display, serif', color: 'var(--text)' }}>
-            {editingId ? 'Edit Product' : 'New Product'}
-          </h3>
-          <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+        <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-lg border border-mid-gray/40">
+          <h2 className="text-xl font-bold font-heading text-charcoal mb-6 pb-2 border-b border-mid-gray/30">
+            {editingId ? '✏️ Edit Product' : '✨ Add New Product'}
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <FormField label="Product Name *">
-                <input required style={inputStyle} value={formData.name} onChange={e => f('name', e.target.value)} placeholder="e.g. Classic Aviator" />
+                <input required className="input" value={formData.name} onChange={e => f('name', e.target.value)} placeholder="e.g. Classic Aviator" />
               </FormField>
               <FormField label="Brand *">
-                <input required style={inputStyle} value={formData.brand} onChange={e => f('brand', e.target.value)} placeholder="e.g. RayBan" />
+                <input required className="input" value={formData.brand} onChange={e => f('brand', e.target.value)} placeholder="e.g. Ray-Ban" />
               </FormField>
-              <FormField label="Sale Price ($) *">
-                <input type="number" step="0.01" required style={inputStyle} value={formData.price} onChange={e => f('price', e.target.value)} placeholder="129.99" />
+              <FormField label="Price ($) *">
+                <input type="number" step="0.01" required className="input" value={formData.price} onChange={e => f('price', e.target.value)} placeholder="129.99" />
               </FormField>
               <FormField label="Original Price ($)">
-                <input type="number" step="0.01" style={inputStyle} value={formData.originalPrice} onChange={e => f('originalPrice', e.target.value)} placeholder="Leave blank if no discount" />
+                <input type="number" step="0.01" className="input" value={formData.originalPrice} onChange={e => f('originalPrice', e.target.value)} placeholder="Leave blank if no discount" />
               </FormField>
               <FormField label="Category *">
-                <select required style={inputStyle} value={formData.category} onChange={e => f('category', e.target.value)}>
-                  <option value="">Select…</option>
+                <select required className="input" value={formData.category} onChange={e => f('category', e.target.value)}>
+                  <option value="">Select Category…</option>
                   <option value="eyeglasses">Eyeglasses</option>
                   <option value="sunglasses">Sunglasses</option>
                   <option value="reading">Reading</option>
                   <option value="sport">Sport</option>
                   <option value="kids">Kids</option>
+                  <option value="contact-lenses">Contact Lenses</option>
                 </select>
               </FormField>
               <FormField label="Gender">
-                <select style={inputStyle} value={formData.gender} onChange={e => f('gender', e.target.value)}>
-                  <option value="">All</option>
+                <select className="input" value={formData.gender} onChange={e => f('gender', e.target.value)}>
+                  <option value="">All / Unisex</option>
                   <option value="men">Men</option>
                   <option value="women">Women</option>
-                  <option value="unisex">Unisex</option>
                   <option value="kids">Kids</option>
                 </select>
               </FormField>
               <FormField label="Frame Shape">
-                <input style={inputStyle} value={formData.frameShape} onChange={e => f('frameShape', e.target.value)} placeholder="e.g. Aviator, Round" />
+                <input className="input" value={formData.frameShape} onChange={e => f('frameShape', e.target.value)} placeholder="e.g. Aviator, Round" />
               </FormField>
               <FormField label="Frame Material">
-                <input style={inputStyle} value={formData.frameMaterial} onChange={e => f('frameMaterial', e.target.value)} placeholder="e.g. Acetate, Titanium" />
+                <input className="input" value={formData.frameMaterial} onChange={e => f('frameMaterial', e.target.value)} placeholder="e.g. Acetate, Titanium" />
               </FormField>
               <FormField label="Frame Color">
-                <input style={inputStyle} value={formData.frameColor} onChange={e => f('frameColor', e.target.value)} placeholder="e.g. Matte Black" />
-              </FormField>
-              <FormField label="Lens Color">
-                <input style={inputStyle} value={formData.lensColor} onChange={e => f('lensColor', e.target.value)} placeholder="e.g. Green Mirror" />
+                <input className="input" value={formData.frameColor} onChange={e => f('frameColor', e.target.value)} placeholder="e.g. Matte Black" />
               </FormField>
             </div>
 
-            {/* Image URL & File Upload */}
-            <div style={{ marginBottom: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField label="Product Image URL">
                 <input
-                  style={inputStyle}
+                  className="input"
                   value={formData.imageUrl}
                   onChange={e => handleImageUrlChange(e.target.value)}
                   placeholder="https://example.com/image.jpg"
                 />
               </FormField>
-              <FormField label={uploading ? "Uploading..." : "Or Upload Image to Storage"}>
+              <FormField label={uploading ? "Uploading..." : "Or Upload Image File"}>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
                   disabled={uploading}
-                  style={{
-                    ...inputStyle,
-                    padding: '0.45rem 0.8rem',
-                    cursor: uploading ? 'not-allowed' : 'pointer'
-                  }}
+                  className="input file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-accent/15 file:text-accent hover:file:bg-accent/25 cursor-pointer disabled:opacity-50"
                 />
               </FormField>
             </div>
+
             {imagePreview && (
-              <div style={{ marginBottom: '1rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div className="flex items-center gap-4 bg-light-gray/30 p-4 rounded-2xl border border-mid-gray/30 w-fit">
                 <img
                   src={imagePreview}
                   alt="Preview"
-                  style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border)' }}
+                  className="w-20 h-16 object-cover rounded-xl border border-mid-gray/50 shadow-sm"
                   onError={e => { e.target.style.display = 'none'; }}
                 />
-                <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>Image preview</span>
+                <div>
+                  <span className="text-xs font-bold text-charcoal block">Live Image Preview</span>
+                  <button type="button" onClick={() => handleImageUrlChange('')} className="text-xs text-red-500 font-semibold hover:underline mt-1">Remove</button>
+                </div>
               </div>
             )}
 
-            <div style={{ marginBottom: '1rem' }}>
-              <FormField label="Description">
-                <textarea style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} value={formData.description} onChange={e => f('description', e.target.value)} placeholder="Product description…" />
-              </FormField>
-            </div>
+            <FormField label="Product Description">
+              <textarea 
+                className="input min-h-[80px]" 
+                value={formData.description} 
+                onChange={e => f('description', e.target.value)} 
+                placeholder="Product characteristics, lens tech, dimensions..." 
+              />
+            </FormField>
 
-            {/* Badges */}
-            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+            <div className="flex gap-6 flex-wrap">
               {[
                 { key: 'isBestSeller', label: '🏆 Best Seller' },
                 { key: 'isSale', label: '🔥 On Sale' },
                 { key: 'isNew', label: '✨ New Arrival' },
               ].map(({ key, label }) => (
-                <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem', color: 'var(--text)' }}>
-                  <input type="checkbox" checked={!!formData[key]} onChange={e => f(key, e.target.checked)} />
+                <label key={key} className="flex items-center gap-2 cursor-pointer font-semibold text-sm text-charcoal">
+                  <input type="checkbox" checked={!!formData[key]} onChange={e => f(key, e.target.checked)} className="rounded text-accent focus:ring-accent" />
                   {label}
                 </label>
               ))}
             </div>
 
-            <button type="submit" className="" style={{ background: 'var(--primary)' }}>
+            <button type="submit" className="px-6 py-3 bg-accent hover:bg-accent-dark text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-accent/20 cursor-pointer">
               {editingId ? 'Update Product' : 'Create Product'}
             </button>
           </form>
         </div>
       )}
 
-      <div className="">
-        <table className="">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Brand</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Badges</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map(p => (
-              <tr key={p.id}>
-                <td>{p.id}</td>
-                <td>
-                  {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} style={{ width: '48px', height: '36px', objectFit: 'cover', borderRadius: '6px', border: '1px solid var(--border)' }} onError={e => { e.target.style.display = 'none'; }} />
-                  ) : (
-                    <span style={{ fontSize: '1.5rem' }}>👓</span>
-                  )}
-                </td>
-                <td style={{ fontWeight: 600 }}>{p.name}</td>
-                <td>{p.brand}</td>
-                <td style={{ textTransform: 'capitalize' }}>{p.category}</td>
-                <td>
-                  <strong>${p.price}</strong>
-                  {p.originalPrice && p.originalPrice > p.price && (
-                    <span style={{ color: 'var(--text-secondary)', textDecoration: 'line-through', fontSize: '0.82rem', marginLeft: '0.3rem' }}>${p.originalPrice}</span>
-                  )}
-                </td>
-                <td style={{ fontSize: '0.8rem' }}>
-                  {p.isBestSeller && <span style={{ background: '#fef3c7', color: '#92400e', padding: '0.15rem 0.5rem', borderRadius: '10px', marginRight: '0.3rem' }}>Best Seller</span>}
-                  {p.isSale && <span style={{ background: '#fee2e2', color: '#991b1b', padding: '0.15rem 0.5rem', borderRadius: '10px', marginRight: '0.3rem' }}>Sale</span>}
-                  {p.isNew && <span style={{ background: '#dcfce7', color: '#166534', padding: '0.15rem 0.5rem', borderRadius: '10px' }}>New</span>}
-                </td>
-                <td>
-                  <button className={`${""} ${""}`} onClick={() => handleEdit(p)}>Edit</button>
-                  <button className="" onClick={() => handleDelete(p.id)}>Delete</button>
-                </td>
+      {/* Filters and List */}
+      <div className="bg-white p-6 rounded-3xl border border-mid-gray/40 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="relative w-full sm:max-w-xs">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-dark-gray/60 text-sm">🔍</span>
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-light-gray/50 rounded-xl border border-mid-gray/30 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40"
+            />
+          </div>
+          <select
+            value={categoryFilter}
+            onChange={e => setCategoryFilter(e.target.value)}
+            className="w-full sm:w-auto px-4 py-2 bg-light-gray/50 rounded-xl border border-mid-gray/30 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 text-charcoal font-semibold"
+          >
+            <option value="">All Categories</option>
+            <option value="eyeglasses">Eyeglasses</option>
+            <option value="sunglasses">Sunglasses</option>
+            <option value="reading">Reading</option>
+            <option value="sport">Sport</option>
+            <option value="kids">Kids</option>
+            <option value="contact-lenses">Contact Lenses</option>
+          </select>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="text-xs text-dark-gray/70 border-b border-mid-gray/30 uppercase tracking-wider font-bold">
+                <th className="pb-3">ID</th>
+                <th className="pb-3">Image</th>
+                <th className="pb-3">Name</th>
+                <th className="pb-3">Brand</th>
+                <th className="pb-3">Category</th>
+                <th className="pb-3">Price</th>
+                <th className="pb-3">Status</th>
+                <th className="pb-3 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-mid-gray/30">
+              {filteredProducts.map(p => (
+                <tr key={p.id} className="hover:bg-soft-white/50 transition-colors">
+                  <td className="py-4 font-semibold text-dark-gray">{p.id}</td>
+                  <td className="py-4">
+                    {p.imageUrl ? (
+                      <img src={p.imageUrl} alt={p.name} className="w-12 h-9 object-cover rounded-lg border border-mid-gray/50 shadow-sm" onError={e => { e.target.style.display = 'none'; }} />
+                    ) : (
+                      <span className="text-xl">👓</span>
+                    )}
+                  </td>
+                  <td className="py-4 font-bold text-charcoal max-w-[200px] truncate">{p.name}</td>
+                  <td className="py-4 font-semibold text-charcoal">{p.brand}</td>
+                  <td className="py-4 text-dark-gray capitalize">{p.category}</td>
+                  <td className="py-4 font-bold text-charcoal">
+                    ${p.price.toFixed(2)}
+                    {p.originalPrice && p.originalPrice > p.price && (
+                      <span className="text-xs text-dark-gray/60 line-through ml-1.5">${p.originalPrice.toFixed(2)}</span>
+                    )}
+                  </td>
+                  <td className="py-4">
+                    <div className="flex flex-wrap gap-1">
+                      {p.isBestSeller && <span className="px-2 py-0.5 bg-yellow-50 border border-yellow-200 text-yellow-700 text-[10px] font-bold rounded-full">Best Seller</span>}
+                      {p.isSale && <span className="px-2 py-0.5 bg-red-50 border border-red-200 text-red-700 text-[10px] font-bold rounded-full">Sale</span>}
+                      {p.isNew && <span className="px-2 py-0.5 bg-green-50 border border-green-200 text-green-700 text-[10px] font-bold rounded-full">New</span>}
+                    </div>
+                  </td>
+                  <td className="py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button 
+                        className="px-3 py-1.5 bg-light-gray hover:bg-mid-gray/70 text-charcoal text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                        onClick={() => handleEdit(p)}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                        onClick={() => handleDelete(p.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {filteredProducts.length === 0 && (
+                <tr>
+                  <td colSpan="8" className="text-center text-dark-gray py-8">No products found matching filters.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -289,22 +345,9 @@ export default function AdminProductsPage() {
 
 function FormField({ label, children }) {
   return (
-    <div>
-      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text)' }}>{label}</label>
+    <div className="space-y-1.5">
+      <label className="block text-xs font-bold text-charcoal/80 uppercase tracking-wider">{label}</label>
       {children}
     </div>
   );
 }
-
-const inputStyle = {
-  width: '100%',
-  padding: '0.6rem 0.8rem',
-  border: '1.5px solid var(--border)',
-  borderRadius: '8px',
-  fontFamily: 'inherit',
-  fontSize: '0.9rem',
-  color: 'var(--text)',
-  background: 'var(--bg)',
-  outline: 'none',
-  boxSizing: 'border-box',
-};
