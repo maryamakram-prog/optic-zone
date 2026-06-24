@@ -45,7 +45,7 @@ export const categories = [
 
 export const products = [
   {
-    id: 1,
+    id: 'a1111111-1111-1111-1111-111111111111',
     name: 'Classic Aviator Pro',
     price: 189.99,
     originalPrice: 249.99,
@@ -54,9 +54,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&q=80',
     badge: 'Best Seller',
     category: 'sunglasses',
+    is_hidden: false,
   },
   {
-    id: 2,
+    id: 'a2222222-2222-2222-2222-222222222222',
     name: 'Titanium Round Frame',
     price: 159.99,
     originalPrice: null,
@@ -65,9 +66,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=600&q=80',
     badge: 'New',
     category: 'eyeglasses',
+    is_hidden: false,
   },
   {
-    id: 3,
+    id: 'a3333333-3333-3333-3333-333333333333',
     name: 'Retro Cat Eye',
     price: 129.99,
     originalPrice: 179.99,
@@ -76,9 +78,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1509695507497-903c140c43b0?w=600&q=80',
     badge: 'Sale',
     category: 'eyeglasses',
+    is_hidden: false,
   },
   {
-    id: 4,
+    id: 'a4444444-4444-4444-4444-444444444444',
     name: 'Digital Shield Blue',
     price: 99.99,
     originalPrice: null,
@@ -87,9 +90,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?w=600&q=80',
     badge: 'Best Seller',
     category: 'blue-light',
+    is_hidden: false,
   },
   {
-    id: 5,
+    id: 'a5555555-5555-5555-5555-555555555555',
     name: 'Luxury Wayfarer',
     price: 219.99,
     originalPrice: 299.99,
@@ -98,9 +102,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=600&q=80',
     badge: 'Sale',
     category: 'sunglasses',
+    is_hidden: false,
   },
   {
-    id: 6,
+    id: 'a6666666-6666-6666-6666-666666666666',
     name: 'Minimalist Wire Frame',
     price: 139.99,
     originalPrice: null,
@@ -109,9 +114,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1513673054901-2b5f51551112?w=600&q=80',
     badge: null,
     category: 'eyeglasses',
+    is_hidden: false,
   },
   {
-    id: 7,
+    id: 'a7777777-7777-7777-7777-777777777777',
     name: 'Sport Flex Active',
     price: 169.99,
     originalPrice: null,
@@ -120,9 +126,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1556306535-0f09a537f0a3?w=600&q=80',
     badge: 'New',
     category: 'sports',
+    is_hidden: false,
   },
   {
-    id: 8,
+    id: 'a8888888-8888-8888-8888-888888888888',
     name: 'Oversized Glamour',
     price: 199.99,
     originalPrice: 259.99,
@@ -131,9 +138,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80',
     badge: 'Sale',
     category: 'sunglasses',
+    is_hidden: false,
   },
   {
-    id: 9,
+    id: 'a9999999-9999-9999-9999-999999999999',
     name: 'MoistDaily Hydration (30 Pack)',
     price: 39.99,
     originalPrice: 49.99,
@@ -142,9 +150,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1585553616435-2dc0a54e271d?w=600&q=80',
     badge: 'Popular',
     category: 'contact-lenses',
+    is_hidden: false,
   },
   {
-    id: 10,
+    id: 'b1010101-1010-1010-1010-101010101010',
     name: 'UltraVision Monthly Comfort',
     price: 54.99,
     originalPrice: null,
@@ -153,9 +162,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1590611936760-eeb9bc5937db?w=600&q=80',
     badge: 'Best Seller',
     category: 'contact-lenses',
+    is_hidden: false,
   },
   {
-    id: 11,
+    id: 'b1111111-1111-1111-1111-111111111111',
     name: 'Kids FlexiRound Durable',
     price: 69.99,
     originalPrice: 89.99,
@@ -164,9 +174,10 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=600&q=80',
     badge: 'New',
     category: 'kids',
+    is_hidden: false,
   },
   {
-    id: 12,
+    id: 'b1212121-1212-1212-1212-121212121212',
     name: 'SportJunior Anti-Slip',
     price: 79.99,
     originalPrice: null,
@@ -175,6 +186,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80',
     badge: 'Sale',
     category: 'kids',
+    is_hidden: false,
   },
 ];
 

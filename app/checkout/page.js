@@ -124,7 +124,8 @@ export default function CheckoutPage() {
         name: i.name,
         brand: i.brand,
         price: i.price,
-        qty: i.qty
+        qty: i.qty,
+        prescription: i.prescription || null
       }));
 
       await addOrder({

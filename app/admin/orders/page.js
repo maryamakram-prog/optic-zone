@@ -170,14 +170,39 @@ export default function AdminOrdersPage() {
               {/* Items List */}
               <div className="space-y-4">
                 <h4 className="text-sm font-bold text-accent uppercase tracking-wider border-b border-mid-gray/20 pb-1">Ordered Items ({order.order_items?.length || 0})</h4>
-                <div className="divide-y divide-mid-gray/20 max-h-56 overflow-y-auto pr-2">
+                <div className="divide-y divide-mid-gray/20 max-h-96 overflow-y-auto pr-2">
                   {order.order_items?.map((item, idx) => (
-                    <div key={idx} className="py-2.5 flex justify-between text-sm items-center">
+                    <div key={idx} className="py-2.5 flex justify-between text-sm items-start gap-4">
                       <div className="flex flex-col">
                         <span className="font-bold text-charcoal">{item.products?.name}</span>
                         <span className="text-xs text-dark-gray">Brand: {item.products?.brand} | Qty: {item.quantity}</span>
+                        
+                        {item.prescription && (
+                          <div className="mt-1.5 p-2.5 bg-light-gray/40 border border-mid-gray/25 rounded-xl text-xs max-w-md">
+                            <span className="font-bold text-charcoal block mb-1">👓 Prescription: {item.prescription.name || 'Rx'}</span>
+                            {item.prescription.type === 'manual' ? (
+                              <div className="grid grid-cols-1 gap-1 text-[10px] text-dark-gray leading-normal">
+                                <div><span className="font-semibold text-charcoal">OD (Right):</span> SPH {item.prescription.od_sph} | CYL {item.prescription.od_cyl} | AXIS {item.prescription.od_axis || '—'} | ADD {item.prescription.od_add || 'None'}</div>
+                                <div><span className="font-semibold text-charcoal">OS (Left):</span> SPH {item.prescription.os_sph} | CYL {item.prescription.os_cyl} | AXIS {item.prescription.os_axis || '—'} | ADD {item.prescription.os_add || 'None'}</div>
+                                <div><span className="font-semibold text-charcoal">PD:</span> {item.prescription.pd} mm</div>
+                                {item.prescription.notes && <div className="italic text-dark-gray/80 mt-0.5">Notes: {item.prescription.notes}</div>}
+                              </div>
+                            ) : item.prescription.type === 'upload' ? (
+                              <div className="text-[10px] text-dark-gray space-y-1">
+                                <span>Uploaded Document.</span>
+                                <a href={item.prescription.file_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline font-bold block mt-0.5">
+                                  View / Download Rx File ↗
+                                </a>
+                              </div>
+                            ) : (
+                              <div className="text-[10px] text-amber-600 font-bold">
+                                ⚠️ Pending User Upload (Skip & Upload Later)
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <span className="font-extrabold text-charcoal">${(item.price_at_time * item.quantity).toFixed(2)}</span>
+                      <span className="font-extrabold text-charcoal shrink-0">${(item.price_at_time * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                   {(!order.order_items || order.order_items.length === 0) && (

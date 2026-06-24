@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
+import PrescriptionForm from '@/components/PrescriptionForm';
 
 function Stars({ rating, size = 16 }) {
   return (
@@ -54,8 +55,10 @@ export default function ProductDetailPage() {
   const [reviewForm, setReviewForm] = useState({ rating: 5, title: '', body: '', user: '' });
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [added, setAdded] = useState(false);
+  const [prescription, setPrescription] = useState(null);
+  const [isRxModalOpen, setIsRxModalOpen] = useState(false);
 
-  const product = products?.find(p => p.id === parseInt(params.id));
+  const product = products?.find(p => String(p.id) === String(params.id));
 
   useEffect(() => {
     if (product) addRecentlyViewed(product.id);
@@ -69,7 +72,7 @@ export default function ProductDetailPage() {
     return <div className="pt-32 pb-20 bg-soft-white min-h-screen flex items-center justify-center"><p className="text-xl font-bold">Product not found.</p></div>;
   }
 
-  const productReviews = reviews?.filter(r => r.productId === product.id) || [];
+  const productReviews = reviews?.filter(r => String(r.productId || r.product_id) === String(product.id)) || [];
   const lensPackage = LENS_PACKAGES.find(l => l.id === selectedLens);
   const totalPrice = product.price + (lensPackage?.price || 0);
   const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
@@ -77,13 +80,21 @@ export default function ProductDetailPage() {
   const related = products?.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4) || [];
 
   const handleAddToCart = () => {
-    addItem({ ...product, price: totalPrice, lensPackage: selectedLens });
+    if (selectedLens === 'prescription' && !prescription) {
+      setIsRxModalOpen(true);
+      return;
+    }
+    addItem({ ...product, price: totalPrice, lensPackage: selectedLens, prescription });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
   const handleBuyNow = () => {
-    addItem({ ...product, price: totalPrice, lensPackage: selectedLens });
+    if (selectedLens === 'prescription' && !prescription) {
+      setIsRxModalOpen(true);
+      return;
+    }
+    addItem({ ...product, price: totalPrice, lensPackage: selectedLens, prescription });
     router.push('/checkout');
   };
 
@@ -210,6 +221,28 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
+            {selectedLens === 'prescription' && (
+              <div className="mb-6 p-5 bg-blue-50/50 border border-blue-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <h4 className="font-bold text-charcoal text-sm flex items-center gap-1.5">
+                    {prescription ? '✓ Prescription Attached' : '👁️ Prescription Required'}
+                  </h4>
+                  <p className="text-xs text-dark-gray mt-1 leading-relaxed">
+                    {prescription 
+                      ? `Rx Details: ${prescription.type === 'manual' ? 'Manual SPH OD ' + prescription.od_sph + ' / OS ' + prescription.os_sph : prescription.type === 'upload' ? 'Uploaded Document' : 'Upload Later'}`
+                      : 'Please enter your prescription details or upload/skip.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsRxModalOpen(true)}
+                  className="px-5 py-2.5 bg-accent hover:bg-accent-dark text-white text-xs font-bold rounded-xl transition-all shadow-sm cursor-pointer whitespace-nowrap"
+                >
+                  {prescription ? 'Edit Prescription' : 'Enter Prescription'}
+                </button>
+              </div>
+            )}
+
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <button 
@@ -319,6 +352,13 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+      
+      <PrescriptionForm 
+        isOpen={isRxModalOpen} 
+        onClose={() => setIsRxModalOpen(false)} 
+        onSave={(rx) => setPrescription(rx)} 
+        initialPrescription={prescription} 
+      />
     </div>
   );
 }

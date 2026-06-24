@@ -8,6 +8,7 @@ const EMPTY_FORM = {
   description: '', imageUrl: '', frameShape: '', frameMaterial: '',
   frameColor: '', lensColor: '', gender: '',
   isBestSeller: false, isSale: false, isNew: false,
+  is_hidden: false,
 };
 
 export default function AdminProductsPage() {
@@ -19,6 +20,20 @@ export default function AdminProductsPage() {
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleToggleVisibility = async (product) => {
+    const updated = { ...product, is_hidden: !product.is_hidden };
+    const res = await updateProduct(updated);
+    if (res && res.error) {
+      setErrorMsg(`Failed to update visibility: ${res.error.message || JSON.stringify(res.error)}`);
+    } else {
+      setSuccessMsg(`Product "${product.name}" is now ${updated.is_hidden ? 'hidden' : 'visible'}.`);
+      setTimeout(() => setSuccessMsg(''), 4000);
+      setErrorMsg('');
+    }
+  };
 
   const handleEdit = (product) => {
     setFormData({ ...EMPTY_FORM, ...product });
@@ -39,7 +54,7 @@ export default function AdminProductsPage() {
         !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
       if (!isSupabaseConfigured) {
-        alert('Supabase is not configured yet. Using local fallback file URL.');
+        setErrorMsg('Supabase is not configured yet. Using local fallback file URL.');
         const mockUrl = URL.createObjectURL(file);
         setFormData(prev => ({ ...prev, imageUrl: mockUrl }));
         setImagePreview(mockUrl);
@@ -64,15 +79,22 @@ export default function AdminProductsPage() {
       setImagePreview(publicUrl);
     } catch (err) {
       console.error('Upload Error:', err);
-      alert(`Upload failed: ${err.message}`);
+      setErrorMsg(`Upload failed: ${err.message}`);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('Are you sure you want to delete this product?')) {
-      deleteProduct(id);
+      const res = await deleteProduct(id);
+      if (res && res.error) {
+        setErrorMsg(`Failed to delete product: ${res.error.message || JSON.stringify(res.error)}`);
+      } else {
+        setSuccessMsg('Product deleted successfully!');
+        setTimeout(() => setSuccessMsg(''), 4000);
+        setErrorMsg('');
+      }
     }
   };
 
@@ -98,10 +120,13 @@ export default function AdminProductsPage() {
     
     if (res && res.error) {
       console.error('Failed to save product:', res.error);
-      alert(`Failed to save product: ${res.error.message || JSON.stringify(res.error)}`);
+      setErrorMsg(`Failed to save product: ${res.error.message || JSON.stringify(res.error)}`);
       return;
     }
     
+    setSuccessMsg(editingId ? 'Product updated successfully!' : 'Product created successfully!');
+    setTimeout(() => setSuccessMsg(''), 4000);
+    setErrorMsg('');
     setShowForm(false);
     setFormData(EMPTY_FORM);
     setImagePreview('');
@@ -137,6 +162,20 @@ export default function AdminProductsPage() {
           {showForm ? 'Cancel' : '+ Add New Product'}
         </button>
       </div>
+
+      {/* Success & Error Banners */}
+      {successMsg && (
+        <div className="p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl text-sm font-semibold flex items-center justify-between animate-fade-in shadow-sm">
+          <span className="flex items-center gap-2">🟢 {successMsg}</span>
+          <button onClick={() => setSuccessMsg('')} className="text-green-600 hover:text-green-800 font-bold text-xs">✕</button>
+        </div>
+      )}
+      {errorMsg && (
+        <div className="p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl text-sm font-semibold flex items-center justify-between animate-fade-in shadow-sm">
+          <span className="flex items-center gap-2">🔴 {errorMsg}</span>
+          <button onClick={() => setErrorMsg('')} className="text-red-600 hover:text-red-800 font-bold text-xs">✕</button>
+        </div>
+      )}
 
       {/* Edit/Add Form */}
       {showForm && (
@@ -237,6 +276,7 @@ export default function AdminProductsPage() {
                 { key: 'isBestSeller', label: '🏆 Best Seller' },
                 { key: 'isSale', label: '🔥 On Sale' },
                 { key: 'isNew', label: '✨ New Arrival' },
+                { key: 'is_hidden', label: '👁️ Hidden from Customer Site' },
               ].map(({ key, label }) => (
                 <label key={key} className="flex items-center gap-2 cursor-pointer font-semibold text-sm text-charcoal">
                   <input type="checkbox" checked={!!formData[key]} onChange={e => f(key, e.target.checked)} className="rounded text-accent focus:ring-accent" />
@@ -316,6 +356,8 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="py-4">
                     <div className="flex flex-wrap gap-1">
+                      {p.is_hidden && <span className="px-2 py-0.5 bg-gray-100 border border-gray-300 text-gray-700 text-[10px] font-bold rounded-full">Hidden</span>}
+                      {!p.is_hidden && <span className="px-2 py-0.5 bg-green-50 border border-green-200 text-green-700 text-[10px] font-bold rounded-full">Visible</span>}
                       {p.isBestSeller && <span className="px-2 py-0.5 bg-yellow-50 border border-yellow-200 text-yellow-700 text-[10px] font-bold rounded-full">Best Seller</span>}
                       {p.isSale && <span className="px-2 py-0.5 bg-red-50 border border-red-200 text-red-700 text-[10px] font-bold rounded-full">Sale</span>}
                       {p.isNew && <span className="px-2 py-0.5 bg-green-50 border border-green-200 text-green-700 text-[10px] font-bold rounded-full">New</span>}
@@ -323,6 +365,12 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="py-4 text-right">
                     <div className="flex justify-end gap-2">
+                      <button 
+                        className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${p.is_hidden ? "bg-green-50 hover:bg-green-100 text-green-600" : "bg-orange-50 hover:bg-orange-100 text-orange-600"}`}
+                        onClick={() => handleToggleVisibility(p)}
+                      >
+                        {p.is_hidden ? 'Unhide' : 'Hide'}
+                      </button>
                       <button 
                         className="px-3 py-1.5 bg-light-gray hover:bg-mid-gray/70 text-charcoal text-xs font-bold rounded-lg transition-colors cursor-pointer"
                         onClick={() => handleEdit(p)}

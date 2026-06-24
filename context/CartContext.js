@@ -9,17 +9,31 @@ function cartReducer(state, action) {
     case 'INIT':
       return { ...state, items: action.payload || [] };
     case 'ADD_ITEM': {
-      const existing = state.items.find(i => i.id === action.payload.id);
-      if (existing) {
-        return { ...state, items: state.items.map(i => i.id === action.payload.id ? { ...i, qty: i.qty + 1 } : i) };
+      const existingIndex = state.items.findIndex(i => 
+        i.id === action.payload.id && 
+        i.lensPackage === action.payload.lensPackage &&
+        JSON.stringify(i.prescription || null) === JSON.stringify(action.payload.prescription || null)
+      );
+      if (existingIndex > -1) {
+        return { 
+          ...state, 
+          items: state.items.map((i, idx) => idx === existingIndex ? { ...i, qty: i.qty + 1 } : i) 
+        };
       }
-      return { ...state, items: [...state.items, { ...action.payload, qty: 1 }] };
+      const cartItemId = `${action.payload.id}-${action.payload.lensPackage || 'standard'}-${Math.random().toString(36).substring(2, 9)}`;
+      return { ...state, items: [...state.items, { ...action.payload, cartItemId, qty: 1 }] };
     }
     case 'REMOVE_ITEM':
-      return { ...state, items: state.items.filter(i => i.id !== action.payload) };
+      return { ...state, items: state.items.filter(i => i.cartItemId !== action.payload) };
     case 'UPDATE_QTY': {
-      if (action.payload.qty < 1) return { ...state, items: state.items.filter(i => i.id !== action.payload.id) };
-      return { ...state, items: state.items.map(i => i.id === action.payload.id ? { ...i, qty: action.payload.qty } : i) };
+      if (action.payload.qty < 1) return { ...state, items: state.items.filter(i => i.cartItemId !== action.payload.cartItemId) };
+      return { ...state, items: state.items.map(i => i.cartItemId === action.payload.cartItemId ? { ...i, qty: action.payload.qty } : i) };
+    }
+    case 'UPDATE_PRESCRIPTION': {
+      return {
+        ...state,
+        items: state.items.map(i => i.cartItemId === action.payload.cartItemId ? { ...i, prescription: action.payload.prescription } : i)
+      };
     }
     case 'CLEAR':
       return { ...state, items: [] };
@@ -50,8 +64,9 @@ export function CartProvider({ children }) {
   }, [state.items, isInitialized]);
 
   const addItem = product => dispatch({ type: 'ADD_ITEM', payload: product });
-  const removeItem = id => dispatch({ type: 'REMOVE_ITEM', payload: id });
-  const updateQty = (id, qty) => dispatch({ type: 'UPDATE_QTY', payload: { id, qty } });
+  const removeItem = cartItemId => dispatch({ type: 'REMOVE_ITEM', payload: cartItemId });
+  const updateQty = (cartItemId, qty) => dispatch({ type: 'UPDATE_QTY', payload: { cartItemId, qty } });
+  const updatePrescription = (cartItemId, prescription) => dispatch({ type: 'UPDATE_PRESCRIPTION', payload: { cartItemId, prescription } });
   const clearCart = () => dispatch({ type: 'CLEAR' });
 
   const subtotal = state.items.reduce((sum, i) => sum + i.price * i.qty, 0);
@@ -79,7 +94,7 @@ export function CartProvider({ children }) {
 
   return (
     <CartContext.Provider value={{
-      items: state.items, addItem, removeItem, updateQty, clearCart,
+      items: state.items, addItem, removeItem, updateQty, updatePrescription, clearCart,
       subtotal, total, count, shipping, tax, discount, coupon, applyCoupon, removeCoupon
     }}>
       {children}

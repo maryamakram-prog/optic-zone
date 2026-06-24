@@ -87,7 +87,11 @@ export default function CategoryProductsPage() {
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === 'newest') return b.id - a.id;
+        if (sortBy === 'newest') {
+          const dateB = b.created_at ? new Date(b.created_at) : 0;
+          const dateA = a.created_at ? new Date(a.created_at) : 0;
+          return dateB - dateA;
+        }
         if (sortBy === 'bestseller') return (b.sales || 0) - (a.sales || 0);
         if (sortBy === 'price-asc') return a.price - b.price;
         if (sortBy === 'price-desc') return b.price - a.price;

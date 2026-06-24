@@ -12,14 +12,25 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 
 -- 2. Products
 CREATE TABLE IF NOT EXISTS public.products (
-  id SERIAL PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   brand TEXT NOT NULL,
   price DECIMAL(10, 2) NOT NULL,
   category TEXT NOT NULL,
-  image_url TEXT,
+  "imageUrl" TEXT,
   description TEXT,
-  in_stock BOOLEAN DEFAULT TRUE,
+  "inStock" BOOLEAN DEFAULT TRUE,
+  "frameShape" TEXT,
+  "frameMaterial" TEXT,
+  "frameColor" TEXT,
+  "lensColor" TEXT,
+  gender TEXT,
+  "isBestSeller" BOOLEAN DEFAULT FALSE,
+  "isSale" BOOLEAN DEFAULT FALSE,
+  "isNew" BOOLEAN DEFAULT FALSE,
+  rating DECIMAL(3, 2) DEFAULT 5.0,
+  reviews INTEGER DEFAULT 0,
+  is_hidden BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -34,7 +45,7 @@ CREATE TABLE IF NOT EXISTS public.carts (
 CREATE TABLE IF NOT EXISTS public.cart_items (
   id SERIAL PRIMARY KEY,
   cart_id UUID REFERENCES public.carts ON DELETE CASCADE NOT NULL,
-  product_id INTEGER REFERENCES public.products ON DELETE CASCADE NOT NULL,
+  product_id UUID REFERENCES public.products ON DELETE CASCADE NOT NULL,
   quantity INTEGER DEFAULT 1 NOT NULL,
   UNIQUE(cart_id, product_id)
 );
@@ -49,14 +60,37 @@ CREATE TABLE IF NOT EXISTS public.orders (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- Prescriptions
+CREATE TABLE IF NOT EXISTS public.prescriptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT DEFAULT 'My Prescription',
+  type TEXT NOT NULL CHECK (type IN ('manual', 'upload', 'upload_later')),
+  od_sph TEXT,
+  od_cyl TEXT,
+  od_axis TEXT,
+  od_add TEXT,
+  os_sph TEXT,
+  os_cyl TEXT,
+  os_axis TEXT,
+  os_add TEXT,
+  pd TEXT,
+  notes TEXT,
+  file_url TEXT,
+  is_saved BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
 -- Order Items
 CREATE TABLE IF NOT EXISTS public.order_items (
   id SERIAL PRIMARY KEY,
   order_id UUID REFERENCES public.orders ON DELETE CASCADE NOT NULL,
-  product_id INTEGER REFERENCES public.products ON DELETE SET NULL,
+  product_id UUID REFERENCES public.products ON DELETE SET NULL,
   quantity INTEGER NOT NULL,
-  price_at_time DECIMAL(10, 2) NOT NULL
+  price_at_time DECIMAL(10, 2) NOT NULL,
+  prescription_id UUID REFERENCES public.prescriptions(id) ON DELETE SET NULL
 );
+
 
 -- 5. Appointments
 CREATE TABLE IF NOT EXISTS public.appointments (
@@ -83,7 +117,7 @@ CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
 -- 7. Reviews
 CREATE TABLE IF NOT EXISTS public.reviews (
   id SERIAL PRIMARY KEY,
-  product_id INTEGER REFERENCES public.products ON DELETE CASCADE NOT NULL,
+  product_id UUID REFERENCES public.products ON DELETE CASCADE NOT NULL,
   user_id UUID REFERENCES auth.users ON DELETE CASCADE,
   user_name TEXT,
   rating INTEGER CHECK (rating >= 1 AND rating <= 5),
@@ -112,7 +146,22 @@ CREATE POLICY "Users can manage own cart items" ON public.cart_items FOR ALL USI
 -- Policies for Orders
 CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = user_id);
 
--- Storage Buckets (Execute via Supabase Dashboard or CLI)
--- INSERT INTO storage.buckets (id, name, public) VALUES ('product-images', 'product-images', true);
--- INSERT INTO storage.buckets (id, name, public) VALUES ('user-uploads', 'user-uploads', false);
--- INSERT INTO storage.buckets (id, name, public) VALUES ('virtual-try-on', 'virtual-try-on', true);
+-- Enable RLS for Prescriptions
+ALTER TABLE public.prescriptions ENABLE ROW LEVEL SECURITY;
+
+-- Policies for Prescriptions
+CREATE POLICY "Anyone can insert prescriptions" ON public.prescriptions FOR INSERT WITH CHECK (true);
+CREATE POLICY "Users can view own prescriptions" ON public.prescriptions FOR SELECT USING (auth.uid() = user_id OR ((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+CREATE POLICY "Users can update own prescriptions" ON public.prescriptions FOR UPDATE USING (auth.uid() = user_id OR ((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+CREATE POLICY "Users can delete own prescriptions" ON public.prescriptions FOR DELETE USING (auth.uid() = user_id OR ((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text);
+
+-- Storage Buckets
+INSERT INTO storage.buckets (id, name, public) VALUES ('product_images', 'product_images', true) ON CONFLICT (id) DO NOTHING;
+INSERT INTO storage.buckets (id, name, public) VALUES ('prescriptions', 'prescriptions', true) ON CONFLICT (id) DO NOTHING;
+
+-- Storage policies
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING ( bucket_id = 'product_images' );
+CREATE POLICY "Auth Uploads" ON storage.objects FOR INSERT WITH CHECK ( bucket_id = 'product_images' AND auth.role() = 'authenticated' );
+CREATE POLICY "Prescription Public Access" ON storage.objects FOR SELECT USING ( bucket_id = 'prescriptions' );
+CREATE POLICY "Prescription Public Upload" ON storage.objects FOR INSERT WITH CHECK ( bucket_id = 'prescriptions' );
+

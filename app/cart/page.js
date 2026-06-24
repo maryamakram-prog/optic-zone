@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useStore } from '@/context/StoreContext';
 import Link from 'next/link';
+import PrescriptionForm from '@/components/PrescriptionForm';
 
 function GlassesIconMini({ color = '#a78bfa' }) {
   return (
@@ -15,11 +16,14 @@ function GlassesIconMini({ color = '#a78bfa' }) {
 }
 
 export default function StandaloneCartPage() {
-  const { items, removeItem, updateQty, subtotal, discount, shipping, tax, total, coupon, applyCoupon, removeCoupon } = useCart();
+  const { items, removeItem, updateQty, updatePrescription, subtotal, discount, shipping, tax, total, coupon, applyCoupon, removeCoupon } = useCart();
   const { coupons } = useStore();
   const [couponInput, setCouponInput] = useState('');
   const [couponMsg, setCouponMsg] = useState({ text: '', isError: false });
   const [mounted, setMounted] = useState(false);
+  const [isRxModalOpen, setIsRxModalOpen] = useState(false);
+  const [selectedCartItemId, setSelectedCartItemId] = useState('');
+  const [editingRx, setEditingRx] = useState(null);
 
   useEffect(() => setMounted(true), []);
 
@@ -79,7 +83,7 @@ export default function StandaloneCartPage() {
 
             <div className="divide-y divide-mid-gray/30">
               {items.map(item => (
-                <div key={item.id} className="py-6 flex flex-col sm:grid sm:grid-cols-12 gap-6 items-center">
+                <div key={item.cartItemId} className="py-6 flex flex-col sm:grid sm:grid-cols-12 gap-6 items-center">
                   <div className="col-span-6 flex items-center gap-6 w-full">
                     <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-light-gray/50 flex items-center justify-center p-2 flex-shrink-0">
                       {item.image ? (
@@ -97,6 +101,55 @@ export default function StandaloneCartPage() {
                       {item.lensPackage && (
                         <span className="text-xs text-dark-gray/70 mt-1">Lens: {item.lensPackage}</span>
                       )}
+
+                      {/* Prescription indicator */}
+                      {item.lensPackage === 'prescription' && (
+                        <div className="mt-2.5 p-2.5 bg-blue-50/40 border border-blue-200/50 rounded-xl max-w-sm">
+                          {item.prescription ? (
+                            <div className="space-y-1">
+                              <span className="text-xs text-green-700 font-bold flex items-center gap-1">
+                                ✓ Rx Attached: {item.prescription.name || 'Prescription'}
+                              </span>
+                              <p className="text-[10px] text-dark-gray leading-normal">
+                                {item.prescription.type === 'manual' 
+                                  ? `OD SPH ${item.prescription.od_sph} / OS SPH ${item.prescription.os_sph} | PD ${item.prescription.pd}mm` 
+                                  : item.prescription.type === 'upload' 
+                                    ? 'Uploaded Document' 
+                                    : 'Will upload after checkout'}
+                              </p>
+                              <button 
+                                type="button"
+                                onClick={() => {
+                                  setSelectedCartItemId(item.cartItemId);
+                                  setEditingRx(item.prescription);
+                                  setIsRxModalOpen(true);
+                                }}
+                                className="text-[10px] text-accent hover:underline font-bold text-left block cursor-pointer"
+                              >
+                                Edit Rx Details
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="space-y-1">
+                              <span className="text-xs text-red-500 font-bold flex items-center gap-1">
+                                ⚠️ Missing Prescription
+                              </span>
+                              <p className="text-[10px] text-dark-gray">Lenses cannot be crafted without Rx details.</p>
+                              <button 
+                                type="button"
+                                onClick={() => {
+                                  setSelectedCartItemId(item.cartItemId);
+                                  setEditingRx(null);
+                                  setIsRxModalOpen(true);
+                                }}
+                                className="mt-1 px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-[10px] font-bold transition-all cursor-pointer inline-block"
+                              >
+                                Add Prescription
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -106,11 +159,11 @@ export default function StandaloneCartPage() {
 
                   <div className="col-span-2 flex flex-col items-center justify-center w-full sm:w-auto">
                     <div className="flex items-center bg-light-gray rounded-xl border border-mid-gray/50 overflow-hidden">
-                      <button onClick={() => updateQty(item.id, item.qty - 1)} className="px-3 py-1.5 hover:bg-white transition-colors text-charcoal font-medium">−</button>
+                      <button onClick={() => updateQty(item.cartItemId, item.qty - 1)} className="px-3 py-1.5 hover:bg-white transition-colors text-charcoal font-medium">−</button>
                       <span className="w-8 text-center font-semibold text-charcoal">{item.qty}</span>
-                      <button onClick={() => updateQty(item.id, item.qty + 1)} className="px-3 py-1.5 hover:bg-white transition-colors text-charcoal font-medium">+</button>
+                      <button onClick={() => updateQty(item.cartItemId, item.qty + 1)} className="px-3 py-1.5 hover:bg-white transition-colors text-charcoal font-medium">+</button>
                     </div>
-                    <button className="text-xs text-red-500 font-medium mt-3 hover:underline" onClick={() => removeItem(item.id)}>Remove</button>
+                    <button className="text-xs text-red-500 font-medium mt-3 hover:underline cursor-pointer" onClick={() => removeItem(item.cartItemId)}>Remove</button>
                   </div>
 
                   <div className="col-span-2 text-right font-bold text-charcoal text-lg w-full sm:w-auto flex justify-between sm:block">
@@ -195,9 +248,31 @@ export default function StandaloneCartPage() {
                 )}
               </div>
 
-              <Link href="/checkout" className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-accent to-pastel-blue hover:to-accent-dark text-white rounded-xl font-bold text-lg shadow-lg shadow-accent/25 hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                Proceed to Checkout →
-              </Link>
+              {items.some(item => item.lensPackage === 'prescription' && !item.prescription) ? (
+                <div className="space-y-3">
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs font-semibold leading-relaxed animate-pulse">
+                    ⚠️ Prescription details required for one or more frames.
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      const firstMissing = items.find(item => item.lensPackage === 'prescription' && !item.prescription);
+                      if (firstMissing) {
+                        setSelectedCartItemId(firstMissing.cartItemId);
+                        setEditingRx(null);
+                        setIsRxModalOpen(true);
+                      }
+                    }}
+                    className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-bold text-lg shadow-md cursor-pointer transition-all"
+                  >
+                    Configure Prescription to Checkout →
+                  </button>
+                </div>
+              ) : (
+                <Link href="/checkout" className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-accent to-pastel-blue hover:to-accent-dark text-white rounded-xl font-bold text-lg shadow-lg shadow-accent/25 hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                  Proceed to Checkout →
+                </Link>
+              )}
 
               <div className="mt-8 space-y-3 text-xs font-medium text-dark-gray/80">
                 <p className="flex items-center gap-2"><span className="text-base">🔒</span> Secure SSL Checkout</p>
@@ -208,6 +283,21 @@ export default function StandaloneCartPage() {
           </aside>
         </div>
       </div>
+
+      <PrescriptionForm
+        isOpen={isRxModalOpen}
+        onClose={() => {
+          setIsRxModalOpen(false);
+          setSelectedCartItemId('');
+          setEditingRx(null);
+        }}
+        onSave={(rx) => {
+          if (selectedCartItemId) {
+            updatePrescription(selectedCartItemId, rx);
+          }
+        }}
+        initialPrescription={editingRx}
+      />
     </div>
   );
 }

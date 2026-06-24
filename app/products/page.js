@@ -35,7 +35,11 @@ function ProductsContent() {
     // Clone the array before sorting to avoid mutating the original array
     const sorted = [...result];
     return sorted.sort((a, b) => {
-      if (sortBy === 'newest') return (Number(b.id) || 0) - (Number(a.id) || 0);
+      if (sortBy === 'newest') {
+        const dateB = b.created_at ? new Date(b.created_at) : 0;
+        const dateA = a.created_at ? new Date(a.created_at) : 0;
+        return dateB - dateA;
+      }
       if (sortBy === 'price-asc') return (Number(a.price) || 0) - (Number(b.price) || 0);
       if (sortBy === 'price-desc') return (Number(b.price) || 0) - (Number(a.price) || 0);
       return 0; // featured

@@ -32,6 +32,7 @@ export default function AccountLayout({ children }) {
             <nav className="bg-white p-4 rounded-3xl shadow-sm border border-mid-gray/30 flex flex-col space-y-1">
               <Link href="/account/profile" className="px-4 py-3 text-sm font-semibold text-charcoal hover:bg-pastel-blue-light/30 hover:text-accent rounded-xl transition-all">Profile</Link>
               <Link href="/account/orders" className="px-4 py-3 text-sm font-semibold text-charcoal hover:bg-pastel-blue-light/30 hover:text-accent rounded-xl transition-all">My Orders</Link>
+              <Link href="/account/prescriptions" className="px-4 py-3 text-sm font-semibold text-charcoal hover:bg-pastel-blue-light/30 hover:text-accent rounded-xl transition-all">My Prescriptions</Link>
               <Link href="/account/wishlist" className="px-4 py-3 text-sm font-semibold text-charcoal hover:bg-pastel-blue-light/30 hover:text-accent rounded-xl transition-all">My Wishlist</Link>
               <Link href="/account/addresses" className="px-4 py-3 text-sm font-semibold text-charcoal hover:bg-pastel-blue-light/30 hover:text-accent rounded-xl transition-all">Saved Addresses</Link>
               <Link href="/account/tracking" className="px-4 py-3 text-sm font-semibold text-charcoal hover:bg-pastel-blue-light/30 hover:text-accent rounded-xl transition-all">Track Order</Link>

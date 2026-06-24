@@ -33,12 +33,22 @@ const mapOrder = (o) => {
     },
     order_items: (o.order_items || []).map(item => ({
       ...item,
-      products: item.products || { name: item.name || 'Premium Frame', brand: item.brand || 'Optic Zone' }
+      products: item.products || { name: item.name || 'Premium Frame', brand: item.brand || 'Optic Zone' },
+      prescription: item.prescription || item.prescriptions || null
+    })),
+    items: o.items || (o.order_items || []).map(item => ({
+      id: item.product_id,
+      name: item.products?.name || item.name || 'Premium Frame',
+      brand: item.products?.brand || item.brand || 'Optic Zone',
+      price: Number(item.price_at_time) || 0,
+      qty: item.quantity,
+      prescription: item.prescription || item.prescriptions || null
     }))
   };
 };
 
 export function StoreProvider({ children }) {
+  const [isAdmin, setIsAdmin] = useState(false);
   const [state, setState] = useState({
     products: [],
     orders: [],
@@ -99,6 +109,7 @@ export function StoreProvider({ children }) {
         !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
       if (!isSupabaseConfigured) {
+        setIsAdmin(false);
         setState({
           products: staticProducts,
           orders: [],
@@ -136,15 +147,16 @@ export function StoreProvider({ children }) {
             if (profile?.role) role = profile.role;
           } catch (e) {}
 
-          const isAdmin = role === 'admin' || session.user.email === 'admin@opticzone.com';
+          const isUserAdmin = role === 'admin' || session.user.email === 'admin@opticzone.com';
+          setIsAdmin(isUserAdmin);
 
-          if (isAdmin) {
+          if (isUserAdmin) {
             const [
               { data: allOrders },
               { data: allAppointments },
               { data: allProfiles }
             ] = await Promise.all([
-              supabase.from('orders').select('*, order_items(*)').order('created_at', { ascending: false }),
+              supabase.from('orders').select('*, order_items(*, products(*), prescriptions(*))').order('created_at', { ascending: false }),
               supabase.from('appointments').select('*').order('appointment_date', { ascending: false }),
               supabase.from('profiles').select('*')
             ]);
@@ -156,7 +168,7 @@ export function StoreProvider({ children }) {
               { data: userOrders },
               { data: userAppointments }
             ] = await Promise.all([
-              supabase.from('orders').select('*, order_items(*)').eq('user_id', session.user.id).order('created_at', { ascending: false }),
+              supabase.from('orders').select('*, order_items(*, products(*), prescriptions(*))').eq('user_id', session.user.id).order('created_at', { ascending: false }),
               supabase.from('appointments').select('*').eq('user_id', session.user.id).order('appointment_date', { ascending: false })
             ]);
             orders = userOrders || [];
@@ -166,6 +178,8 @@ export function StoreProvider({ children }) {
               if (myProfile) customersList = [myProfile];
             } catch {}
           }
+        } else {
+          setIsAdmin(false);
         }
 
         setState({
@@ -184,6 +198,7 @@ export function StoreProvider({ children }) {
         });
       } catch (err) {
         console.error('Error fetching from Supabase, using mock data fallback:', err);
+        setIsAdmin(false);
         setState({
           products: staticProducts,
           orders: [],
@@ -202,6 +217,9 @@ export function StoreProvider({ children }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN') {
+        fetchData();
+      } else if (event === 'SIGNED_OUT') {
+        setIsAdmin(false);
         fetchData();
       }
     });
@@ -230,7 +248,7 @@ export function StoreProvider({ children }) {
       
     const payload = {
       ...review,
-      id: Date.now(),
+      id: typeof window !== 'undefined' && window.crypto?.randomUUID ? window.crypto.randomUUID() : 'review-' + Date.now(),
       created_at: new Date().toISOString()
     };
 
@@ -242,8 +260,13 @@ export function StoreProvider({ children }) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const dbPayload = {
-        ...review,
+        product_id: review.productId || review.product_id,
         user_id: session?.user?.id || null,
+        user_name: review.user || review.user_name || 'Anonymous',
+        rating: review.rating,
+        title: review.title,
+        body: review.body,
+        verified: review.verified || false,
         created_at: new Date().toISOString()
       };
       const { data, error } = await supabase.from('reviews').insert([dbPayload]).select();
@@ -253,8 +276,12 @@ export function StoreProvider({ children }) {
     } catch (e) { console.error(e); }
   };
 
+  const visibleProducts = isAdmin ? state.products : state.products.filter(p => !p.is_hidden);
+
   const value = {
     ...state,
+    products: visibleProducts,
+    isAdmin,
     settings,
     updateSettings,
     toggleWishlist,
@@ -285,7 +312,8 @@ export function StoreProvider({ children }) {
           product_id: i.id,
           quantity: i.qty,
           price_at_time: i.price,
-          products: { name: i.name, brand: i.brand }
+          products: { name: i.name, brand: i.brand },
+          prescription: i.prescription || null
         }))
       };
 
@@ -300,6 +328,47 @@ export function StoreProvider({ children }) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
+        // Save prescriptions first
+        const itemsWithPrescription = [];
+        for (const item of orderData.items) {
+          let dbPrescriptionId = null;
+          if (item.prescription) {
+            const rxPayload = {
+              user_id: session?.user?.id || null,
+              type: item.prescription.type,
+              name: item.prescription.name || 'Order Prescription',
+              od_sph: item.prescription.od_sph || null,
+              od_cyl: item.prescription.od_cyl || null,
+              od_axis: item.prescription.od_axis || null,
+              od_add: item.prescription.od_add || null,
+              os_sph: item.prescription.os_sph || null,
+              os_cyl: item.prescription.os_cyl || null,
+              os_axis: item.prescription.os_axis || null,
+              os_add: item.prescription.os_add || null,
+              pd: item.prescription.pd || null,
+              notes: item.prescription.notes || null,
+              file_url: item.prescription.file_url || null,
+              is_saved: false
+            };
+
+            const { data: newRx, error: rxError } = await supabase
+              .from('prescriptions')
+              .insert([rxPayload])
+              .select()
+              .single();
+
+            if (rxError) {
+              console.error('Error inserting prescription for order item:', rxError);
+            } else if (newRx) {
+              dbPrescriptionId = newRx.id;
+            }
+          }
+          itemsWithPrescription.push({
+            ...item,
+            dbPrescriptionId
+          });
+        }
+
         const orderInsertPayload = {
           user_id: session?.user?.id || null,
           total_amount: orderData.total,
@@ -318,11 +387,12 @@ export function StoreProvider({ children }) {
 
         if (orderError) throw orderError;
 
-        const orderItemsPayload = orderData.items.map(item => ({
+        const orderItemsPayload = itemsWithPrescription.map(item => ({
           order_id: newOrder.id,
           product_id: item.id,
           quantity: item.qty,
-          price_at_time: item.price
+          price_at_time: item.price,
+          prescription_id: item.dbPrescriptionId
         }));
 
         const { error: itemsError } = await supabase
@@ -333,7 +403,7 @@ export function StoreProvider({ children }) {
 
         const { data: fullOrder } = await supabase
           .from('orders')
-          .select('*, order_items(*)')
+          .select('*, order_items(*, products(*), prescriptions(*))')
           .eq('id', newOrder.id)
           .single();
 
@@ -365,7 +435,11 @@ export function StoreProvider({ children }) {
       const { id, created_at, ...cleanProduct } = product;
 
       if (!isSupabaseConfigured) {
-        const newProduct = { id: Date.now(), ...cleanProduct };
+        const newProduct = { 
+          id: typeof window !== 'undefined' && window.crypto?.randomUUID ? window.crypto.randomUUID() : 'local-' + Date.now(), 
+          is_hidden: false,
+          ...cleanProduct 
+        };
         setState(prev => ({ ...prev, products: [...prev.products, newProduct] }));
         return { data: [newProduct], error: null };
       }
