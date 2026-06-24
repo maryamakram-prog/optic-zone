@@ -49,6 +49,7 @@ const mapOrder = (o) => {
 
 export function StoreProvider({ children }) {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [dbSchemaErrors, setDbSchemaErrors] = useState([]);
   const [state, setState] = useState({
     products: [],
     orders: [],
@@ -182,6 +183,31 @@ export function StoreProvider({ children }) {
           setIsAdmin(false);
         }
 
+        // Check for schema mismatches
+        const errors = [];
+        try {
+          const { error: rxError } = await supabase.from('prescriptions').select('id').limit(1);
+          if (rxError && (rxError.message.includes('does not exist') || rxError.code === 'PGRST116' || rxError.message.includes('not find'))) {
+            errors.push('Table "public.prescriptions" is missing. Please run supabase_update_to_uuid.sql in the Supabase SQL Editor.');
+          }
+        } catch (e) {
+          errors.push('Table "public.prescriptions" is missing.');
+        }
+
+        try {
+          const { error: hiddenError } = await supabase.from('products').select('is_hidden').limit(1);
+          if (hiddenError && (hiddenError.message.includes('is_hidden') || hiddenError.message.includes('schema cache') || hiddenError.message.includes('does not exist') || hiddenError.message.includes('not find'))) {
+            errors.push('Column "is_hidden" is missing from the "products" table. Please run supabase_update_to_uuid.sql in the Supabase SQL Editor.');
+          }
+        } catch (e) {
+          errors.push('Column "is_hidden" is missing from table "products".');
+        }
+
+        if (products && products[0] && typeof products[0].id === 'number') {
+          errors.push('Product ID column type is "integer" instead of "UUID". Please run supabase_update_to_uuid.sql in the Supabase SQL Editor.');
+        }
+        setDbSchemaErrors(errors);
+
         setState({
           products: (products && products.length > 0) ? products : staticProducts,
           orders: (orders || []).map(mapOrder),
@@ -199,6 +225,7 @@ export function StoreProvider({ children }) {
       } catch (err) {
         console.error('Error fetching from Supabase, using mock data fallback:', err);
         setIsAdmin(false);
+        setDbSchemaErrors([`Failed to query database: ${err.message || 'Database connection error'}. Falling back to offline mock data.`]);
         setState({
           products: staticProducts,
           orders: [],
@@ -283,6 +310,7 @@ export function StoreProvider({ children }) {
     products: visibleProducts,
     isAdmin,
     settings,
+    dbSchemaErrors,
     updateSettings,
     toggleWishlist,
     addRecentlyViewed,

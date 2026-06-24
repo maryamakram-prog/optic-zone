@@ -7,8 +7,8 @@ import { CartProvider } from '@/context/CartContext';
 import LiveChat from '@/components/LiveChat';
 
 export const metadata = {
-  title: 'Optic Zone — Premium Eyewear & Sunglasses',
-  description: 'Discover premium eyeglasses, sunglasses, blue light glasses, and contact lenses at Optic Zone. Virtual try-on, free shipping, and expert vision care.',
+  title: 'Optic Zone — Eyeglasses, Sunglasses & Contact Lenses',
+  description: 'Shop premium eyeglasses, sunglasses, contact lenses and more at Optic Zone. Free shipping on orders over $99. Virtual try-on available.',
   keywords: 'eyeglasses, sunglasses, prescription glasses, blue light glasses, contact lenses, optical frames, eyewear',
 };
 
@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>

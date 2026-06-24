@@ -1,105 +1,183 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
+const HERO_SLIDES = [
+  {
+    badge: '✨ New Arrivals 2026',
+    headline: 'See the World\nIn Style',
+    sub: 'Premium eyeglasses, sunglasses & contact lenses. Thousands of designer frames from $19.',
+    cta: 'Shop Eyeglasses',
+    ctaHref: '/products?category=eyeglasses',
+    secondary: 'Try Virtually',
+    secondaryHref: '/virtual-try-on',
+    image: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=900&q=80',
+    bg: 'from-[#e8f1f9] to-[#f0f7ff]',
+  },
+  {
+    badge: '☀️ Summer Collection',
+    headline: 'Premium\nSunglasses',
+    sub: 'Block UV rays in style. Polarized lenses, designer frames, and virtual try-on available.',
+    cta: 'Shop Sunglasses',
+    ctaHref: '/products?category=sunglasses',
+    secondary: 'View Collection',
+    secondaryHref: '/products?category=sunglasses',
+    image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=900&q=80',
+    bg: 'from-[#fff8e1] to-[#fff3cd]',
+  },
+  {
+    badge: '🏷️ Limited Time Offer',
+    headline: 'Buy 2 Get 1\nFree',
+    sub: 'Mix and match from our entire collection. Free lenses included with every frame purchase.',
+    cta: 'Shop the Sale',
+    ctaHref: '/products?isSale=true',
+    secondary: 'View All Frames',
+    secondaryHref: '/products',
+    image: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?w=900&q=80',
+    bg: 'from-[#e8f5e9] to-[#f1f8e9]',
+  },
+];
+
+const TRUST_BADGES = [
+  { icon: '🚚', text: 'Free Shipping', sub: 'Orders over $99' },
+  { icon: '↩️', text: '30-Day Returns', sub: 'Hassle-free' },
+  { icon: '🔒', text: 'Secure Checkout', sub: 'SSL Encrypted' },
+  { icon: '👓', text: 'Rx Guaranteed', sub: '100% Accurate' },
+];
 
 export default function Hero() {
+  const [slide, setSlide] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setSlide(s => (s + 1) % HERO_SLIDES.length);
+        setIsAnimating(false);
+      }, 300);
+    }, 5500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const current = HERO_SLIDES[slide];
+
   return (
-    <section className="relative min-h-[92vh] flex items-center overflow-hidden bg-gradient-to-br from-soft-white via-pastel-blue-light/30 to-pastel-lavender-light/20">
-      {/* Decorative blobs */}
-      <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-pastel-blue/20 rounded-full blur-[120px] animate-pulse-soft" />
-      <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-pastel-lavender/20 rounded-full blur-[100px] animate-pulse-soft" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-accent/5 rounded-full blur-[80px]" />
+    <>
+      {/* Hero Section */}
+      <section className={`relative overflow-hidden bg-gradient-to-br ${current.bg} transition-all duration-700`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[520px] py-12 lg:py-16">
+            
+            {/* Left — Text */}
+            <div className={`transition-all duration-300 ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/70 text-accent text-xs font-bold tracking-wider uppercase mb-5 shadow-sm border border-white">
+                {current.badge}
+              </span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-heading text-charcoal leading-tight mb-5 whitespace-pre-line">
+                {current.headline}
+              </h1>
+              <p className="text-base text-dark-gray leading-relaxed max-w-md mb-8">
+                {current.sub}
+              </p>
+              <div className="flex flex-wrap gap-3 mb-8">
+                <Link
+                  href={current.ctaHref}
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-accent-dark hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/25 transition-all duration-200"
+                >
+                  {current.cta}
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </Link>
+                <Link
+                  href={current.secondaryHref}
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white text-charcoal font-semibold text-sm border border-border hover:bg-light-gray hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  {current.secondary}
+                </Link>
+              </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Text */}
-          <div className="animate-fade-in-up">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-semibold tracking-wider uppercase mb-6">
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse-soft" />
-              New Collection 2026
-            </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-heading text-charcoal leading-[1.1] mb-6">
-              Find Your Perfect{' '}
-              <span className="text-gradient">Vision Style</span>
-            </h1>
-            <p className="text-lg text-dark-gray/80 leading-relaxed max-w-lg mb-8">
-              Discover premium eyewear crafted for comfort and style. From classic frames to cutting-edge designs, find the perfect pair that defines you.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-accent to-accent-dark text-white font-semibold text-sm shadow-lg shadow-accent/25 hover:shadow-xl hover:shadow-accent/30 hover:-translate-y-0.5 transition-all duration-300"
-              >
-                Shop Now
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </Link>
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white/80 text-charcoal font-semibold text-sm border border-mid-gray/50 shadow-sm hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
-              >
-                Learn More
-              </Link>
+              {/* Stats Row */}
+              <div className="flex items-center gap-6 pt-6 border-t border-white/60">
+                {[
+                  { value: '50K+', label: 'Happy Customers' },
+                  { value: '2,000+', label: 'Frame Styles' },
+                  { value: '4.9★', label: 'Average Rating' },
+                ].map(stat => (
+                  <div key={stat.label}>
+                    <div className="text-xl font-black text-charcoal font-heading">{stat.value}</div>
+                    <div className="text-xs text-text-muted mt-0.5">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Slide Dots */}
+              <div className="flex gap-2 mt-8">
+                {HERO_SLIDES.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { setIsAnimating(true); setTimeout(() => { setSlide(i); setIsAnimating(false); }, 300); }}
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${i === slide ? 'w-8 bg-accent' : 'w-2 bg-mid-gray hover:bg-dark-gray'}`}
+                    aria-label={`Slide ${i + 1}`}
+                  />
+                ))}
+              </div>
             </div>
 
-            {/* Stats */}
-            <div className="flex items-center gap-8 mt-12 pt-8 border-t border-mid-gray/40">
-              {[
-                { value: '50K+', label: 'Happy Customers' },
-                { value: '2000+', label: 'Premium Frames' },
-                { value: '4.9', label: 'Average Rating' },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div className="text-2xl font-bold font-heading text-charcoal">{stat.value}</div>
-                  <div className="text-xs text-dark-gray/60 mt-0.5">{stat.label}</div>
+            {/* Right — Image */}
+            <div className="relative hidden lg:block">
+              <div className={`relative transition-all duration-300 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+                {/* Main image */}
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-white/30 border border-white/60">
+                  <img
+                    src={current.image}
+                    alt="Premium eyewear collection"
+                    className="w-full h-[420px] object-cover"
+                    onError={e => { e.target.src = 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=900&q=80'; }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Hero Image */}
-          <div className="relative animate-fade-in hidden lg:block">
-            <div className="relative z-10">
-              <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-2xl shadow-accent/10 border border-white/50">
-                <img
-                  src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=800&q=80"
-                  alt="Premium eyeglasses"
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              {/* Floating card */}
-              <div className="absolute -bottom-6 -left-6 glass rounded-2xl px-5 py-4 shadow-xl animate-float">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-success/20 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                {/* Floating badge — Try-On */}
+                <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl p-4 shadow-xl border border-border flex items-center gap-3 animate-float">
+                  <div className="w-10 h-10 rounded-xl bg-ebd-blue-light flex items-center justify-center">
+                    <span className="text-xl">🕶️</span>
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-charcoal">Free Shipping</div>
-                    <div className="text-xs text-dark-gray">On orders over $99</div>
+                    <div className="text-sm font-bold text-charcoal">Virtual Try-On</div>
+                    <div className="text-xs text-text-muted">See how they look on you</div>
                   </div>
                 </div>
-              </div>
-              {/* Floating card right */}
-              <div className="absolute -top-4 -right-4 glass rounded-2xl px-5 py-4 shadow-xl animate-float" style={{ animationDelay: '2s' }}>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-warning/20 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-charcoal">Top Rated</div>
-                    <div className="text-xs text-dark-gray">4.9/5 Stars</div>
-                  </div>
+
+                {/* Floating badge — Offer */}
+                <div className="absolute -top-4 -right-4 bg-accent rounded-2xl p-4 shadow-xl text-white" style={{ animationDelay: '2s' }}>
+                  <div className="text-2xl font-black">40%</div>
+                  <div className="text-xs font-semibold opacity-90">OFF Today</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Trust Badges Bar */}
+      <section className="bg-white border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {TRUST_BADGES.map((badge, i) => (
+              <div key={i} className="flex items-center gap-2.5 py-1">
+                <span className="text-xl">{badge.icon}</span>
+                <div>
+                  <div className="text-sm font-semibold text-charcoal leading-tight">{badge.text}</div>
+                  <div className="text-xs text-text-muted">{badge.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

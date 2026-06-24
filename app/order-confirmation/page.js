@@ -10,7 +10,7 @@ export default function OrderConfirmationPage() {
 
   if (!recentOrder) {
     return (
-      <div className="pt-32 pb-20 bg-soft-white min-h-[80vh] flex items-center justify-center">
+      <div className="py-20 bg-off-white min-h-[80vh] flex items-center justify-center">
         <div className="text-center p-10 bg-white rounded-3xl shadow-xl shadow-black/5 border border-mid-gray/30 mx-4 max-w-lg">
           <h1 className="text-3xl font-bold font-heading text-charcoal mb-4">No recent orders found</h1>
           <Link href="/" className="px-8 py-3.5 bg-gradient-to-r from-accent to-pastel-blue text-white font-semibold rounded-xl hover:shadow-lg transition-all inline-block">Return to Shop</Link>
@@ -29,7 +29,7 @@ export default function OrderConfirmationPage() {
   const deliveryString = `${deliveryEstStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${deliveryEstEnd.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
 
   return (
-    <div className="pt-32 pb-20 bg-soft-white min-h-screen">
+    <div className="py-8 bg-off-white min-h-screen">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 sm:p-12 rounded-3xl shadow-xl border border-mid-gray/30 text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-accent via-pastel-blue to-accent-dark"></div>

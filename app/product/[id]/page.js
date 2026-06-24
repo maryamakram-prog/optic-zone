@@ -1,10 +1,12 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 import PrescriptionForm from '@/components/PrescriptionForm';
+
+const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 100 100" fill="%23f3f4f6"><rect width="100" height="100" fill="%23f3f4f6"/><path d="M20 40 Q35 25 50 40 Q65 25 80 40" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="35" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="65" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><path d="M42.5 55 L57.5 55" stroke="%239ca3af" stroke-width="3" fill="none"/></svg>';
 
 function Stars({ rating, size = 16 }) {
   return (
@@ -60,16 +62,33 @@ export default function ProductDetailPage() {
 
   const product = products?.find(p => String(p.id) === String(params.id));
 
+  const [detailImgSrc, setDetailImgSrc] = useState(product?.imageUrl || product?.image || FALLBACK_IMAGE);
+  const [detailImgLoading, setDetailImgLoading] = useState(true);
+  const detailImgRef = useRef(null);
+
+  useEffect(() => {
+    if (product) {
+      setDetailImgSrc(product.imageUrl || product.image || FALLBACK_IMAGE);
+      setDetailImgLoading(true);
+    }
+  }, [product?.imageUrl, product?.image]);
+
+  useEffect(() => {
+    if (detailImgRef.current && detailImgRef.current.complete) {
+      setDetailImgLoading(false);
+    }
+  }, [detailImgSrc]);
+
   useEffect(() => {
     if (product) addRecentlyViewed(product.id);
   }, [product?.id]);
 
   if (loading) {
-    return <div className="pt-32 pb-20 bg-soft-white min-h-screen flex items-center justify-center"><p>Loading...</p></div>;
+    return <div className="py-20 bg-off-white min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin" /></div>;
   }
 
   if (!product) {
-    return <div className="pt-32 pb-20 bg-soft-white min-h-screen flex items-center justify-center"><p className="text-xl font-bold">Product not found.</p></div>;
+    return <div className="py-20 bg-off-white min-h-screen flex items-center justify-center"><p className="text-xl font-bold">Product not found.</p></div>;
   }
 
   const productReviews = reviews?.filter(r => String(r.productId || r.product_id) === String(product.id)) || [];
@@ -106,7 +125,7 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="pt-24 pb-20 bg-soft-white min-h-screen">
+    <div className="py-8 bg-off-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumb */}
@@ -121,11 +140,26 @@ export default function ProductDetailPage() {
           {/* Gallery */}
           <div className="lg:w-1/2">
             <div className="relative aspect-[4/3] bg-white rounded-3xl border border-mid-gray/30 flex items-center justify-center p-8 mb-4 shadow-sm group">
-              {product.image ? (
-                 <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-2xl" />
+              {detailImgLoading && (product?.imageUrl || product?.image) && (
+                <div className="absolute inset-0 bg-light-gray/40 animate-pulse flex items-center justify-center z-10 rounded-3xl">
+                  <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+              {product?.imageUrl || product?.image ? (
+                 <img 
+                   ref={detailImgRef}
+                   src={detailImgSrc} 
+                   alt={product.name} 
+                   onLoad={() => setDetailImgLoading(false)}
+                   onError={() => {
+                     setDetailImgSrc(FALLBACK_IMAGE);
+                     setDetailImgLoading(false);
+                   }}
+                   className={`w-full h-full object-cover rounded-2xl transition-all duration-300 ${detailImgLoading ? 'opacity-0' : 'opacity-100'}`} 
+                 />
               ) : (
                 <div className="w-full transition-transform duration-500 group-hover:scale-105">
-                  <GlassesIcon color={product.colors?.[selectedColor] || '#2563EB'} accent="#0ea5e9" />
+                  <GlassesIcon color={product?.colors?.[selectedColor] || '#2563EB'} accent="#0ea5e9" />
                 </div>
               )}
               
@@ -275,9 +309,14 @@ export default function ProductDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {related.map(p => (
                 <Link key={p.id} href={`/product/${p.id}`} className="group bg-white rounded-2xl border border-mid-gray/30 overflow-hidden hover:shadow-lg transition-all">
-                  <div className="aspect-square bg-light-gray flex items-center justify-center p-6">
-                    {p.image ? (
-                       <img src={p.image} alt={p.name} className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-105" />
+                  <div className="aspect-square bg-light-gray flex items-center justify-center p-6 relative overflow-hidden">
+                    {p.imageUrl || p.image ? (
+                       <img 
+                         src={p.imageUrl || p.image} 
+                         alt={p.name} 
+                         onError={(e) => { e.target.src = FALLBACK_IMAGE; }}
+                         className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-105" 
+                       />
                     ) : (
                       <div className="transition-transform duration-500 group-hover:scale-105 w-full">
                         <GlassesIcon color={p.colors?.[0] || '#2563EB'} accent="#0ea5e9" />

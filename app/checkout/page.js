@@ -149,11 +149,11 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="pt-32 pb-20 bg-soft-white min-h-[80vh] flex items-center justify-center">
-        <div className="text-center p-10 bg-white rounded-3xl shadow-xl border border-mid-gray/30 max-w-lg mx-4">
+      <div className="py-20 bg-off-white min-h-[80vh] flex items-center justify-center">
+        <div className="text-center p-10 bg-white rounded-3xl shadow-lg border border-border max-w-lg mx-4">
           <h1 className="text-3xl font-bold font-heading text-charcoal mb-4">Cart is Empty</h1>
-          <p className="text-dark-gray/80 mb-8">You need to add items to your cart before checking out.</p>
-          <Link href="/products" className="px-8 py-3.5 bg-gradient-to-r from-accent to-pastel-blue text-white font-semibold rounded-xl hover:shadow-lg transition-all">
+          <p className="text-dark-gray mb-8">You need to add items to your cart before checking out.</p>
+          <Link href="/products" className="px-8 py-3.5 bg-accent text-white font-semibold rounded-xl hover:bg-accent-dark transition-all inline-block">
             Return to Shop
           </Link>
         </div>
@@ -162,9 +162,9 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="pt-32 pb-20 bg-soft-white min-h-screen">
+    <div className="py-8 bg-off-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold font-heading text-charcoal mb-10">Checkout</h1>
+        <h1 className="text-3xl font-bold font-heading text-charcoal mb-8">Checkout</h1>
 
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Left Side: Shipping & Billing Form */}

@@ -174,8 +174,8 @@ export default function AdminOrdersPage() {
                   {order.order_items?.map((item, idx) => (
                     <div key={idx} className="py-2.5 flex justify-between text-sm items-start gap-4">
                       <div className="flex flex-col">
-                        <span className="font-bold text-charcoal">{item.products?.name}</span>
-                        <span className="text-xs text-dark-gray">Brand: {item.products?.brand} | Qty: {item.quantity}</span>
+                        <span className="font-bold text-charcoal">{item.products?.name || item.name || 'Premium Frame'}</span>
+                        <span className="text-xs text-dark-gray">Brand: {item.products?.brand || item.brand || 'Optic Zone'} | Qty: {item.quantity}</span>
                         
                         {item.prescription && (
                           <div className="mt-1.5 p-2.5 bg-light-gray/40 border border-mid-gray/25 rounded-xl text-xs max-w-md">
@@ -209,10 +209,39 @@ export default function AdminOrdersPage() {
                     <p className="text-xs text-dark-gray py-4 text-center">No item details saved for this order.</p>
                   )}
                 </div>
-                <div className="pt-4 border-t border-mid-gray/30 flex justify-between items-center">
-                  <span className="text-sm font-bold text-charcoal">Subtotal Amount:</span>
-                  <strong className="text-lg font-black text-accent">${order.total.toFixed(2)}</strong>
-                </div>
+                {(() => {
+                  const itemSubtotal = order.order_items?.reduce((sum, item) => sum + (item.price_at_time * item.quantity), 0) || 0;
+                  const estimatedShipping = itemSubtotal >= 99 || itemSubtotal === 0 ? 0 : 9.99;
+                  const estimatedTax = itemSubtotal * 0.08;
+                  const computedTotal = itemSubtotal + estimatedShipping + estimatedTax;
+                  const estimatedDiscount = Math.max(0, computedTotal - order.total);
+                  return (
+                    <div className="pt-4 border-t border-mid-gray/30 space-y-1.5 text-sm">
+                      <div className="flex justify-between text-dark-gray">
+                        <span>Items Subtotal:</span>
+                        <span className="font-semibold text-charcoal">${itemSubtotal.toFixed(2)}</span>
+                      </div>
+                      {estimatedDiscount > 0.01 && (
+                        <div className="flex justify-between text-green-600">
+                          <span>Discount Applied:</span>
+                          <span className="font-semibold">-${estimatedDiscount.toFixed(2)}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-dark-gray">
+                        <span>Shipping:</span>
+                        <span className="font-semibold text-charcoal">{estimatedShipping === 0 ? 'Free' : `$${estimatedShipping.toFixed(2)}`}</span>
+                      </div>
+                      <div className="flex justify-between text-dark-gray">
+                        <span>Estimated Tax (8%):</span>
+                        <span className="font-semibold text-charcoal">${estimatedTax.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t border-mid-gray/20">
+                        <span className="font-bold text-charcoal text-base">Total Amount:</span>
+                        <strong className="text-xl font-black text-accent">${order.total.toFixed(2)}</strong>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>

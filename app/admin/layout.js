@@ -1,5 +1,6 @@
 'use client';
 import { useAuth } from '@/context/AuthContext';
+import { useStore } from '@/context/StoreContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -7,6 +8,7 @@ import Link from 'next/link';
 const MENU_ITEMS = [
   { label: '📊 Dashboard', path: '/admin' },
   { label: '📦 Products', path: '/admin/products' },
+  { label: '👁️ Lenses', path: '/admin/lenses' },
   { label: '🛒 Orders', path: '/admin/orders' },
   { label: '👥 Users', path: '/admin/customers' },
   { label: '🏷️ Coupons', path: '/admin/coupons' },
@@ -17,6 +19,7 @@ const MENU_ITEMS = [
 
 export default function AdminLayout({ children }) {
   const { admin, logoutAdmin } = useAuth();
+  const { dbSchemaErrors } = useStore();
   const router = useRouter();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -124,7 +127,35 @@ export default function AdminLayout({ children }) {
 
       {/* Main Content Area */}
       <main className="flex-1 min-w-0 md:pl-64 pt-16 md:pt-0">
-        <div className="p-6 md:p-10 max-w-7xl mx-auto w-full">
+        <div className="p-6 md:p-10 max-w-7xl mx-auto w-full space-y-6">
+          {dbSchemaErrors && dbSchemaErrors.length > 0 && (
+            <div className="p-5 bg-red-50 border border-red-200 text-red-900 rounded-3xl text-sm font-semibold space-y-3 shadow-sm animate-fade-in">
+              <div className="flex items-center gap-2.5 text-red-800 text-base font-bold">
+                <span>⚠️</span>
+                <span>Database Schema Warning</span>
+              </div>
+              <p className="text-xs text-red-700 leading-relaxed font-medium">
+                The application detected that your Supabase database schema is out of sync or missing required components. Some features (such as product creation, order placement, or saved prescriptions) will fail or operate in local mock mode until this is resolved:
+              </p>
+              <ul className="list-disc pl-5 text-xs text-red-800 font-semibold space-y-1">
+                {dbSchemaErrors.map((err, idx) => (
+                  <li key={idx}>{err}</li>
+                ))}
+              </ul>
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <a 
+                  href="/supabase_update_to_uuid.sql" 
+                  download
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-red-600/10 cursor-pointer"
+                >
+                  Download SQL Migration File
+                </a>
+                <span className="text-[10px] text-red-600 font-bold">
+                  💡 Copy and execute the contents of this SQL script in your Supabase SQL Editor, then refresh this page to apply changes.
+                </span>
+              </div>
+            </div>
+          )}
           {children}
         </div>
       </main>

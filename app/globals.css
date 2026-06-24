@@ -1,75 +1,96 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-pastel-blue: #B8D4E3;
-  --color-pastel-blue-light: #D6E8F2;
-  --color-pastel-blue-dark: #8BBAD4;
-  --color-pastel-lavender: #C4B7D8;
-  --color-pastel-lavender-light: #DDD4EC;
-  --color-pastel-lavender-dark: #A48FC4;
-  --color-soft-white: #FAFBFD;
-  --color-cream: #F5F3F0;
-  --color-light-gray: #F0F2F5;
-  --color-mid-gray: #E2E5EA;
-  --color-dark-gray: #6B7280;
-  --color-charcoal: #2D3748;
-  --color-accent: #7C6DC8;
-  --color-accent-light: #9B8FD8;
-  --color-accent-dark: #5A4FA8;
-  --color-success: #68D391;
-  --color-warning: #F6C95E;
-  --color-gold: #DAA520;
+  /* === EyeBuyDirect-inspired Brand Colors === */
+  --color-ebd-blue: #1a6fb0;
+  --color-ebd-blue-dark: #155a90;
+  --color-ebd-blue-light: #e8f1f9;
+  --color-ebd-teal: #00a4a6;
+  --color-ebd-teal-light: #e0f5f5;
+  --color-sale: #e63946;
+  --color-ebd-green: #2a9d8f;
 
-  --font-heading: 'Outfit', sans-serif;
+  /* === Neutrals (keep backward compat) === */
+  --color-soft-white: #ffffff;
+  --color-off-white: #f8f9fa;
+  --color-cream: #fafafa;
+  --color-light-gray: #f1f3f5;
+  --color-mid-gray: #dee2e6;
+  --color-border: #e9ecef;
+  --color-dark-gray: #6c757d;
+  --color-text-muted: #868e96;
+  --color-charcoal: #212529;
+  --color-charcoal-light: #343a40;
+
+  /* === Pastel (backward-compat aliases) === */
+  --color-pastel-blue: #cce4f6;
+  --color-pastel-blue-light: #e8f1f9;
+  --color-pastel-blue-dark: #90c2e7;
+  --color-pastel-lavender: #d4c5e2;
+  --color-pastel-lavender-light: #ede8f5;
+  --color-pastel-lavender-dark: #b8a3d4;
+
+  /* === Brand accent (maps to ebd-blue) === */
+  --color-accent: #1a6fb0;
+  --color-accent-light: #2a85d0;
+  --color-accent-dark: #155a90;
+
+  /* === Status colors === */
+  --color-success: #40c057;
+  --color-warning: #fab005;
+  --color-gold: #f59f00;
+
+  /* === Fonts === */
+  --font-heading: 'DM Sans', 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
 
-  --animate-fade-in: fade-in 0.6s ease-out;
-  --animate-fade-in-up: fade-in-up 0.6s ease-out;
-  --animate-slide-in-right: slide-in-right 0.5s ease-out;
+  /* === Animations === */
+  --animate-fade-in: fade-in 0.4s ease-out;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out;
+  --animate-slide-in-right: slide-in-right 0.4s ease-out;
   --animate-float: float 6s ease-in-out infinite;
   --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
-  --animate-shimmer: shimmer 2s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.5s ease-in-out infinite;
+  --animate-slide-down: slide-down 0.3s ease-out;
 }
 
+/* ============ Keyframes ============ */
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(30px); }
+  from { opacity: 0; transform: translateX(20px); }
   to { opacity: 1; transform: translateX(0); }
 }
-
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
-
 @keyframes pulse-soft {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  50% { opacity: 0.75; }
 }
-
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
-/* Base styles */
-html {
-  scroll-behavior: smooth;
-}
+/* ============ Base ============ */
+html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-body);
   color: var(--color-charcoal);
-  background-color: var(--color-soft-white);
+  background-color: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -78,41 +99,58 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
 }
 
-/* Custom utilities */
+/* ============ Input ============ */
+.input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 0.5rem;
+  background-color: #fff;
+  font-size: 0.875rem;
+  color: var(--color-charcoal);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+.input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(26, 111, 176, 0.1);
+}
+
+/* ============ Custom Utilities ============ */
 @utility glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 @utility glass-dark {
-  background: rgba(45, 55, 72, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(33, 37, 41, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 @utility text-gradient {
-  background: linear-gradient(135deg, var(--color-accent), var(--color-pastel-blue-dark));
+  background: linear-gradient(135deg, var(--color-ebd-blue), var(--color-ebd-teal));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 @utility hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
   }
 }
 
 @utility section-padding {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
   @media (min-width: 768px) {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
   }
 }

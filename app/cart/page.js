@@ -48,16 +48,16 @@ export default function StandaloneCartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="pt-32 pb-20 bg-soft-white min-h-[80vh] flex items-center justify-center">
-        <div className="text-center p-10 bg-white rounded-3xl shadow-xl shadow-black/5 max-w-lg border border-mid-gray/30 mx-4">
-          <span className="text-6xl mb-6 block drop-shadow-lg">🛒</span>
+      <div className="py-20 bg-off-white min-h-[80vh] flex items-center justify-center">
+        <div className="text-center p-10 bg-white rounded-3xl shadow-lg max-w-lg border border-border mx-4">
+          <span className="text-6xl mb-6 block">🛒</span>
           <h1 className="text-3xl font-bold font-heading text-charcoal mb-4">Your Cart is Empty</h1>
-          <p className="text-dark-gray/80 mb-8 leading-relaxed">Looks like you haven't added any premium frames to your cart yet. Discover your perfect pair today.</p>
+          <p className="text-dark-gray mb-8 leading-relaxed">Looks like you haven't added any frames to your cart yet. Discover your perfect pair today.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/products?category=eyeglasses" className="px-8 py-3.5 bg-gradient-to-r from-accent to-pastel-blue text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-0.5 transition-all">
+            <Link href="/products?category=eyeglasses" className="px-8 py-3.5 bg-accent text-white font-semibold rounded-xl hover:bg-accent-dark hover:-translate-y-0.5 transition-all">
               Shop Eyeglasses
             </Link>
-            <Link href="/products?category=sunglasses" className="px-8 py-3.5 bg-white text-charcoal border border-mid-gray font-semibold rounded-xl hover:bg-light-gray hover:shadow-md transition-all">
+            <Link href="/products?category=sunglasses" className="px-8 py-3.5 bg-white text-charcoal border border-border font-semibold rounded-xl hover:bg-light-gray transition-all">
               Shop Sunglasses
             </Link>
           </div>
@@ -67,9 +67,9 @@ export default function StandaloneCartPage() {
   }
 
   return (
-    <div className="pt-32 pb-20 bg-soft-white min-h-screen">
+    <div className="py-8 bg-off-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold font-heading text-charcoal mb-10">Shopping Cart</h1>
+        <h1 className="text-3xl font-bold font-heading text-charcoal mb-8">Shopping Cart</h1>
 
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Left Side: Cart Items Table */}
@@ -86,8 +86,13 @@ export default function StandaloneCartPage() {
                 <div key={item.cartItemId} className="py-6 flex flex-col sm:grid sm:grid-cols-12 gap-6 items-center">
                   <div className="col-span-6 flex items-center gap-6 w-full">
                     <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-light-gray/50 flex items-center justify-center p-2 flex-shrink-0">
-                      {item.image ? (
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-xl" />
+                      {item.imageUrl || item.image ? (
+                        <img 
+                          src={item.imageUrl || item.image} 
+                          alt={item.name} 
+                          onError={(e) => { e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="%23f3f4f6"><rect width="100" height="100" fill="%23f3f4f6"/><path d="M20 40 Q35 25 50 40 Q65 25 80 40" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="35" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="65" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><path d="M42.5 55 L57.5 55" stroke="%239ca3af" stroke-width="3" fill="none"/></svg>'; }}
+                          className="w-full h-full object-cover rounded-xl" 
+                        />
                       ) : (
                         <GlassesIconMini color="#3b82f6" />
                       )}

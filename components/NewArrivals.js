@@ -7,7 +7,13 @@ import Link from 'next/link';
 export default function NewArrivals() {
   const { products } = useStore();
   // Get latest 4 products
-  const newArrivals = products ? [...products].sort((a, b) => b.id - a.id).slice(0, 4) : [];
+  const newArrivals = products 
+    ? [...products].sort((a, b) => {
+        const dateB = b.created_at ? new Date(b.created_at) : 0;
+        const dateA = a.created_at ? new Date(a.created_at) : 0;
+        return dateB - dateA;
+      }).slice(0, 4)
+    : [];
 
   return (
     <section className="section-padding bg-soft-white">

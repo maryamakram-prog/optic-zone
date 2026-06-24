@@ -71,11 +71,13 @@ export default function AccountPrescriptionsPage() {
   };
 
   const handleSavePrescription = async (rxData) => {
+    // NOTE: PrescriptionForm is called with disableSaveToProfile=true here
+    // because this page handles the DB write itself — prevents double-insert.
     setErrorMsg('');
     setSuccessMsg('');
     try {
       if (editingRx) {
-        // Edit existing
+        // Update existing saved prescription
         const { error } = await supabase
           .from('prescriptions')
           .update({
@@ -98,8 +100,7 @@ export default function AccountPrescriptionsPage() {
         if (error) throw error;
         setSuccessMsg('Prescription updated successfully.');
       } else {
-        // Add new (Note: PrescriptionForm already inserts if saveToProfile is checked,
-        // but here we are in Account Dashboard, so we want to force write is_saved=true if it wasn't done yet)
+        // Add new prescription directly (PrescriptionForm disableSaveToProfile=true)
         const { error } = await supabase
           .from('prescriptions')
           .insert([{
@@ -114,7 +115,12 @@ export default function AccountPrescriptionsPage() {
       }
       fetchPrescriptions();
     } catch (err) {
-      setErrorMsg('Failed to save prescription. ' + err.message);
+      // Friendly error for missing prescriptions table
+      if (err.message && (err.message.includes('does not exist') || err.message.includes('schema cache') || err.message.includes('relation'))) {
+        setErrorMsg('The prescriptions table is missing from your database. Please run the SQL migration script from supabase_update_to_uuid.sql in your Supabase SQL Editor.');
+      } else {
+        setErrorMsg('Failed to save prescription. ' + err.message);
+      }
     }
   };
 
@@ -135,8 +141,28 @@ export default function AccountPrescriptionsPage() {
       </div>
 
       {errorMsg && (
-        <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-xs font-semibold border border-red-100">
-          ⚠️ {errorMsg}
+        <div className="bg-red-50 text-red-700 px-5 py-4 rounded-2xl text-xs font-semibold border border-red-200 shadow-sm space-y-2">
+          <div className="flex items-center gap-2 font-bold text-red-800">
+            <span>⚠️</span>
+            <span>{errorMsg.includes('does not exist') || errorMsg.includes('schema cache') ? 'Database Error' : 'Error'}</span>
+          </div>
+          <p className="leading-relaxed font-medium">{errorMsg}</p>
+          {(errorMsg.includes('does not exist') || errorMsg.includes('schema cache')) && (
+            <div className="pt-1 flex flex-col gap-2">
+              <p className="text-[10px] text-red-600 font-bold">
+                The "prescriptions" table is missing from your Supabase database. Please execute the SQL migration script:
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <a 
+                  href="/supabase_update_to_uuid.sql" 
+                  download
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-[10px] transition-colors cursor-pointer"
+                >
+                  Download SQL Migration Script
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -264,6 +290,7 @@ export default function AccountPrescriptionsPage() {
         }}
         onSave={handleSavePrescription}
         initialPrescription={editingRx}
+        disableSaveToProfile={true}
       />
     </div>
   );

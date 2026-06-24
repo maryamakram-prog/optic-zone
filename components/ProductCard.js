@@ -1,13 +1,29 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
+
+const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 100 100" fill="%23f3f4f6"><rect width="100" height="100" fill="%23f3f4f6"/><path d="M20 40 Q35 25 50 40 Q65 25 80 40" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="35" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="65" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><path d="M42.5 55 L57.5 55" stroke="%239ca3af" stroke-width="3" fill="none"/></svg>';
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
   const [showToast, setShowToast] = useState(false);
   const router = useRouter();
-  
+  const [imgSrc, setImgSrc] = useState(product.imageUrl || product.image || FALLBACK_IMAGE);
+  const [imgLoading, setImgLoading] = useState(true);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    setImgSrc(product.imageUrl || product.image || FALLBACK_IMAGE);
+    setImgLoading(true);
+  }, [product.imageUrl, product.image]);
+
+  useEffect(() => {
+    if (imgRef.current && imgRef.current.complete) {
+      setImgLoading(false);
+    }
+  }, [imgSrc]);
+
   const badgeColors = {
     'Best Seller': 'bg-accent text-white',
     'New': 'bg-green-500 text-white',
@@ -28,11 +44,22 @@ export default function ProductCard({ product }) {
       className="group bg-white rounded-2xl border border-mid-gray/30 overflow-hidden hover-lift block cursor-pointer"
     >
       {/* Image */}
-      <div className="relative aspect-square overflow-hidden bg-light-gray">
+      <div className="relative aspect-square overflow-hidden bg-light-gray flex items-center justify-center">
+        {imgLoading && (
+          <div className="absolute inset-0 bg-light-gray/40 animate-pulse flex items-center justify-center z-10">
+            <div className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
         <img
-          src={product.image}
+          ref={imgRef}
+          src={imgSrc}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
+          onLoad={() => setImgLoading(false)}
+          onError={() => {
+            setImgSrc(FALLBACK_IMAGE);
+            setImgLoading(false);
+          }}
+          className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-108 ${imgLoading ? 'opacity-0' : 'opacity-100'}`}
         />
         {product.badge && (
           <span className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${badgeColors[product.badge]}`}>
