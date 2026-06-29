@@ -44,7 +44,7 @@ export default function ProductCard({ product }) {
 
   return (
     <div 
-      onClick={() => router.push(`/product/${product.id}`)}
+      onClick={() => router.push(`/product/${String(product.id).substring(0, 8)}`)}
       className="group bg-white rounded-2xl border border-mid-gray/30 overflow-hidden hover-lift block cursor-pointer"
     >
       {/* Image */}

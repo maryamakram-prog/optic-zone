@@ -63,7 +63,7 @@ export default function ProductDetailPage() {
   const [isRxModalOpen, setIsRxModalOpen] = useState(false);
   const [isUsageModalOpen, setIsUsageModalOpen] = useState(false);
 
-  const product = products?.find(p => String(p.id) === String(params.id));
+  const product = products?.find(p => String(p.id).substring(0, 8) === String(params.id).substring(0, 8));
 
   const [detailImgSrc, setDetailImgSrc] = useState(product?.imageUrl || product?.image || FALLBACK_IMAGE);
   const [detailImgLoading, setDetailImgLoading] = useState(true);

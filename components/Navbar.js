@@ -299,7 +299,7 @@ export default function Navbar() {
                         onClick={() => {
                           setSearchOpen(false);
                           setSearchQuery('');
-                          router.push(`/product/${product.id}`);
+                          router.push(`/product/${String(product.id).substring(0, 8)}`);
                         }}
                         className="w-full text-left flex items-center gap-3.5 px-4 py-3 hover:bg-ebd-blue-light transition-colors border-b border-light-gray last:border-0"
                       >

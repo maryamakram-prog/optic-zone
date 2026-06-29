@@ -9,7 +9,6 @@ const USAGE_OPTIONS = [
 ];
 
 export default function UsageModal({ isOpen, onClose, onSelectUsage, product, totalPrice }) {
-  const [isInsuranceUsed, setIsInsuranceUsed] = useState(false);
 
   // Close on Escape key
   useEffect(() => {
@@ -70,16 +69,7 @@ export default function UsageModal({ isOpen, onClose, onSelectUsage, product, to
 
         {/* Sticky Footer */}
         <div className="bg-white border-t border-mid-gray/30 p-6 shrink-0 shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-10">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-charcoal font-medium">Use insurance benefits</span>
-            <div 
-              onClick={() => setIsInsuranceUsed(!isInsuranceUsed)}
-              className={`w-12 h-6 rounded-full relative cursor-pointer border transition-colors ${isInsuranceUsed ? 'bg-accent border-accent' : 'bg-light-gray border-mid-gray/50'}`}
-            >
-              <div className={`w-5 h-5 bg-white rounded-full absolute top-[1px] shadow-sm transition-transform ${isInsuranceUsed ? 'translate-x-[22px]' : 'translate-x-[1px]'}`}></div>
-            </div>
-          </div>
-          
+
           <div className="flex items-center justify-center gap-3 mb-2">
             <span className="text-dark-gray font-medium text-lg">Subtotal:</span>
             <span className="text-charcoal font-black text-2xl">${(totalPrice || 0).toFixed(2)}</span>
