@@ -86,7 +86,6 @@ export default function Footer() {
                 { href: '/products?category=eyeglasses', label: 'Eyeglasses' },
                 { href: '/products?category=sunglasses', label: 'Sunglasses' },
                 { href: '/products?category=contact-lenses', label: 'Contact Lenses' },
-                { href: '/virtual-try-on', label: 'Virtual Try-On' },
                 { href: '/products?category=blue-light', label: 'Blue Light Glasses' },
               ].map((link) => (
                 <li key={link.href}>

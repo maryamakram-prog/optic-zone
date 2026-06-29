@@ -45,7 +45,7 @@ export default function AdminOrdersPage() {
             />
           </div>
           <div className="flex gap-2 flex-wrap w-full sm:w-auto">
-            {['', 'pending', 'processing', 'completed', 'cancelled'].map((status) => (
+            {['', 'pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'].map((status) => (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
@@ -97,8 +97,10 @@ export default function AdminOrdersPage() {
                     <td className="py-4 font-extrabold text-charcoal">${order.total.toFixed(2)}</td>
                     <td className="py-4">
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider inline-block ${
-                        order.status === 'completed' ? 'bg-green-50 text-green-700 border border-green-200' :
+                        order.status === 'delivered' ? 'bg-green-50 text-green-700 border border-green-200' :
                         order.status === 'pending' ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' :
+                        order.status === 'confirmed' ? 'bg-teal-50 text-teal-700 border border-teal-200' :
+                        order.status === 'shipped' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' :
                         order.status === 'cancelled' ? 'bg-red-50 text-red-700 border border-red-200' :
                         'bg-blue-50 text-blue-700 border border-blue-200'
                       }`}>
@@ -112,8 +114,10 @@ export default function AdminOrdersPage() {
                         onChange={(e) => updateOrderStatus(order.id, e.target.value)}
                       >
                         <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
                         <option value="processing">Processing</option>
-                        <option value="completed">Completed</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
                         <option value="cancelled">Cancelled</option>
                       </select>
                     </td>

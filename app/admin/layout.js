@@ -9,6 +9,7 @@ const MENU_ITEMS = [
   { label: '📊 Dashboard', path: '/admin' },
   { label: '📦 Products', path: '/admin/products' },
   { label: '👁️ Lenses', path: '/admin/lenses' },
+  { label: '🏷️ Lens Discounts', path: '/admin/lens-discounts' },
   { label: '🛒 Orders', path: '/admin/orders' },
   { label: '👥 Users', path: '/admin/customers' },
   { label: '🏷️ Coupons', path: '/admin/coupons' },

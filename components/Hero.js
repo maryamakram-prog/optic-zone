@@ -10,15 +10,16 @@ const HERO_SLIDES = [
     sub: 'Premium eyeglasses, sunglasses & contact lenses. Thousands of designer frames from $19.',
     cta: 'Shop Eyeglasses',
     ctaHref: '/products?category=eyeglasses',
-    secondary: 'Try Virtually',
-    secondaryHref: '/virtual-try-on',
+    secondary: 'View Collection',
+    secondaryHref: '/products?category=eyeglasses',
     image: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=900&q=80',
+    video: 'https://videos.pexels.com/video-files/5309381/5309381-uhd_2560_1440_25fps.mp4',
     bg: 'from-[#e8f1f9] to-[#f0f7ff]',
   },
   {
     badge: '☀️ Summer Collection',
     headline: 'Premium\nSunglasses',
-    sub: 'Block UV rays in style. Polarized lenses, designer frames, and virtual try-on available.',
+    sub: 'Block UV rays in style. Polarized lenses and designer frames available.',
     cta: 'Shop Sunglasses',
     ctaHref: '/products?category=sunglasses',
     secondary: 'View Collection',
@@ -68,7 +69,7 @@ export default function Hero() {
       {/* Hero Section */}
       <section className={`relative overflow-hidden bg-gradient-to-br ${current.bg} transition-all duration-700`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[520px] py-12 lg:py-16">
+          <div className="grid md:grid-cols-2 gap-8 items-center min-h-[520px] py-12 lg:py-16">
             
             {/* Left — Text */}
             <div className={`transition-all duration-300 ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
@@ -127,29 +128,32 @@ export default function Hero() {
             </div>
 
             {/* Right — Image */}
-            <div className="relative hidden lg:block">
+            <div className="relative hidden md:block">
               <div className={`relative transition-all duration-300 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-                {/* Main image */}
-                <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-white/30 border border-white/60">
-                  <img
-                    src={current.image}
-                    alt="Premium eyewear collection"
-                    className="w-full h-[420px] object-cover"
-                    onError={e => { e.target.src = 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=900&q=80'; }}
-                  />
+                {/* Main image / video */}
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-white/30 border border-white/60 h-[420px]">
+                  {current.video ? (
+                    <video
+                      src={current.video}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-[420px] object-cover"
+                      poster={current.image}
+                    />
+                  ) : (
+                    <img
+                      src={current.image}
+                      alt="Premium eyewear collection"
+                      className="w-full h-[420px] object-cover"
+                      onError={e => { e.target.src = 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=900&q=80'; }}
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
                 </div>
 
-                {/* Floating badge — Try-On */}
-                <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl p-4 shadow-xl border border-border flex items-center gap-3 animate-float">
-                  <div className="w-10 h-10 rounded-xl bg-ebd-blue-light flex items-center justify-center">
-                    <span className="text-xl">🕶️</span>
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-charcoal">Virtual Try-On</div>
-                    <div className="text-xs text-text-muted">See how they look on you</div>
-                  </div>
-                </div>
+
 
                 {/* Floating badge — Offer */}
                 <div className="absolute -top-4 -right-4 bg-accent rounded-2xl p-4 shadow-xl text-white" style={{ animationDelay: '2s' }}>

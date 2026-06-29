@@ -42,7 +42,6 @@ const NAV_ITEMS = [
       { label: 'Toric Lenses', href: '/products?category=contact-lenses&type=toric' },
     ],
   },
-  { label: 'Virtual Try-On', href: '/virtual-try-on' },
   { label: 'Sale', href: '/products?isSale=true', badge: 'HOT' },
 ];
 

@@ -73,6 +73,39 @@ export default function OrderConfirmationPage() {
             </div>
           </div>
 
+          {/* Items List */}
+          <div className="text-left mb-10 border border-mid-gray/30 rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-light-gray/50 px-6 py-4 border-b border-mid-gray/30">
+              <h3 className="font-bold text-charcoal">Purchased Items ({recentOrder.order_items?.length || 0})</h3>
+            </div>
+            <div className="divide-y divide-mid-gray/20">
+              {recentOrder.order_items?.map((item, idx) => {
+                // Ensure image works for local fallback or Supabase 'products' join
+                const imageUrl = item.products?.image_url || item.image_url || '/placeholder.png';
+                return (
+                  <div key={idx} className="p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center bg-white">
+                    <div className="w-20 h-20 shrink-0 bg-light-gray rounded-xl overflow-hidden border border-mid-gray/20">
+                      <img src={imageUrl} alt={item.products?.name || item.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-charcoal">{item.products?.name || item.name || 'Premium Frame'}</h4>
+                      <p className="text-sm text-dark-gray mt-1">Brand: {item.products?.brand || item.brand || 'Optic Zone'}</p>
+                      {item.prescription && (
+                        <p className="text-xs text-accent mt-1 font-semibold flex items-center gap-1">
+                          👓 Prescription Included ({item.prescription.type})
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <div className="font-bold text-charcoal text-lg">${item.price_at_time?.toFixed(2)}</div>
+                      <div className="text-sm text-dark-gray mt-1">Qty: {item.quantity}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="bg-light-gray/50 rounded-2xl p-6 text-left space-y-4 mb-10 border border-mid-gray/30">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-mid-gray/30 gap-2">
               <span className="text-dark-gray text-sm">Order Number:</span>
@@ -87,12 +120,16 @@ export default function OrderConfirmationPage() {
               <strong className="text-charcoal">{recentOrder.customer.name}</strong>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-mid-gray/30 gap-2">
+              <span className="text-dark-gray text-sm">Delivery Address:</span>
+              <strong className="text-charcoal text-right max-w-xs">{recentOrder.shipping_address || recentOrder.customer.address}</strong>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-mid-gray/30 gap-2">
               <span className="text-dark-gray text-sm">Email:</span>
               <strong className="text-charcoal">{recentOrder.customer.email}</strong>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span className="text-dark-gray text-sm">Total Amount:</span>
-              <strong className="text-charcoal text-xl">${recentOrder.total.toFixed(2)}</strong>
+              <strong className="text-charcoal text-xl">${recentOrder.total?.toFixed(2) || '0.00'}</strong>
             </div>
           </div>
 

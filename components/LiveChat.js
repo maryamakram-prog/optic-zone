@@ -59,7 +59,7 @@ export default function LiveChat() {
       } else if (lower.includes('return') || lower.includes('refund') || lower.includes('exchange')) {
         replyText = 'We offer a 14-day hassle-free return and exchange policy! If you are not satisfied with your frames, you can return them in original condition for a full refund.';
       } else if (lower.includes('try') || lower.includes('virtual') || lower.includes('camera')) {
-        replyText = 'You can virtually try on any frame! Go to our "Virtual Try-On" page from the menu, allow camera access or upload a photo, and preview how they fit.';
+        replyText = 'We do not offer a virtual try-on feature at this time, but we have a great return policy if the frames don\'t fit you perfectly!';
       } else if (lower.includes('prescription') || lower.includes('lens') || lower.includes('lenses')) {
         replyText = 'Yes! We support single vision, progressive, and reading prescriptions. You can upload your prescription details during checkout or email them to support@opticzone.com.';
       } else if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {

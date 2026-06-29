@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
+import { calculateDiscountedPrice } from '@/lib/discounts';
 
 const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 100 100" fill="%23f3f4f6"><rect width="100" height="100" fill="%23f3f4f6"/><path d="M20 40 Q35 25 50 40 Q65 25 80 40" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="35" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="65" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><path d="M42.5 55 L57.5 55" stroke="%239ca3af" stroke-width="3" fill="none"/></svg>';
 
@@ -30,10 +31,13 @@ export default function ProductCard({ product }) {
     'Sale': 'bg-red-500 text-white',
   };
 
+  const finalPrice = calculateDiscountedPrice(product.price, product.lens_discount);
+  const isDiscounted = finalPrice < product.price;
+
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem(product);
+    addItem({ ...product, imageUrl: product.imageUrl || product.image, price: finalPrice, originalPrice: product.price });
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2000);
   };
@@ -61,9 +65,16 @@ export default function ProductCard({ product }) {
           }}
           className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-108 ${imgLoading ? 'opacity-0' : 'opacity-100'}`}
         />
-        {product.badge && (
+        {product.badge && !isDiscounted && (
           <span className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${badgeColors[product.badge]}`}>
             {product.badge}
+          </span>
+        )}
+        {isDiscounted && (
+          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-purple-600 text-white shadow-sm">
+            {product.lens_discount.discount_type === 'percentage' 
+              ? `${product.lens_discount.discount_value}% OFF` 
+              : `Rs. ${product.lens_discount.discount_value} OFF`}
           </span>
         )}
         {/* Quick actions */}
@@ -101,10 +112,14 @@ export default function ProductCard({ product }) {
 
         {/* Price */}
         <div className="flex items-center gap-2 mt-3">
-          <span className="text-lg font-bold text-charcoal">${product.price}</span>
-          {product.originalPrice && (
-            <span className="text-sm text-dark-gray/50 line-through">${product.originalPrice}</span>
-          )}
+          <span className="text-lg font-bold text-charcoal">
+            {isDiscounted ? `Rs. ${finalPrice.toFixed(2)}` : `Rs. ${product.price.toFixed(2)}`}
+          </span>
+          {isDiscounted ? (
+            <span className="text-sm text-dark-gray/50 line-through">Rs. {product.price.toFixed(2)}</span>
+          ) : product.originalPrice && product.originalPrice > product.price ? (
+            <span className="text-sm text-dark-gray/50 line-through">Rs. {product.originalPrice.toFixed(2)}</span>
+          ) : null}
         </div>
 
         {/* Add to Cart */}

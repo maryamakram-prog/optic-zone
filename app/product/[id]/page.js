@@ -1,10 +1,12 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useStore } from '@/context/StoreContext';
 import { useCart } from '@/context/CartContext';
+import { useStore } from '@/context/StoreContext';
 import Link from 'next/link';
 import PrescriptionForm from '@/components/PrescriptionForm';
+import UsageModal from '@/components/UsageModal';
+import { calculateDiscountedPrice } from '@/lib/discounts';
 
 const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 100 100" fill="%23f3f4f6"><rect width="100" height="100" fill="%23f3f4f6"/><path d="M20 40 Q35 25 50 40 Q65 25 80 40" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="35" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="65" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><path d="M42.5 55 L57.5 55" stroke="%239ca3af" stroke-width="3" fill="none"/></svg>';
 
@@ -59,6 +61,8 @@ export default function ProductDetailPage() {
   const [added, setAdded] = useState(false);
   const [prescription, setPrescription] = useState(null);
   const [isRxModalOpen, setIsRxModalOpen] = useState(false);
+  const [isUsageModalOpen, setIsUsageModalOpen] = useState(false);
+  const [insuranceUsed, setInsuranceUsed] = useState(false);
 
   const product = products?.find(p => String(p.id) === String(params.id));
 
@@ -93,8 +97,36 @@ export default function ProductDetailPage() {
 
   const productReviews = reviews?.filter(r => String(r.productId || r.product_id) === String(product.id)) || [];
   const lensPackage = LENS_PACKAGES.find(l => l.id === selectedLens);
-  const totalPrice = product.price + (lensPackage?.price || 0);
-  const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+  
+  const finalBasePrice = calculateDiscountedPrice(product.price, product.lens_discount);
+  const isDiscounted = finalBasePrice < product.price;
+  const totalPrice = finalBasePrice + (lensPackage?.price || 0);
+  const oldTotalPrice = product.price + (lensPackage?.price || 0);
+
+  const discount = product.originalPrice && !isDiscounted ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+
+  const handleUsageSelect = (usageType) => {
+    setIsUsageModalOpen(false);
+    if (usageType === 'non_prescription') {
+      setSelectedLens('standard');
+      setPrescription(null);
+      // Wait a tiny bit for state to update if needed, but synchronous works for cart context
+      const itemPrice = finalBasePrice; 
+      addItem({ 
+        ...product, 
+        imageUrl: product.imageUrl || product.image, 
+        price: itemPrice, 
+        originalPrice: product.price, 
+        lensPackage: 'standard', 
+        prescription: null 
+      });
+      router.push('/cart');
+    } else {
+      setSelectedLens('prescription');
+      setIsRxModalOpen(true);
+    }
+  };
+  
   const inWishlist = wishlist?.includes(product.id);
   const related = products?.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4) || [];
 
@@ -103,7 +135,7 @@ export default function ProductDetailPage() {
       setIsRxModalOpen(true);
       return;
     }
-    addItem({ ...product, price: totalPrice, lensPackage: selectedLens, prescription });
+    addItem({ ...product, imageUrl: product.imageUrl || product.image, price: totalPrice, originalPrice: product.price, lensPackage: selectedLens, prescription });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -113,7 +145,7 @@ export default function ProductDetailPage() {
       setIsRxModalOpen(true);
       return;
     }
-    addItem({ ...product, price: totalPrice, lensPackage: selectedLens, prescription });
+    addItem({ ...product, imageUrl: product.imageUrl || product.image, price: totalPrice, originalPrice: product.price, lensPackage: selectedLens, prescription });
     router.push('/checkout');
   };
 
@@ -165,7 +197,14 @@ export default function ProductDetailPage() {
               
               <div className="absolute top-4 left-4 flex flex-col gap-2">
                 {product.isBestSeller && <span className="bg-accent text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg">Best Seller</span>}
-                {discount > 0 && <span className="bg-red-500 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg">-{discount}% Off</span>}
+                {isDiscounted && (
+                  <span className="bg-purple-600 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg">
+                    {product.lens_discount.discount_type === 'percentage' 
+                      ? `${product.lens_discount.discount_value}% OFF` 
+                      : `Rs. ${product.lens_discount.discount_value} OFF`}
+                  </span>
+                )}
+                {discount > 0 && !isDiscounted && <span className="bg-red-500 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg">-{discount}% Off</span>}
                 {product.isNew && <span className="bg-green-500 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg">New</span>}
               </div>
             </div>
@@ -200,96 +239,81 @@ export default function ProductDetailPage() {
               </button>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl font-bold font-heading text-charcoal leading-tight mb-4">{product.name}</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold font-heading text-charcoal leading-tight mb-2">{product.name}</h1>
+            <p className="text-dark-gray text-lg mb-4">{product.frameShape} {product.frameColor} Glasses</p>
 
-            <div className="flex items-center gap-3 mb-6">
+            {/* Stars & Reviews */}
+            <div className="flex items-center gap-2 mb-4">
               <Stars rating={product.rating || 5} />
-              <span className="font-bold text-charcoal">{product.rating || 5}</span>
-              <span className="text-dark-gray text-sm underline cursor-pointer">({product.reviews || 0} reviews)</span>
+              <span className="text-charcoal font-bold underline cursor-pointer underline-offset-4">{product.reviews || 0} Reviews</span>
             </div>
 
-            <div className="flex items-end gap-3 mb-8">
-              <span className="text-4xl font-black text-charcoal">${totalPrice}</span>
-              {product.originalPrice > product.price && <span className="text-xl text-dark-gray/60 line-through mb-1">${product.originalPrice}</span>}
+            {/* Promo Banner */}
+            <div className="bg-[#E5F5E9] text-green-800 font-bold px-3 py-1.5 rounded text-sm inline-flex items-center gap-4 mb-6">
+              <span>65% Off Lenses with Frames</span>
+              <span className="text-green-900 border-l border-green-300 pl-4">Code: SMARTLENS</span>
             </div>
 
-            <p className="text-dark-gray leading-relaxed mb-8">{product.description}</p>
-
-            {/* Specs */}
-            <div className="grid grid-cols-2 gap-y-4 gap-x-8 py-6 border-y border-mid-gray/40 mb-8">
-              {[
-                ['Frame Color', product.frameColor],
-                ['Lens Color', product.lensColor],
-                ['Frame Shape', product.frameShape],
-                ['Material', product.frameMaterial],
-                ['Gender', product.gender],
-              ].map(([k, v]) => v && (
-                <div key={k} className="flex flex-col">
-                  <span className="text-xs text-dark-gray/70 font-semibold uppercase tracking-wider">{k}</span>
-                  <span className="text-charcoal font-medium capitalize mt-1">{v}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Lens package */}
-            <div className="mb-8">
-              <h3 className="font-bold text-charcoal mb-4">Select Lens Package</h3>
-              <div className="space-y-3">
-                {LENS_PACKAGES.map(pkg => (
+            {/* Colors */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex gap-2">
+                {(product.colors?.length > 0 ? product.colors : ['#1F2937', '#9CA3AF', '#D1D5DB']).map((c, i) => (
                   <button 
-                    key={pkg.id} 
-                    className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center justify-between ${selectedLens === pkg.id ? "border-accent bg-accent/5" : "border-mid-gray/30 hover:border-accent/50 bg-white"}`} 
-                    onClick={() => setSelectedLens(pkg.id)}
-                  >
-                    <div>
-                      <div className={`font-bold ${selectedLens === pkg.id ? "text-accent" : "text-charcoal"}`}>{pkg.label}</div>
-                      <div className="text-sm text-dark-gray mt-1">{pkg.desc}</div>
-                    </div>
-                    <span className="font-semibold text-charcoal">{pkg.price === 0 ? 'Included' : `+$${pkg.price}`}</span>
-                  </button>
+                    key={i} 
+                    className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === i ? "border-[#CD9950] ring-2 ring-white ring-inset shadow-md" : "border-transparent"}`} 
+                    onClick={() => setSelectedColor(i)} 
+                    style={{ background: c }} 
+                    aria-label={`Color ${i+1}`}
+                  />
                 ))}
               </div>
-              <div className="flex items-center gap-6 mt-4 text-sm font-semibold text-accent">
-                <Link href="/frame-size-guide" className="flex items-center gap-2 hover:text-accent-dark">📏 Frame Size Guide</Link>
-                <Link href="/virtual-try-on" className="flex items-center gap-2 hover:text-accent-dark">📱 Virtual Try-On</Link>
+              <span className="text-dark-gray text-sm">{product.frameColor || 'Shiny Black'}</span>
+            </div>
+
+            {/* Tags */}
+            <div className="flex gap-2 mb-4">
+              <span className="bg-[#FFF4E6] text-[#CD9950] font-semibold text-xs px-2 py-1 rounded">Free Shipping</span>
+              <span className="bg-[#E6F4FB] text-[#0EA5E9] font-semibold text-xs px-2 py-1 rounded">Premium Case</span>
+            </div>
+
+            {/* Price */}
+            <div className="flex items-end gap-3 mb-2">
+              <span className="text-3xl font-black text-charcoal">${finalBasePrice.toFixed(2)}</span>
+              <span className="text-dark-gray mb-1">price includes charging case</span>
+            </div>
+
+            {/* Installments */}
+            <div className="text-xs text-dark-gray flex flex-wrap items-center gap-1.5 mb-8">
+              4 interest-free payments of ${(finalBasePrice / 4).toFixed(2)} 
+              <span className="bg-[#B2FCE4] text-black font-bold px-1.5 py-0.5 rounded text-[10px] ml-1">Afterpay</span>
+              <span className="bg-[#FFA8C5] text-black font-bold px-1.5 py-0.5 rounded text-[10px]">Klarna</span>
+              <span className="w-4 h-4 rounded-full border border-dark-gray flex items-center justify-center opacity-70">i</span>
+            </div>
+
+            {/* Size */}
+            <div className="flex items-center justify-between py-4 border-t border-mid-gray/40">
+              <div className="text-charcoal font-medium">Size: <span className="font-bold">Medium (50-22-150)</span></div>
+              <Link href="/frame-size-guide" className="text-dark-gray underline text-sm hover:text-charcoal">Size Guide</Link>
+            </div>
+
+            {/* Insurance Toggle */}
+            <div className="flex items-center justify-between py-4 border-y border-mid-gray/40 mb-6">
+              <span className="text-charcoal font-medium">Use insurance benefits</span>
+              <div 
+                onClick={() => setInsuranceUsed(!insuranceUsed)}
+                className={`w-12 h-6 rounded-full relative cursor-pointer border transition-colors ${insuranceUsed ? 'bg-[#CD9950] border-[#CD9950]' : 'bg-light-gray border-mid-gray/50'}`}
+              >
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-[1px] shadow-sm transition-transform ${insuranceUsed ? 'translate-x-[22px]' : 'translate-x-[1px]'}`}></div>
               </div>
             </div>
 
-            {selectedLens === 'prescription' && (
-              <div className="mb-6 p-5 bg-blue-50/50 border border-blue-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                  <h4 className="font-bold text-charcoal text-sm flex items-center gap-1.5">
-                    {prescription ? '✓ Prescription Attached' : '👁️ Prescription Required'}
-                  </h4>
-                  <p className="text-xs text-dark-gray mt-1 leading-relaxed">
-                    {prescription 
-                      ? `Rx Details: ${prescription.type === 'manual' ? 'Manual SPH OD ' + prescription.od_sph + ' / OS ' + prescription.os_sph : prescription.type === 'upload' ? 'Uploaded Document' : 'Upload Later'}`
-                      : 'Please enter your prescription details or upload/skip.'}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsRxModalOpen(true)}
-                  className="px-5 py-2.5 bg-accent hover:bg-accent-dark text-white text-xs font-bold rounded-xl transition-all shadow-sm cursor-pointer whitespace-nowrap"
-                >
-                  {prescription ? 'Edit Prescription' : 'Enter Prescription'}
-                </button>
-              </div>
-            )}
-
             {/* CTA */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="mb-10">
               <button 
-                className={`flex-1 py-4 rounded-xl font-bold text-lg transition-all ${added ? "bg-green-500 text-white shadow-lg shadow-green-500/25" : "bg-white text-charcoal border-2 border-charcoal hover:bg-light-gray"}`} 
-                onClick={handleAddToCart}
+                className="w-full py-4 bg-[#CD9950] hover:bg-[#b07b38] text-white font-bold text-lg rounded-md transition-colors"
+                onClick={() => setIsUsageModalOpen(true)}
               >
-                {added ? '✓ Added to Cart!' : 'Add to Cart'}
-              </button>
-              <button 
-                className="flex-1 py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-accent to-accent-dark text-white shadow-lg shadow-accent/25 hover:shadow-xl hover:-translate-y-0.5 transition-all" 
-                onClick={handleBuyNow}
-              >
-                Buy Now
+                Select Lenses
               </button>
             </div>
 
@@ -395,8 +419,29 @@ export default function ProductDetailPage() {
       <PrescriptionForm 
         isOpen={isRxModalOpen} 
         onClose={() => setIsRxModalOpen(false)} 
-        onSave={(rx) => setPrescription(rx)} 
+        onSave={(rx) => {
+          setPrescription(rx);
+          setIsRxModalOpen(false);
+          const itemPrice = finalBasePrice + 49; // Rx lens price
+          addItem({ 
+            ...product, 
+            imageUrl: product.imageUrl || product.image, 
+            price: itemPrice, 
+            originalPrice: product.price, 
+            lensPackage: 'prescription', 
+            prescription: rx 
+          });
+          router.push('/cart');
+        }} 
         initialPrescription={prescription} 
+      />
+
+      <UsageModal 
+        isOpen={isUsageModalOpen}
+        onClose={() => setIsUsageModalOpen(false)}
+        onSelectUsage={handleUsageSelect}
+        product={product}
+        totalPrice={finalBasePrice}
       />
     </div>
   );

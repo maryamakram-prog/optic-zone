@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useStore } from '@/context/StoreContext';
+import Link from 'next/link';
 
 const LENS_TYPES = ['contact-daily', 'contact-monthly', 'contact-biweekly', 'contact-yearly', 'prescription-single', 'prescription-bifocal', 'prescription-progressive', 'prescription-blue-light'];
 
@@ -120,6 +122,7 @@ const STATIC_LENSES = [
 ];
 
 export default function AdminLensesPage() {
+  const { lensDiscounts } = useStore();
   const [lenses, setLenses] = useState(STATIC_LENSES);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -196,6 +199,7 @@ export default function AdminLensesPage() {
       price: parseFloat(formData.price) || 0,
       original_price: formData.original_price ? parseFloat(formData.original_price) : null,
       quantity: parseInt(formData.quantity) || 0,
+      lens_discount_id: formData.lens_discount_id || null,
     };
 
     if (useSupabase) {
@@ -255,16 +259,25 @@ export default function AdminLensesPage() {
           <h1 className="text-3xl font-black font-heading text-charcoal tracking-tight">Lens Management</h1>
           <p className="text-sm text-dark-gray mt-1">Manage contact lenses & prescription lens catalog</p>
         </div>
-        <button
-          className="px-5 py-2.5 bg-charcoal text-white rounded-xl text-sm font-semibold hover:bg-black transition-all hover:-translate-y-0.5 shadow-md shadow-black/10 cursor-pointer"
-          onClick={() => {
-            setShowForm(!showForm);
-            setEditingId(null);
-            setFormData(EMPTY_FORM);
-          }}
-        >
-          {showForm ? '✕ Cancel' : '+ Add New Lens'}
-        </button>
+        <div className="flex gap-3">
+          <Link
+            href="/admin/lens-price-list"
+            target="_blank"
+            className="px-5 py-2.5 bg-white border border-mid-gray text-charcoal rounded-xl text-sm font-semibold hover:bg-light-gray transition-all shadow-sm cursor-pointer"
+          >
+            🖨️ Print Price List
+          </Link>
+          <button
+            className="px-5 py-2.5 bg-charcoal text-white rounded-xl text-sm font-semibold hover:bg-black transition-all hover:-translate-y-0.5 shadow-md shadow-black/10 cursor-pointer"
+            onClick={() => {
+              setShowForm(!showForm);
+              setEditingId(null);
+              setFormData(EMPTY_FORM);
+            }}
+          >
+            {showForm ? '✕ Cancel' : '+ Add New Lens'}
+          </button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -357,6 +370,14 @@ export default function AdminLensesPage() {
                 </FormField>
                 <FormField label="Pack Size">
                   <input className="input" value={formData.pack_size} onChange={e => f('pack_size', e.target.value)} placeholder="e.g. 30 lenses, 6 lenses" />
+                </FormField>
+                <FormField label="Assign Discount Campaign">
+                  <select className="input" value={formData.lens_discount_id || ''} onChange={e => f('lens_discount_id', e.target.value || null)}>
+                    <option value="">No Active Discount</option>
+                    {lensDiscounts?.filter(d => d.is_active).map(d => (
+                      <option key={d.id} value={d.id}>{d.name} ({d.discount_type === 'percentage' ? `${d.discount_value}%` : `Rs. ${d.discount_value}`})</option>
+                    ))}
+                  </select>
                 </FormField>
               </div>
             </div>
@@ -565,6 +586,7 @@ export default function AdminLensesPage() {
                         {lens.is_featured && <span className="px-2 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold rounded-full">⭐ Featured</span>}
                         {lens.uv_protection && <span className="px-2 py-0.5 bg-orange-50 border border-orange-200 text-orange-700 text-[10px] font-bold rounded-full">☀️ UV</span>}
                         {lens.color_available && <span className="px-2 py-0.5 bg-pink-50 border border-pink-200 text-pink-700 text-[10px] font-bold rounded-full">🎨 Colors</span>}
+                        {lens.lens_discount_id && <span className="px-2 py-0.5 bg-purple-50 border border-purple-200 text-purple-700 text-[10px] font-bold rounded-full">Has Discount</span>}
                       </div>
                     </td>
                     <td className="py-4 text-right">
@@ -694,53 +716,6 @@ export default function AdminLensesPage() {
         </p>
       </div>
 
-      {/* SQL Schema Hint */}
-      <div className="bg-slate-900 text-slate-200 p-6 rounded-3xl shadow-sm border border-slate-700 space-y-3">
-        <div className="flex items-center gap-2">
-          <span className="text-lg">🗄️</span>
-          <h3 className="font-bold text-sm text-white">Database Setup: Lenses Table</h3>
-          <span className="px-2 py-0.5 bg-blue-600/30 text-blue-300 text-[10px] font-bold rounded-full border border-blue-500/30 ml-auto">Optional</span>
-        </div>
-        <p className="text-xs text-slate-400 font-medium">
-          Run this SQL in your Supabase SQL Editor to persist lenses in the database:
-        </p>
-        <pre className="text-[11px] text-emerald-300 bg-black/30 p-4 rounded-xl overflow-x-auto leading-relaxed border border-slate-700">
-{`CREATE TABLE IF NOT EXISTS public.lenses (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  brand TEXT NOT NULL,
-  lens_type TEXT NOT NULL,
-  power_range TEXT,
-  base_curve TEXT,
-  diameter TEXT,
-  water_content TEXT,
-  material TEXT,
-  replacement_schedule TEXT,
-  pack_size TEXT,
-  price DECIMAL(10, 2) NOT NULL,
-  original_price DECIMAL(10, 2),
-  description TEXT,
-  image_url TEXT,
-  in_stock BOOLEAN DEFAULT TRUE,
-  quantity INTEGER DEFAULT 0,
-  is_featured BOOLEAN DEFAULT FALSE,
-  color_available BOOLEAN DEFAULT FALSE,
-  uv_protection BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
-);
-
--- Enable Row Level Security
-ALTER TABLE public.lenses ENABLE ROW LEVEL SECURITY;
-
--- Public can read lenses
-CREATE POLICY "lenses_public_read"
-ON public.lenses FOR SELECT USING (true);
-
--- Only admins can modify lenses (handled at application level)
-CREATE POLICY "lenses_admin_all"
-ON public.lenses USING (true) WITH CHECK (true);`}
-        </pre>
-      </div>
     </div>
   );
 }

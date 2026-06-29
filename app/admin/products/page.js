@@ -12,7 +12,7 @@ const EMPTY_FORM = {
 };
 
 export default function AdminProductsPage() {
-  const { products, addProduct, updateProduct, deleteProduct } = useStore();
+  const { products, lensDiscounts, addProduct, updateProduct, deleteProduct } = useStore();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState(EMPTY_FORM);
@@ -225,6 +225,14 @@ export default function AdminProductsPage() {
               <FormField label="Frame Color">
                 <input className="input" value={formData.frameColor} onChange={e => f('frameColor', e.target.value)} placeholder="e.g. Matte Black" />
               </FormField>
+              <FormField label="Assign Discount Campaign">
+                <select className="input" value={formData.lens_discount_id || ''} onChange={e => f('lens_discount_id', e.target.value || null)}>
+                  <option value="">No Active Discount</option>
+                  {lensDiscounts?.filter(d => d.is_active).map(d => (
+                    <option key={d.id} value={d.id}>{d.name} ({d.discount_type === 'percentage' ? `${d.discount_value}%` : `Rs. ${d.discount_value}`})</option>
+                  ))}
+                </select>
+              </FormField>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -337,7 +345,7 @@ export default function AdminProductsPage() {
             <tbody className="divide-y divide-mid-gray/30">
               {filteredProducts.map(p => (
                 <tr key={p.id} className="hover:bg-soft-white/50 transition-colors">
-                  <td className="py-4 font-semibold text-dark-gray">{p.id}</td>
+                  <td className="py-4 font-semibold text-dark-gray max-w-[120px] truncate" title={p.id}>{p.id}</td>
                   <td className="py-4">
                     {p.imageUrl ? (
                       <img src={p.imageUrl} alt={p.name} className="w-12 h-9 object-cover rounded-lg border border-mid-gray/50 shadow-sm" onError={e => { e.target.style.display = 'none'; }} />
@@ -361,6 +369,7 @@ export default function AdminProductsPage() {
                       {p.isBestSeller && <span className="px-2 py-0.5 bg-yellow-50 border border-yellow-200 text-yellow-700 text-[10px] font-bold rounded-full">Best Seller</span>}
                       {p.isSale && <span className="px-2 py-0.5 bg-red-50 border border-red-200 text-red-700 text-[10px] font-bold rounded-full">Sale</span>}
                       {p.isNew && <span className="px-2 py-0.5 bg-green-50 border border-green-200 text-green-700 text-[10px] font-bold rounded-full">New</span>}
+                      {p.lens_discount_id && <span className="px-2 py-0.5 bg-purple-50 border border-purple-200 text-purple-700 text-[10px] font-bold rounded-full">Has Discount</span>}
                     </div>
                   </td>
                   <td className="py-4 text-right">

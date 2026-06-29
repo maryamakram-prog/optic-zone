@@ -205,7 +205,7 @@ export const reviews = [
     name: 'Sarah Johnson',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80',
     rating: 5,
-    text: 'Absolutely love my new frames! The quality is outstanding and they arrived so quickly. The virtual try-on feature helped me choose the perfect pair.',
+    text: 'Absolutely love my new frames! The quality is outstanding and they arrived so quickly.',
     date: '2 weeks ago',
   },
   {
@@ -231,7 +231,6 @@ export const navLinks = [
   { href: '/products?category=eyeglasses', label: 'Shop Glasses' },
   { href: '/products?category=sunglasses', label: 'Sunglasses' },
   { href: '/products?category=contact-lenses', label: 'Contact Lenses' },
-  { href: '/virtual-try-on', label: 'Virtual Try-On' },
   { href: '/about', label: 'About Us' },
   { href: '/contact', label: 'Contact' },
 ];

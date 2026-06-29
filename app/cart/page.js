@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useStore } from '@/context/StoreContext';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import PrescriptionForm from '@/components/PrescriptionForm';
 
 function GlassesIconMini({ color = '#a78bfa' }) {
@@ -16,6 +17,7 @@ function GlassesIconMini({ color = '#a78bfa' }) {
 }
 
 export default function StandaloneCartPage() {
+  const router = useRouter();
   const { items, removeItem, updateQty, updatePrescription, subtotal, discount, shipping, tax, total, coupon, applyCoupon, removeCoupon } = useCart();
   const { coupons } = useStore();
   const [couponInput, setCouponInput] = useState('');
@@ -57,9 +59,9 @@ export default function StandaloneCartPage() {
             <Link href="/products?category=eyeglasses" className="px-8 py-3.5 bg-accent text-white font-semibold rounded-xl hover:bg-accent-dark hover:-translate-y-0.5 transition-all">
               Shop Eyeglasses
             </Link>
-            <Link href="/products?category=sunglasses" className="px-8 py-3.5 bg-white text-charcoal border border-border font-semibold rounded-xl hover:bg-light-gray transition-all">
-              Shop Sunglasses
-            </Link>
+            <button onClick={() => router.back()} className="px-8 py-3.5 bg-white text-charcoal border border-border font-semibold rounded-xl hover:bg-light-gray transition-all cursor-pointer">
+              Continue Shopping
+            </button>
           </div>
         </div>
       </div>
@@ -105,6 +107,13 @@ export default function StandaloneCartPage() {
                       <span className="text-sm text-dark-gray mt-1 capitalize">Category: {item.category}</span>
                       {item.lensPackage && (
                         <span className="text-xs text-dark-gray/70 mt-1">Lens: {item.lensPackage}</span>
+                      )}
+                      {item.lens_discount && item.originalPrice && item.originalPrice > item.price && (
+                        <span className="text-[10px] bg-purple-600 text-white px-2 py-0.5 rounded uppercase font-bold w-fit mt-1 block shadow-sm">
+                          {item.lens_discount.discount_type === 'percentage' 
+                            ? `${item.lens_discount.discount_value}% OFF` 
+                            : `Rs. ${item.lens_discount.discount_value} OFF`}
+                        </span>
                       )}
 
                       {/* Prescription indicator */}
@@ -159,7 +168,10 @@ export default function StandaloneCartPage() {
                   </div>
 
                   <div className="col-span-2 text-center font-medium text-dark-gray hidden sm:block">
-                    ${item.price.toFixed(2)}
+                    Rs. {item.price.toFixed(2)}
+                    {item.originalPrice && item.originalPrice > item.price && (
+                      <div className="text-xs text-dark-gray/50 line-through">Rs. {item.originalPrice.toFixed(2)}</div>
+                    )}
                   </div>
 
                   <div className="col-span-2 flex flex-col items-center justify-center w-full sm:w-auto">
@@ -173,16 +185,16 @@ export default function StandaloneCartPage() {
 
                   <div className="col-span-2 text-right font-bold text-charcoal text-lg w-full sm:w-auto flex justify-between sm:block">
                     <span className="sm:hidden text-dark-gray font-normal text-base">Total:</span>
-                    ${(item.price * item.qty).toFixed(2)}
+                    Rs. {(item.price * item.qty).toFixed(2)}
                   </div>
                 </div>
               ))}
             </div>
 
             <div className="pt-6 border-t border-mid-gray/40">
-              <Link href="/products" className="inline-flex items-center text-sm font-semibold text-accent hover:text-accent-dark transition-colors">
+              <button onClick={() => router.back()} className="inline-flex items-center text-sm font-semibold text-accent hover:text-accent-dark transition-colors cursor-pointer">
                 ← Continue Shopping
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -195,29 +207,29 @@ export default function StandaloneCartPage() {
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between text-dark-gray">
                   <span>Subtotal</span>
-                  <span className="font-medium text-charcoal">${subtotal.toFixed(2)}</span>
+                  <span className="font-medium text-charcoal">Rs. {subtotal.toFixed(2)}</span>
                 </div>
 
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600 font-medium">
                     <span>Discount</span>
-                    <span>-${discount.toFixed(2)}</span>
+                    <span>-Rs. {discount.toFixed(2)}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between text-dark-gray">
                   <span>Shipping</span>
-                  <span className="font-medium text-charcoal">{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                  <span className="font-medium text-charcoal">{shipping === 0 ? 'FREE' : `Rs. ${shipping.toFixed(2)}`}</span>
                 </div>
 
                 <div className="flex justify-between text-dark-gray">
                   <span>Estimated Tax (8%)</span>
-                  <span className="font-medium text-charcoal">${tax.toFixed(2)}</span>
+                  <span className="font-medium text-charcoal">Rs. {tax.toFixed(2)}</span>
                 </div>
 
                 <div className="flex justify-between items-center pt-4 border-t border-mid-gray/40 mt-4">
                   <span className="text-lg font-bold text-charcoal">Total</span>
-                  <strong className="text-3xl font-black text-accent">${total.toFixed(2)}</strong>
+                  <strong className="text-3xl font-black text-accent">Rs. {total.toFixed(2)}</strong>
                 </div>
               </div>
 
@@ -242,7 +254,7 @@ export default function StandaloneCartPage() {
                   </form>
                 ) : (
                   <div className="flex items-center justify-between bg-green-50 px-4 py-3 rounded-xl border border-green-200">
-                    <span className="text-sm text-green-700">🏷️ <strong>{coupon.code}</strong> applied ({coupon.type === 'percent' ? `${coupon.value}%` : `$${coupon.value}`} off)</span>
+                    <span className="text-sm text-green-700">🏷️ <strong>{coupon.code}</strong> applied ({coupon.type === 'percent' ? `${coupon.value}%` : `Rs. ${coupon.value}`} off)</span>
                     <button onClick={handleRemoveCoupon} className="text-xs text-green-600 hover:text-green-800 font-bold underline">Remove</button>
                   </div>
                 )}

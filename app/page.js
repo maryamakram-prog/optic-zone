@@ -4,7 +4,6 @@ import NewArrivals from '@/components/NewArrivals';
 import TrendingProducts from '@/components/TrendingProducts';
 import Categories from '@/components/Categories';
 import FeaturedProducts from '@/components/FeaturedProducts';
-import VirtualTryOn from '@/components/VirtualTryOn';
 import WhyUs from '@/components/WhyUs';
 import TrendingGallery from '@/components/TrendingGallery';
 import Reviews from '@/components/Reviews';
@@ -20,7 +19,6 @@ export default function HomePage() {
       <Categories />
       <TrendingProducts />
       <FeaturedProducts />
-      <VirtualTryOn />
       <WhyUs />
       <TrendingGallery />
       <Reviews />

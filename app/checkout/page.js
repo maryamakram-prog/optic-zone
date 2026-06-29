@@ -125,10 +125,11 @@ export default function CheckoutPage() {
         brand: i.brand,
         price: i.price,
         qty: i.qty,
+        imageUrl: i.imageUrl || i.image,
         prescription: i.prescription || null
       }));
 
-      await addOrder({
+      const newOrderPayload = {
         customer,
         items: orderItems,
         total,
@@ -137,7 +138,20 @@ export default function CheckoutPage() {
         shippingCost: shipping,
         taxAmount: tax,
         subtotalAmount: subtotal
-      });
+      };
+
+      await addOrder(newOrderPayload);
+
+      // Fire and forget email notification
+      fetch('/api/send-order-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderDetails: newOrderPayload,
+          customerEmail: customer.email,
+          customerName: customer.name
+        })
+      }).catch(err => console.error("Email API failed:", err));
 
       clearCart();
       router.push('/order-confirmation');
@@ -308,7 +322,7 @@ export default function CheckoutPage() {
               disabled={isSubmitting}
               className="w-full py-4 bg-gradient-to-r from-accent to-pastel-blue text-white rounded-xl font-bold text-lg hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-75 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Processing Payment...' : `Complete Secure Payment - $${total.toFixed(2)}`}
+              {isSubmitting ? 'Processing Payment...' : `Complete Secure Payment - Rs. ${total.toFixed(2)}`}
             </button>
           </form>
 
@@ -318,12 +332,24 @@ export default function CheckoutPage() {
               <h2 className="text-xl font-bold font-heading text-charcoal mb-6 border-b border-mid-gray/30 pb-4">Order Summary</h2>
               <div className="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2">
                 {items.map(item => (
-                  <div key={item.id} className="flex justify-between items-center text-sm">
-                    <div className="flex flex-col">
+                  <div key={item.cartItemId || item.id} className="flex gap-3 items-center text-sm mb-4 last:mb-0">
+                    <div className="w-12 h-12 bg-light-gray rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {item.imageUrl || item.image ? (
+                        <img src={item.imageUrl || item.image} alt={item.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-xs">👓</span>
+                      )}
+                    </div>
+                    <div className="flex flex-col flex-1">
                       <span className="font-semibold text-charcoal">{item.name} <span className="text-dark-gray">x{item.qty}</span></span>
                       {item.lensPackage && <span className="text-xs text-dark-gray">Lens: {item.lensPackage}</span>}
                     </div>
-                    <span className="font-semibold text-charcoal">${(item.price * item.qty).toFixed(2)}</span>
+                    <div className="flex flex-col text-right">
+                      <span className="font-semibold text-charcoal">Rs. {(item.price * item.qty).toFixed(2)}</span>
+                      {item.originalPrice && item.originalPrice > item.price && (
+                        <span className="text-xs text-dark-gray/50 line-through">Rs. {(item.originalPrice * item.qty).toFixed(2)}</span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -331,25 +357,25 @@ export default function CheckoutPage() {
               <div className="space-y-3 pt-6 border-t border-mid-gray/30 text-sm">
                 <div className="flex justify-between text-dark-gray">
                   <span>Subtotal</span>
-                  <span className="font-semibold text-charcoal">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold text-charcoal">Rs. {subtotal.toFixed(2)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600 font-semibold">
                     <span>Coupon Discount</span>
-                    <span>-${discount.toFixed(2)}</span>
+                    <span>-Rs. {discount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-dark-gray">
                   <span>Shipping</span>
-                  <span className="font-semibold text-charcoal">{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                  <span className="font-semibold text-charcoal">{shipping === 0 ? 'FREE' : `Rs. ${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between text-dark-gray">
                   <span>Estimated Sales Tax (8%)</span>
-                  <span className="font-semibold text-charcoal">${tax.toFixed(2)}</span>
+                  <span className="font-semibold text-charcoal">Rs. {tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center pt-4 border-t border-mid-gray/30 mt-4">
                   <span className="text-lg font-bold text-charcoal">Total</span>
-                  <span className="text-2xl font-black text-accent">${total.toFixed(2)}</span>
+                  <span className="text-2xl font-black text-accent">Rs. {total.toFixed(2)}</span>
                 </div>
               </div>
 

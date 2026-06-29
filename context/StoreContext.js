@@ -59,6 +59,7 @@ export function StoreProvider({ children }) {
     customers: [],
     wishlist: [],
     recentlyViewed: [],
+    lensDiscounts: [],
     loading: true,
   });
 
@@ -120,6 +121,7 @@ export function StoreProvider({ children }) {
           customers: staticCustomers,
           wishlist: localWishlist,
           recentlyViewed: localRecent,
+          lensDiscounts: [],
           loading: false
         });
         return;
@@ -129,11 +131,13 @@ export function StoreProvider({ children }) {
         const [
           { data: products },
           { data: reviews },
-          { data: coupons }
+          { data: coupons },
+          { data: lensDiscounts }
         ] = await Promise.all([
           supabase.from('products').select('*').order('id'),
           supabase.from('reviews').select('*').order('created_at', { ascending: false }),
-          supabase.from('coupons').select('*')
+          supabase.from('coupons').select('*'),
+          supabase.from('lens_discounts').select('*')
         ]);
 
         const { data: { session } } = await supabase.auth.getSession();
@@ -220,6 +224,7 @@ export function StoreProvider({ children }) {
           })) : staticCustomers,
           wishlist: localWishlist,
           recentlyViewed: localRecent,
+          lensDiscounts: lensDiscounts || [],
           loading: false
         });
       } catch (err) {
@@ -235,6 +240,7 @@ export function StoreProvider({ children }) {
           customers: staticCustomers,
           wishlist: localWishlist,
           recentlyViewed: localRecent,
+          lensDiscounts: [],
           loading: false
         });
       }
@@ -303,7 +309,17 @@ export function StoreProvider({ children }) {
     } catch (e) { console.error(e); }
   };
 
-  const visibleProducts = isAdmin ? state.products : state.products.filter(p => !p.is_hidden);
+  const mappedProducts = state.products.map(p => {
+    if (p.lens_discount_id && state.lensDiscounts) {
+      const discount = state.lensDiscounts.find(ld => ld.id === p.lens_discount_id);
+      if (discount) {
+        return { ...p, lens_discount: discount };
+      }
+    }
+    return p;
+  });
+
+  const visibleProducts = isAdmin ? mappedProducts : mappedProducts.filter(p => !p.is_hidden);
 
   const value = {
     ...state,
@@ -340,7 +356,7 @@ export function StoreProvider({ children }) {
           product_id: i.id,
           quantity: i.qty,
           price_at_time: i.price,
-          products: { name: i.name, brand: i.brand },
+          products: { name: i.name, brand: i.brand, image_url: i.imageUrl || i.image },
           prescription: i.prescription || null
         }))
       };
@@ -386,7 +402,7 @@ export function StoreProvider({ children }) {
               .single();
 
             if (rxError) {
-              console.error('Error inserting prescription for order item:', rxError);
+              console.error('Error inserting prescription for order item:', rxError.message || JSON.stringify(rxError), rxError);
             } else if (newRx) {
               dbPrescriptionId = newRx.id;
             }
@@ -444,7 +460,7 @@ export function StoreProvider({ children }) {
 
         return { data: processedOrder, error: null };
       } catch (err) {
-        console.error('Error inserting order:', err);
+        console.error('Error inserting order:', err.message || JSON.stringify(err), err);
         // Fallback to local
         const guestPayload = { ...localPayload };
         setState(prev => ({

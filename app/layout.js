@@ -8,7 +8,7 @@ import LiveChat from '@/components/LiveChat';
 
 export const metadata = {
   title: 'Optic Zone — Eyeglasses, Sunglasses & Contact Lenses',
-  description: 'Shop premium eyeglasses, sunglasses, contact lenses and more at Optic Zone. Free shipping on orders over $99. Virtual try-on available.',
+  description: 'Shop premium eyeglasses, sunglasses, contact lenses and more at Optic Zone. Free shipping on orders over $99.',
   keywords: 'eyeglasses, sunglasses, prescription glasses, blue light glasses, contact lenses, optical frames, eyewear',
 };
 
