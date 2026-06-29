@@ -6,32 +6,7 @@ import { useStore } from '@/context/StoreContext';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 
-const SAVED_ADDRESSES = [
-  {
-    id: 'addr-1',
-    label: 'Home (Default)',
-    firstName: 'Sarah',
-    lastName: 'Mitchell',
-    email: 'sarah.m@email.com',
-    phone: '+1 (555) 234-5678',
-    country: 'United States',
-    city: 'Boston',
-    address: '12 Oak Ave',
-    postalCode: '02101'
-  },
-  {
-    id: 'addr-2',
-    label: 'Office',
-    firstName: 'Sarah',
-    lastName: 'Mitchell',
-    email: 'sarah.m@email.com',
-    phone: '+1 (555) 987-6543',
-    country: 'United States',
-    city: 'New York',
-    address: '500 Fifth Ave, Suite 210',
-    postalCode: '10110'
-  }
-];
+
 
 export default function CheckoutPage() {
   const { items, subtotal, discount, shipping, tax, total, coupon, clearCart } = useCart();
@@ -50,7 +25,20 @@ export default function CheckoutPage() {
     postalCode: ''
   });
 
+  // Derive saved addresses from user profile
+  const savedAddresses = user?.address ? [{
+    id: 'profile-address',
+    label: 'Saved Address',
+    firstName: user?.first_name || user?.name?.split(' ')[0] || '',
+    lastName: user?.last_name || user?.name?.split(' ').slice(1).join(' ') || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    address: user?.address || ''
+  }] : [];
+
   const [selectedAddressId, setSelectedAddressId] = useState('');
+
+
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [cardNum, setCardNum] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
@@ -62,20 +50,20 @@ export default function CheckoutPage() {
   const handleAddressChange = (addrId) => {
     setSelectedAddressId(addrId);
     if (!addrId) return; // Custom address
-    const selected = SAVED_ADDRESSES.find(a => a.id === addrId);
+    const selected = savedAddresses.find(a => a.id === addrId);
     if (selected) {
-      setForm({
+      setForm(prev => ({
+        ...prev,
         firstName: selected.firstName,
         lastName: selected.lastName,
         email: selected.email,
         phone: selected.phone,
-        country: selected.country,
-        city: selected.city,
-        address: selected.address,
-        postalCode: selected.postalCode
-      });
+        address: selected.address
+      }));
     }
   };
+
+
 
   const handleCardNumChange = (val) => {
     // Format card number with spaces
@@ -182,8 +170,8 @@ export default function CheckoutPage() {
 
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Left Side: Shipping & Billing Form */}
-          <form className="lg:w-2/3 bg-white p-8 rounded-3xl shadow-sm border border-mid-gray/30 space-y-10" onSubmit={handleSubmit}>
-            {user && (
+          <form className="lg:w-2/3 bg-white p-8 rounded-3xl shadow-sm border border-mid-gray/30 space-y-10" onSubmit={handleSubmit} autoComplete="off">
+            {user && savedAddresses.length > 0 && (
               <div>
                 <h2 className="text-xl font-bold font-heading text-charcoal mb-4 border-b border-mid-gray/30 pb-2">Saved Addresses</h2>
                 <div>
@@ -195,9 +183,9 @@ export default function CheckoutPage() {
                     className="w-full px-4 py-3 rounded-xl border border-mid-gray focus:outline-none focus:ring-2 focus:ring-accent"
                   >
                     <option value="">-- Enter Custom Address --</option>
-                    {SAVED_ADDRESSES.map(addr => (
+                    {savedAddresses.map(addr => (
                       <option key={addr.id} value={addr.id}>
-                        {addr.label} - {addr.address}, {addr.city}
+                        {addr.label} - {addr.address}
                       </option>
                     ))}
                   </select>
@@ -234,7 +222,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-semibold text-dark-gray mb-1">Address</label>
-                  <input name="address" required value={form.address} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border border-mid-gray focus:outline-none focus:ring-2 focus:ring-accent" />
+                  <input name="address" required value={form.address} onChange={handleChange} autoComplete="off" className="w-full px-4 py-3 rounded-xl border border-mid-gray focus:outline-none focus:ring-2 focus:ring-accent" />
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-semibold text-dark-gray mb-1">Postal Code</label>
@@ -322,7 +310,7 @@ export default function CheckoutPage() {
               disabled={isSubmitting}
               className="w-full py-4 bg-gradient-to-r from-accent to-pastel-blue text-white rounded-xl font-bold text-lg hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-75 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Processing Payment...' : `Complete Secure Payment - Rs. ${total.toFixed(2)}`}
+              {isSubmitting ? 'Processing Payment...' : `Complete Secure Payment - $${total.toFixed(2)}`}
             </button>
           </form>
 
@@ -345,9 +333,9 @@ export default function CheckoutPage() {
                       {item.lensPackage && <span className="text-xs text-dark-gray">Lens: {item.lensPackage}</span>}
                     </div>
                     <div className="flex flex-col text-right">
-                      <span className="font-semibold text-charcoal">Rs. {(item.price * item.qty).toFixed(2)}</span>
+                      <span className="font-semibold text-charcoal">${(item.price * item.qty).toFixed(2)}</span>
                       {item.originalPrice && item.originalPrice > item.price && (
-                        <span className="text-xs text-dark-gray/50 line-through">Rs. {(item.originalPrice * item.qty).toFixed(2)}</span>
+                        <span className="text-xs text-dark-gray/50 line-through">${(item.originalPrice * item.qty).toFixed(2)}</span>
                       )}
                     </div>
                   </div>
@@ -357,25 +345,25 @@ export default function CheckoutPage() {
               <div className="space-y-3 pt-6 border-t border-mid-gray/30 text-sm">
                 <div className="flex justify-between text-dark-gray">
                   <span>Subtotal</span>
-                  <span className="font-semibold text-charcoal">Rs. {subtotal.toFixed(2)}</span>
+                  <span className="font-semibold text-charcoal">${subtotal.toFixed(2)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600 font-semibold">
                     <span>Coupon Discount</span>
-                    <span>-Rs. {discount.toFixed(2)}</span>
+                    <span>-${discount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-dark-gray">
                   <span>Shipping</span>
-                  <span className="font-semibold text-charcoal">{shipping === 0 ? 'FREE' : `Rs. ${shipping.toFixed(2)}`}</span>
+                  <span className="font-semibold text-charcoal">{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between text-dark-gray">
                   <span>Estimated Sales Tax (8%)</span>
-                  <span className="font-semibold text-charcoal">Rs. {tax.toFixed(2)}</span>
+                  <span className="font-semibold text-charcoal">${tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center pt-4 border-t border-mid-gray/30 mt-4">
                   <span className="text-lg font-bold text-charcoal">Total</span>
-                  <span className="text-2xl font-black text-accent">Rs. {total.toFixed(2)}</span>
+                  <span className="text-2xl font-black text-accent">${total.toFixed(2)}</span>
                 </div>
               </div>
 

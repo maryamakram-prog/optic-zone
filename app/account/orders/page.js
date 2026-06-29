@@ -78,7 +78,7 @@ export default function OrdersPage() {
               <div className="flex items-center gap-4">
                 <div className="text-right">
                   <p className="text-xs text-text-muted font-medium">Order Total</p>
-                  <p className="text-xl font-black text-accent">Rs. {(order.total || 0).toFixed(2)}</p>
+                  <p className="text-xl font-black text-accent">${(order.total || 0).toFixed(2)}</p>
                 </div>
                 <button
                   onClick={() => setExpandedOrderId(isExpanded ? null : order.id)}
@@ -179,7 +179,7 @@ export default function OrdersPage() {
                             )}
                           </div>
                           <span className="font-bold text-charcoal shrink-0 text-sm">
-                            Rs. {((item.price || item.price_at_time || 0) * (item.qty || item.quantity || 1)).toFixed(2)}
+                            ${((item.price || item.price_at_time || 0) * (item.qty || item.quantity || 1)).toFixed(2)}
                           </span>
                         </div>
                       ))}
@@ -198,7 +198,7 @@ export default function OrdersPage() {
                     </div>
                     <div className="flex justify-between font-bold text-charcoal text-base border-t border-border pt-2 mt-2">
                       <span>Total Paid</span>
-                      <span className="text-accent text-lg">Rs. {(order.total || 0).toFixed(2)}</span>
+                      <span className="text-accent text-lg">${(order.total || 0).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

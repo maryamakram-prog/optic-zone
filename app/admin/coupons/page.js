@@ -3,11 +3,14 @@ import { useStore } from '@/context/StoreContext';
 import { useState } from 'react';
 
 export default function AdminCouponsPage() {
-  const { coupons, addCoupon, updateCoupon, deleteCoupon } = useStore();
+  const { coupons, addCoupon, updateCoupon, deleteCoupon, products } = useStore();
   const [showForm, setShowForm] = useState(false);
   const [code, setCode] = useState('');
   const [type, setType] = useState('percent');
   const [value, setValue] = useState('');
+  const [applicability, setApplicability] = useState('global');
+  const [applicableCategory, setApplicableCategory] = useState('');
+  const [applicableProductId, setApplicableProductId] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
@@ -28,7 +31,9 @@ export default function AdminCouponsPage() {
       code: code.trim().toUpperCase(),
       type,
       value: valNum,
-      active: true
+      active: true,
+      applicable_category: applicability === 'category' ? applicableCategory : null,
+      applicable_product_id: applicability === 'product' ? applicableProductId : null
     };
 
     const res = await addCoupon(payload);
@@ -37,6 +42,9 @@ export default function AdminCouponsPage() {
     } else {
       setCode('');
       setValue('');
+      setApplicability('global');
+      setApplicableCategory('');
+      setApplicableProductId('');
       setShowForm(false);
     }
   };
@@ -115,6 +123,44 @@ export default function AdminCouponsPage() {
               />
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-charcoal/80 uppercase tracking-wider mb-2">Applies To</label>
+                <select value={applicability} onChange={e => setApplicability(e.target.value)} className="input">
+                  <option value="global">Entire Order</option>
+                  <option value="category">Specific Category</option>
+                  <option value="product">Specific Product</option>
+                </select>
+              </div>
+
+              {applicability === 'category' && (
+                <div>
+                  <label className="block text-xs font-bold text-charcoal/80 uppercase tracking-wider mb-2">Select Category *</label>
+                  <select required value={applicableCategory} onChange={e => setApplicableCategory(e.target.value)} className="input">
+                    <option value="">Choose a category...</option>
+                    <option value="eyeglasses">Eyeglasses</option>
+                    <option value="sunglasses">Sunglasses</option>
+                    <option value="reading">Reading</option>
+                    <option value="sport">Sport</option>
+                    <option value="kids">Kids</option>
+                    <option value="contact-lenses">Contact Lenses</option>
+                  </select>
+                </div>
+              )}
+
+              {applicability === 'product' && (
+                <div>
+                  <label className="block text-xs font-bold text-charcoal/80 uppercase tracking-wider mb-2">Select Product *</label>
+                  <select required value={applicableProductId} onChange={e => setApplicableProductId(e.target.value)} className="input">
+                    <option value="">Choose a product...</option>
+                    {products.map(p => (
+                      <option key={p.id} value={p.id}>{p.name} ({p.brand})</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+
             <button 
               type="submit"
               className="px-5 py-2.5 bg-accent hover:bg-accent-dark text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-accent/20 cursor-pointer"
@@ -149,7 +195,9 @@ export default function AdminCouponsPage() {
                     <span className="font-bold text-charcoal">
                       {c.type === 'percent' ? `${c.value}% Off` : `$${c.value} Off`}
                     </span>
-                    <span className="text-xs text-dark-gray block mt-0.5">Applied on order subtotal</span>
+                    <span className="text-xs text-dark-gray block mt-0.5">
+                      {c.applicable_category ? `Category: ${c.applicable_category}` : c.applicable_product_id ? `Product ID: ${c.applicable_product_id.substring(0,8)}` : 'Global - Applied on order subtotal'}
+                    </span>
                   </td>
                   <td className="py-4">
                     <button

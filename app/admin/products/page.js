@@ -229,7 +229,7 @@ export default function AdminProductsPage() {
                 <select className="input" value={formData.lens_discount_id || ''} onChange={e => f('lens_discount_id', e.target.value || null)}>
                   <option value="">No Active Discount</option>
                   {lensDiscounts?.filter(d => d.is_active).map(d => (
-                    <option key={d.id} value={d.id}>{d.name} ({d.discount_type === 'percentage' ? `${d.discount_value}%` : `Rs. ${d.discount_value}`})</option>
+                    <option key={d.id} value={d.id}>{d.name} ({d.discount_type === 'percentage' ? `${d.discount_value}%` : `$${d.discount_value}`})</option>
                   ))}
                 </select>
               </FormField>
@@ -345,7 +345,11 @@ export default function AdminProductsPage() {
             <tbody className="divide-y divide-mid-gray/30">
               {filteredProducts.map(p => (
                 <tr key={p.id} className="hover:bg-soft-white/50 transition-colors">
-                  <td className="py-4 font-semibold text-dark-gray max-w-[120px] truncate" title={p.id}>{p.id}</td>
+                  <td className="py-4 font-semibold text-dark-gray max-w-[120px] truncate" title={p.id}>
+                    <span className="font-mono text-xs bg-light-gray px-2 py-1 rounded-lg">
+                      {typeof p.id === 'string' ? p.id.substring(0, 8) : p.id}
+                    </span>
+                  </td>
                   <td className="py-4">
                     {p.imageUrl ? (
                       <img src={p.imageUrl} alt={p.name} className="w-12 h-9 object-cover rounded-lg border border-mid-gray/50 shadow-sm" onError={e => { e.target.style.display = 'none'; }} />

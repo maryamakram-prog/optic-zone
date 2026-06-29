@@ -201,7 +201,7 @@ export default function ProductDetailPage() {
                   <span className="bg-purple-600 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg">
                     {product.lens_discount.discount_type === 'percentage' 
                       ? `${product.lens_discount.discount_value}% OFF` 
-                      : `Rs. ${product.lens_discount.discount_value} OFF`}
+                      : `$${product.lens_discount.discount_value} OFF`}
                   </span>
                 )}
                 {discount > 0 && !isDiscounted && <span className="bg-red-500 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg">-{discount}% Off</span>}

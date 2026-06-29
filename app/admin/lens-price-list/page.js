@@ -88,18 +88,18 @@ export default function LensPriceListPage() {
                   <td className="p-3 border border-mid-gray/50 font-semibold">{lens.name}</td>
                   <td className="p-3 border border-mid-gray/50 text-dark-gray">{lens.brand}</td>
                   <td className="p-3 border border-mid-gray/50 text-xs text-dark-gray uppercase tracking-wider">{lens.lens_type.replace('-', ' ')}</td>
-                  <td className="p-3 border border-mid-gray/50 font-medium">Rs. {lens.price.toFixed(2)}</td>
+                  <td className="p-3 border border-mid-gray/50 font-medium">${lens.price.toFixed(2)}</td>
                   <td className="p-3 border border-mid-gray/50 text-purple-700 font-bold">
                     {isDiscounted ? (
                       discount.discount_type === 'percentage' 
                         ? `${discount.discount_value}% OFF` 
-                        : `Rs. ${discount.discount_value} OFF`
+                        : `$${discount.discount_value} OFF`
                     ) : (
                       <span className="text-mid-gray/50 font-normal">None</span>
                     )}
                   </td>
                   <td className="p-3 border border-mid-gray/50 text-right font-black text-lg">
-                    Rs. {finalPrice.toFixed(2)}
+                    ${finalPrice.toFixed(2)}
                   </td>
                 </tr>
               );

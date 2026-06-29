@@ -74,7 +74,7 @@ export default function ProductCard({ product }) {
           <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-purple-600 text-white shadow-sm">
             {product.lens_discount.discount_type === 'percentage' 
               ? `${product.lens_discount.discount_value}% OFF` 
-              : `Rs. ${product.lens_discount.discount_value} OFF`}
+              : `$${product.lens_discount.discount_value} OFF`}
           </span>
         )}
         {/* Quick actions */}
@@ -113,12 +113,12 @@ export default function ProductCard({ product }) {
         {/* Price */}
         <div className="flex items-center gap-2 mt-3">
           <span className="text-lg font-bold text-charcoal">
-            {isDiscounted ? `Rs. ${finalPrice.toFixed(2)}` : `Rs. ${product.price.toFixed(2)}`}
+            {isDiscounted ? `$${finalPrice.toFixed(2)}` : `$${product.price.toFixed(2)}`}
           </span>
           {isDiscounted ? (
-            <span className="text-sm text-dark-gray/50 line-through">Rs. {product.price.toFixed(2)}</span>
+            <span className="text-sm text-dark-gray/50 line-through">${product.price.toFixed(2)}</span>
           ) : product.originalPrice && product.originalPrice > product.price ? (
-            <span className="text-sm text-dark-gray/50 line-through">Rs. {product.originalPrice.toFixed(2)}</span>
+            <span className="text-sm text-dark-gray/50 line-through">${product.originalPrice.toFixed(2)}</span>
           ) : null}
         </div>
 

@@ -375,7 +375,7 @@ export default function AdminLensesPage() {
                   <select className="input" value={formData.lens_discount_id || ''} onChange={e => f('lens_discount_id', e.target.value || null)}>
                     <option value="">No Active Discount</option>
                     {lensDiscounts?.filter(d => d.is_active).map(d => (
-                      <option key={d.id} value={d.id}>{d.name} ({d.discount_type === 'percentage' ? `${d.discount_value}%` : `Rs. ${d.discount_value}`})</option>
+                      <option key={d.id} value={d.id}>{d.name} ({d.discount_type === 'percentage' ? `${d.discount_value}%` : `$${d.discount_value}`})</option>
                     ))}
                   </select>
                 </FormField>

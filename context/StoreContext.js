@@ -14,11 +14,6 @@ const staticCoupons = [
   { id: 3, code: 'OP15X', type: 'fixed', value: 15, active: true }
 ];
 
-const staticCustomers = [
-  { id: 'b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', email: 'john@opticzone.com', first_name: 'John', last_name: 'Doe', phone: '+1 (555) 123-4567', role: 'customer', address: '12 Oak Ave, Boston, United States' },
-  { id: 'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', email: 'jane@opticzone.com', first_name: 'Jane', last_name: 'Smith', phone: '+1 (555) 987-6543', role: 'customer', address: '500 Fifth Ave, Suite 210, New York, United States' },
-  { id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', email: 'admin@opticzone.com', first_name: 'System', last_name: 'Admin', phone: '+1 (555) 000-1111', role: 'admin', address: 'Optic Zone Headquarters' }
-];
 
 const mapOrder = (o) => {
   if (!o) return null;
@@ -118,7 +113,7 @@ export function StoreProvider({ children }) {
           appointments: [],
           coupons: staticCoupons,
           reviews: staticReviews,
-          customers: staticCustomers,
+          customers: [],
           wishlist: localWishlist,
           recentlyViewed: localRecent,
           lensDiscounts: [],

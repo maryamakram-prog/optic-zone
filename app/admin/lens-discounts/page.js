@@ -24,7 +24,7 @@ const STATIC_DISCOUNTS = [
   },
   {
     id: 'disc-002',
-    name: 'Flat Rs. 500 Off',
+    name: 'Flat $500 Off',
     discount_type: 'fixed',
     discount_value: 500,
     start_date: '',
@@ -203,7 +203,7 @@ export default function AdminLensDiscountsPage() {
                 <FormField label="Type *">
                   <select required className="input" value={formData.discount_type} onChange={e => f('discount_type', e.target.value)}>
                     <option value="percentage">Percentage (%)</option>
-                    <option value="fixed">Fixed Amount (Rs.)</option>
+                    <option value="fixed">Fixed Amount ($)</option>
                   </select>
                 </FormField>
                 <FormField label="Value *">
@@ -269,7 +269,7 @@ export default function AdminLensDiscountsPage() {
                   <td className="py-4 font-bold text-charcoal">{disc.name}</td>
                   <td className="py-4">
                     <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200 font-bold text-xs inline-block">
-                      {disc.discount_type === 'percentage' ? `${disc.discount_value}% OFF` : `Rs. ${disc.discount_value} OFF`}
+                      {disc.discount_type === 'percentage' ? `${disc.discount_value}% OFF` : `$${disc.discount_value} OFF`}
                     </span>
                   </td>
                   <td className="py-4 text-xs text-dark-gray space-y-1">
