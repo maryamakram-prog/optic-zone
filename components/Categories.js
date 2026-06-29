@@ -1,7 +1,22 @@
+'use client';
+
 import Link from 'next/link';
-import { categories } from '@/data/siteData';
+import { categories as staticCategories } from '@/data/siteData';
+import { useStore } from '@/context/StoreContext';
 
 export default function Categories() {
+  const { products } = useStore();
+
+  // Dynamically compute product counts based on the actual database inventory
+  const categories = staticCategories.map(cat => {
+    const actualCount = products?.filter(p => 
+      p.category === cat.slug || 
+      (cat.slug === 'sports' && p.category === 'sport') // Catch legacy spelling
+    ).length || 0;
+
+    return { ...cat, count: actualCount };
+  });
+
   return (
     <section className="section-padding bg-soft-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,7 +42,7 @@ export default function Categories() {
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-charcoal/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <h3 className="text-white font-semibold text-sm font-heading">{cat.name}</h3>
-                <p className="text-white/60 text-xs mt-0.5">{cat.count} Products</p>
+                <p className="text-white/60 text-xs mt-0.5">{cat.count} Product{cat.count !== 1 ? 's' : ''}</p>
               </div>
             </Link>
           ))}

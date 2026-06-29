@@ -202,8 +202,9 @@ export default function AdminProductsPage() {
                   <option value="">Select Category…</option>
                   <option value="eyeglasses">Eyeglasses</option>
                   <option value="sunglasses">Sunglasses</option>
+                  <option value="blue-light">Blue Light Glasses</option>
                   <option value="reading">Reading</option>
-                  <option value="sport">Sport</option>
+                  <option value="sports">Sports</option>
                   <option value="kids">Kids</option>
                   <option value="contact-lenses">Contact Lenses</option>
                 </select>

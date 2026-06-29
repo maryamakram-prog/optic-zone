@@ -216,7 +216,7 @@ export function StoreProvider({ children }) {
           customers: (customersList && customersList.length > 0) ? customersList.map(c => ({
             ...c,
             name: c.first_name || c.last_name ? `${c.first_name || ''} ${c.last_name || ''}`.trim() : 'Unnamed User'
-          })) : staticCustomers,
+          })) : [],
           wishlist: localWishlist,
           recentlyViewed: localRecent,
           lensDiscounts: lensDiscounts || [],
@@ -232,7 +232,7 @@ export function StoreProvider({ children }) {
           appointments: [],
           coupons: staticCoupons,
           reviews: staticReviews,
-          customers: staticCustomers,
+          customers: [],
           wishlist: localWishlist,
           recentlyViewed: localRecent,
           lensDiscounts: [],

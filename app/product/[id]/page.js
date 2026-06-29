@@ -62,7 +62,6 @@ export default function ProductDetailPage() {
   const [prescription, setPrescription] = useState(null);
   const [isRxModalOpen, setIsRxModalOpen] = useState(false);
   const [isUsageModalOpen, setIsUsageModalOpen] = useState(false);
-  const [insuranceUsed, setInsuranceUsed] = useState(false);
 
   const product = products?.find(p => String(p.id) === String(params.id));
 
@@ -240,7 +239,11 @@ export default function ProductDetailPage() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-bold font-heading text-charcoal leading-tight mb-2">{product.name}</h1>
-            <p className="text-dark-gray text-lg mb-4">{product.frameShape} {product.frameColor} Glasses</p>
+            <p className="text-dark-gray text-lg mb-4">
+              {product.category === 'contact-lenses' 
+                ? 'Contact Lenses' 
+                : `${product.frameShape || ''} ${product.frameColor || ''} Glasses`.trim()}
+            </p>
 
             {/* Stars & Reviews */}
             <div className="flex items-center gap-2 mb-4">
@@ -249,37 +252,42 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Promo Banner */}
-            <div className="bg-[#E5F5E9] text-green-800 font-bold px-3 py-1.5 rounded text-sm inline-flex items-center gap-4 mb-6">
-              <span>65% Off Lenses with Frames</span>
-              <span className="text-green-900 border-l border-green-300 pl-4">Code: SMARTLENS</span>
-            </div>
+            {product.category !== 'contact-lenses' && (
+              <div className="bg-[#E5F5E9] text-green-800 font-bold px-3 py-1.5 rounded text-sm inline-flex items-center gap-4 mb-6">
+                <span>65% Off Lenses with Frames</span>
+                <span className="text-green-900 border-l border-green-300 pl-4">Code: SMARTLENS</span>
+              </div>
+            )}
 
             {/* Colors */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="flex gap-2">
-                {(product.colors?.length > 0 ? product.colors : ['#1F2937', '#9CA3AF', '#D1D5DB']).map((c, i) => (
-                  <button 
-                    key={i} 
-                    className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === i ? "border-[#CD9950] ring-2 ring-white ring-inset shadow-md" : "border-transparent"}`} 
-                    onClick={() => setSelectedColor(i)} 
-                    style={{ background: c }} 
-                    aria-label={`Color ${i+1}`}
-                  />
-                ))}
+            {product.category !== 'contact-lenses' && (
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex gap-2">
+                  {(product.colors?.length > 0 ? product.colors : ['#1F2937', '#9CA3AF', '#D1D5DB']).map((c, i) => (
+                    <button 
+                      key={i} 
+                      className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === i ? "border-[#CD9950] ring-2 ring-white ring-inset shadow-md" : "border-transparent"}`} 
+                      onClick={() => setSelectedColor(i)} 
+                      style={{ background: c }} 
+                      aria-label={`Color ${i+1}`}
+                    />
+                  ))}
+                </div>
+                <span className="text-dark-gray text-sm">{product.frameColor || 'Shiny Black'}</span>
               </div>
-              <span className="text-dark-gray text-sm">{product.frameColor || 'Shiny Black'}</span>
-            </div>
+            )}
 
             {/* Tags */}
             <div className="flex gap-2 mb-4">
               <span className="bg-[#FFF4E6] text-[#CD9950] font-semibold text-xs px-2 py-1 rounded">Free Shipping</span>
-              <span className="bg-[#E6F4FB] text-[#0EA5E9] font-semibold text-xs px-2 py-1 rounded">Premium Case</span>
+              {product.category !== 'contact-lenses' && (
+                <span className="bg-[#E6F4FB] text-[#0EA5E9] font-semibold text-xs px-2 py-1 rounded">Premium Case</span>
+              )}
             </div>
 
             {/* Price */}
             <div className="flex items-end gap-3 mb-2">
               <span className="text-3xl font-black text-charcoal">${finalBasePrice.toFixed(2)}</span>
-              <span className="text-dark-gray mb-1">price includes charging case</span>
             </div>
 
             {/* Installments */}
@@ -291,21 +299,12 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Size */}
-            <div className="flex items-center justify-between py-4 border-t border-mid-gray/40">
-              <div className="text-charcoal font-medium">Size: <span className="font-bold">Medium (50-22-150)</span></div>
-              <Link href="/frame-size-guide" className="text-dark-gray underline text-sm hover:text-charcoal">Size Guide</Link>
-            </div>
-
-            {/* Insurance Toggle */}
-            <div className="flex items-center justify-between py-4 border-y border-mid-gray/40 mb-6">
-              <span className="text-charcoal font-medium">Use insurance benefits</span>
-              <div 
-                onClick={() => setInsuranceUsed(!insuranceUsed)}
-                className={`w-12 h-6 rounded-full relative cursor-pointer border transition-colors ${insuranceUsed ? 'bg-[#CD9950] border-[#CD9950]' : 'bg-light-gray border-mid-gray/50'}`}
-              >
-                <div className={`w-5 h-5 bg-white rounded-full absolute top-[1px] shadow-sm transition-transform ${insuranceUsed ? 'translate-x-[22px]' : 'translate-x-[1px]'}`}></div>
+            {product.category !== 'contact-lenses' && (
+              <div className="flex items-center justify-between py-4 border-t border-mid-gray/40">
+                <div className="text-charcoal font-medium">Size: <span className="font-bold">Medium (50-22-150)</span></div>
+                <Link href="/frame-size-guide" className="text-dark-gray underline text-sm hover:text-charcoal">Size Guide</Link>
               </div>
-            </div>
+            )}
 
             {/* CTA */}
             <div className="mb-10">

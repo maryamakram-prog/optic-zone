@@ -24,5 +24,3 @@ CREATE POLICY "Admins can manage lens_discounts" ON public.lens_discounts
 -- Add discount_id to products table
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS lens_discount_id UUID REFERENCES public.lens_discounts(id) ON DELETE SET NULL;
 
--- Also add it to lenses table
-ALTER TABLE public.lenses ADD COLUMN IF NOT EXISTS lens_discount_id UUID REFERENCES public.lens_discounts(id) ON DELETE SET NULL;

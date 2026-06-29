@@ -39,15 +39,15 @@ export default function OrderTrackingPage() {
     e.preventDefault();
     if (!typedOrderId.trim()) return;
     
-    const formattedId = typedOrderId.trim().toUpperCase();
-    const found = orders.find(o => o.id === formattedId);
+    const formattedId = typedOrderId.trim().toLowerCase();
+    const found = orders.find(o => String(o.id).toLowerCase() === formattedId);
 
     if (found) {
       setCurrentOrder(found);
       setSelectedOrderId('');
       setSearchError('');
     } else {
-      setSearchError(`No order found with ID "${formattedId}". Try "ORD-0001" or "ORD-0002".`);
+      setSearchError(`No order found with ID "${formattedId}". Please check your order confirmation email.`);
     }
   };
 
@@ -97,7 +97,7 @@ export default function OrderTrackingPage() {
             <input
               id="searchId"
               type="text"
-              placeholder="e.g. ORD-0002"
+              placeholder="e.g. 550e8400-e29b..."
               value={typedOrderId}
               onChange={e => setTypedOrderId(e.target.value)}
               className="styledInput"
