@@ -64,6 +64,7 @@ export default function ProductDetailPage() {
   const [isUsageModalOpen, setIsUsageModalOpen] = useState(false);
 
   const product = products?.find(p => String(p.id).substring(0, 8) === String(params.id).substring(0, 8));
+  const isContactLens = product?.category === 'contact-lenses';
 
   const [detailImgSrc, setDetailImgSrc] = useState(product?.imageUrl || product?.image || FALLBACK_IMAGE);
   const [detailImgLoading, setDetailImgLoading] = useState(true);
@@ -306,15 +307,82 @@ export default function ProductDetailPage() {
               </div>
             )}
 
+            {/* Lens Package Selector — frame products only */}
+            {!isContactLens && (
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-charcoal font-bold">Choose Lens Package</span>
+                  <Link href="/pd-guide" className="text-accent text-xs underline">What's included?</Link>
+                </div>
+                <div className="grid grid-cols-1 gap-2">
+                  {LENS_PACKAGES.map(pkg => (
+                    <button
+                      key={pkg.id}
+                      onClick={() => setSelectedLens(pkg.id)}
+                      className={`flex items-center justify-between w-full px-4 py-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                        selectedLens === pkg.id
+                          ? 'border-accent bg-ebd-blue-light'
+                          : 'border-mid-gray/30 hover:border-accent/50 bg-white'
+                      }`}
+                    >
+                      <div>
+                        <div className={`font-semibold text-sm ${selectedLens === pkg.id ? 'text-accent' : 'text-charcoal'}`}>{pkg.label}</div>
+                        <div className="text-xs text-text-muted">{pkg.desc}</div>
+                      </div>
+                      <span className={`text-sm font-bold shrink-0 ml-3 ${selectedLens === pkg.id ? 'text-accent' : 'text-charcoal'}`}>
+                        {pkg.price === 0 ? 'Free' : `+$${pkg.price}`}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Contact Lens Info Strip */}
+            {isContactLens && (
+              <div className="mb-8 p-4 bg-ebd-blue-light rounded-xl border border-accent/20 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-semibold text-accent">👁️ Contact Lens Details</div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex justify-between col-span-2 py-1 border-b border-accent/10">
+                    <span className="text-text-muted">Pack Size</span>
+                    <span className="font-semibold text-charcoal">{product.packSize || '30 lenses'}</span>
+                  </div>
+                  <div className="flex justify-between col-span-2 py-1 border-b border-accent/10">
+                    <span className="text-text-muted">Replacement</span>
+                    <span className="font-semibold text-charcoal">{product.replacement || 'Daily'}</span>
+                  </div>
+                  <div className="flex justify-between col-span-2 py-1">
+                    <span className="text-text-muted">Water Content</span>
+                    <span className="font-semibold text-charcoal">{product.waterContent || '55%'}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* CTA */}
             <div className="mb-10">
-              <button 
-                className="w-full py-4 bg-[#CD9950] hover:bg-[#b07b38] text-white font-bold text-lg rounded-md transition-colors"
-                onClick={() => setIsUsageModalOpen(true)}
-              >
-                Select Lenses
-              </button>
+              {isContactLens ? (
+                // Contact lenses: simple add to cart, no lens selection needed
+                <button
+                  className="w-full py-4 bg-[#CD9950] hover:bg-[#b07b38] text-white font-bold text-lg rounded-md transition-colors"
+                  onClick={() => {
+                    addItem({ ...product, imageUrl: product.imageUrl || product.image, price: finalBasePrice, originalPrice: product.price, lensPackage: 'contacts', prescription: null });
+                    setAdded(true);
+                    setTimeout(() => setAdded(false), 2000);
+                  }}
+                >
+                  {added ? '✓ Added to Cart!' : 'Add to Cart'}
+                </button>
+              ) : (
+                <button
+                  className="w-full py-4 bg-[#CD9950] hover:bg-[#b07b38] text-white font-bold text-lg rounded-md transition-colors"
+                  onClick={() => setIsUsageModalOpen(true)}
+                >
+                  Select Lenses
+                </button>
+              )}
             </div>
+
 
             {/* Trust */}
             <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-dark-gray bg-white p-5 rounded-2xl border border-mid-gray/30">

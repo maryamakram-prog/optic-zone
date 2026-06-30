@@ -116,36 +116,38 @@ export function StoreProvider({ children }) {
         return;
       }
 
-      try {
-        const [
-          { data: products },
-          { data: reviews },
-          { data: coupons },
-          { data: lensDiscounts }
-        ] = await Promise.all([
-          supabase.from('products').select('*').order('id'),
-          supabase.from('reviews').select('*').order('created_at', { ascending: false }),
-          supabase.from('coupons').select('*'),
-          supabase.from('lens_discounts').select('*')
-        ]);
+      // Fetch each table independently so a missing table (e.g. lens_discounts)
+      // doesn't cause a Promise.all rejection that kills products/reviews/coupons.
+      let products = null, reviews = null, coupons = null, lensDiscounts = [];
 
-        setPublicState({
-          products: (products && products.length > 0) ? products : staticProducts,
-          coupons: (coupons && coupons.length > 0) ? coupons : staticCoupons,
-          reviews: (reviews && reviews.length > 0) ? reviews : staticReviews,
-          lensDiscounts: lensDiscounts || [],
-          publicLoading: false,
-        });
-      } catch (err) {
-        console.error('Error fetching public data, using fallback:', err);
-        setPublicState({
-          products: staticProducts,
-          coupons: staticCoupons,
-          reviews: staticReviews,
-          lensDiscounts: [],
-          publicLoading: false,
-        });
-      }
+      try {
+        const { data, error } = await supabase.from('products').select('*').order('id');
+        if (!error) products = data;
+      } catch (e) { console.warn('products fetch failed:', e.message); }
+
+      try {
+        const { data, error } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
+        if (!error) reviews = data;
+      } catch (e) { console.warn('reviews fetch failed:', e.message); }
+
+      try {
+        const { data, error } = await supabase.from('coupons').select('*');
+        if (!error) coupons = data;
+      } catch (e) { console.warn('coupons fetch failed:', e.message); }
+
+      try {
+        const { data, error } = await supabase.from('lens_discounts').select('*');
+        if (!error && data) lensDiscounts = data;
+        // If table doesn't exist, silently ignore — not critical for browsing
+      } catch (e) { console.warn('lens_discounts table unavailable, skipping:', e.message); }
+
+      setPublicState({
+        products: (products && products.length > 0) ? products : staticProducts,
+        coupons: (coupons && coupons.length > 0) ? coupons : staticCoupons,
+        reviews: (reviews && reviews.length > 0) ? reviews : staticReviews,
+        lensDiscounts,
+        publicLoading: false,
+      });
     };
 
     fetchPublicData();
