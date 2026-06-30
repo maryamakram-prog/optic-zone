@@ -130,11 +130,16 @@ export function StoreProvider({ children }) {
                 try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
               }
               if (p.category === 'contact-lenses') {
+                const colors = ['blue', 'purple', 'green', 'orange', 'teal'];
+                // Deterministic color based on length of name so it's consistent
+                const colorIdx = (p.name.length + p.id.toString().charCodeAt(0)) % colors.length;
+                const contactSvg = `/images/contact-lens-${colors[colorIdx]}.svg`;
+                
                 if (p.imageUrl && p.imageUrl.includes('unsplash')) {
-                  p.imageUrl = '/images/contact-lens.svg';
+                  p.imageUrl = contactSvg;
                 }
                 if (p.images && Array.isArray(p.images)) {
-                  p.images = p.images.map(img => (typeof img === 'string' && img.includes('unsplash')) ? '/images/contact-lens.svg' : img);
+                  p.images = p.images.map(img => (typeof img === 'string' && img.includes('unsplash')) ? contactSvg : img);
                 }
               }
               return p;

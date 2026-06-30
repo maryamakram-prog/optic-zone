@@ -33,6 +33,16 @@ const GENDERS = [
   { label: 'Unisex', value: 'unisex' },
 ];
 
+const CONTACT_BRANDS = [
+  { label: 'All Brands', value: '' },
+  { label: 'Acuvue', value: 'Acuvue' },
+  { label: 'Biofinity', value: 'Biofinity' },
+  { label: 'Dailies', value: 'Dailies' },
+  { label: 'Air Optix', value: 'Air Optix' },
+  { label: 'Alcon', value: 'Alcon' },
+  { label: 'Coopervision', value: 'Coopervision' },
+];
+
 const SHAPES = [
   { label: 'All', value: '' },
   { label: 'Round', value: 'round' },
@@ -62,7 +72,18 @@ function ProductsContent() {
   const [activeCategory, setActiveCategory] = useState(searchParamsCategory || '');
   const [activeGender, setActiveGender] = useState(searchParamsGender || '');
   const [activeShape, setActiveShape] = useState(searchParamsFaceShape || '');
+  const [activeBrand, setActiveBrand] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  // When category changes, reset irrelevant filters
+  useEffect(() => {
+    if (activeCategory === 'contact-lenses') {
+      setActiveGender('');
+      setActiveShape('');
+    } else {
+      setActiveBrand('');
+    }
+  }, [activeCategory]);
 
   const displayProducts = useMemo(() => {
     if (!products) return [];
@@ -99,6 +120,11 @@ function ProductsContent() {
     // Shape Filter
     if (activeShape) {
       result = result.filter(p => p.frameShape?.toLowerCase() === activeShape.toLowerCase());
+    }
+
+    // Brand Filter
+    if (activeBrand) {
+      result = result.filter(p => p.brand === activeBrand);
     }
 
     // Price range filter
@@ -184,7 +210,30 @@ function ProductsContent() {
           </div>
         </div>
 
+        {/* Contact Lens Brand Filter */}
+        {activeCategory === 'contact-lenses' && (
+        <div className="bg-white rounded-2xl border border-border p-5 shadow-sm">
+          <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider mb-4">Brand</h3>
+          <div className="space-y-1">
+            {CONTACT_BRANDS.map(b => (
+              <button
+                key={b.value}
+                onClick={() => setActiveBrand(b.value)}
+                className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                  (activeBrand || '') === b.value
+                    ? 'bg-accent text-white font-semibold'
+                    : 'text-charcoal-light hover:bg-ebd-blue-light hover:text-accent'
+                }`}
+              >
+                {b.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        )}
+
         {/* Gender Filter */}
+        {activeCategory !== 'contact-lenses' && (
         <div className="bg-white rounded-2xl border border-border p-5 shadow-sm">
           <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider mb-4">Gender</h3>
           <div className="space-y-1">
@@ -203,8 +252,10 @@ function ProductsContent() {
             ))}
           </div>
         </div>
+        )}
 
         {/* Shape Filter */}
+        {activeCategory !== 'contact-lenses' && (
         <div className="bg-white rounded-2xl border border-border p-5 shadow-sm">
           <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider mb-4">Frame Shape</h3>
           <div className="space-y-1">
@@ -223,6 +274,7 @@ function ProductsContent() {
             ))}
           </div>
         </div>
+        )}
 
         {/* Quick Filters */}
         <div className="bg-white rounded-2xl border border-border p-5 shadow-sm">
