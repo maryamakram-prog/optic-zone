@@ -127,6 +127,14 @@ export function StoreProvider({ children }) {
             if (typeof p.images === 'string') {
               try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
             }
+            if (p.category === 'contact-lenses') {
+              if (p.imageUrl && p.imageUrl.includes('unsplash')) {
+                p.imageUrl = '/images/contact-lens.svg';
+              }
+              if (p.images && Array.isArray(p.images)) {
+                p.images = p.images.map(img => (typeof img === 'string' && img.includes('unsplash')) ? '/images/contact-lens.svg' : img);
+              }
+            }
             return p;
           });
         }

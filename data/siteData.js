@@ -27,8 +27,8 @@ export const categories = [
     id: 4,
     name: 'Contact Lenses',
     slug: 'contact-lenses',
-    image: 'https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80',
-    images: ['https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
+    image: '/images/contact-lens.svg',
+    images: ['/images/contact-lens.svg', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
     count: 98,
   },
   {
@@ -2858,12 +2858,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.8",
     "reviews": 172,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -2886,12 +2886,12 @@ export const products = [
     "originalPrice": 190.91,
     "rating": "4.1",
     "reviews": 337,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -2914,12 +2914,12 @@ export const products = [
     "originalPrice": 179.93,
     "rating": "4.1",
     "reviews": 310,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -2942,12 +2942,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.8",
     "reviews": 395,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -2970,12 +2970,12 @@ export const products = [
     "originalPrice": 187.62,
     "rating": "4.7",
     "reviews": 131,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -2998,12 +2998,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.3",
     "reviews": 71,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3026,12 +3026,12 @@ export const products = [
     "originalPrice": 243.58,
     "rating": "4.6",
     "reviews": 291,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3054,12 +3054,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.0",
     "reviews": 180,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3082,12 +3082,12 @@ export const products = [
     "originalPrice": 276.16,
     "rating": "4.7",
     "reviews": 147,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3110,12 +3110,12 @@ export const products = [
     "originalPrice": 150.93,
     "rating": "4.4",
     "reviews": 212,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3138,12 +3138,12 @@ export const products = [
     "originalPrice": null,
     "rating": "5.0",
     "reviews": 203,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3166,12 +3166,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.8",
     "reviews": 346,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3194,12 +3194,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.2",
     "reviews": 305,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3222,12 +3222,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.6",
     "reviews": 20,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3250,12 +3250,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.7",
     "reviews": 32,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3278,12 +3278,12 @@ export const products = [
     "originalPrice": 245.54,
     "rating": "4.2",
     "reviews": 391,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3306,12 +3306,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.6",
     "reviews": 173,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3334,12 +3334,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.7",
     "reviews": 290,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3362,12 +3362,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.4",
     "reviews": 36,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3390,12 +3390,12 @@ export const products = [
     "originalPrice": 236.92,
     "rating": "4.6",
     "reviews": 36,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3418,12 +3418,12 @@ export const products = [
     "originalPrice": 161.94,
     "rating": "4.5",
     "reviews": 12,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3446,12 +3446,12 @@ export const products = [
     "originalPrice": 228.32,
     "rating": "4.8",
     "reviews": 452,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3474,12 +3474,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.4",
     "reviews": 53,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3502,12 +3502,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.1",
     "reviews": 477,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3530,12 +3530,12 @@ export const products = [
     "originalPrice": 197.73,
     "rating": "4.8",
     "reviews": 397,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3558,12 +3558,12 @@ export const products = [
     "originalPrice": 280.71,
     "rating": "4.0",
     "reviews": 353,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3586,12 +3586,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.7",
     "reviews": 308,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3614,12 +3614,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.9",
     "reviews": 460,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3642,12 +3642,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.0",
     "reviews": 220,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3670,12 +3670,12 @@ export const products = [
     "originalPrice": 264.64,
     "rating": "4.4",
     "reviews": 95,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3698,12 +3698,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.8",
     "reviews": 199,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3726,12 +3726,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.7",
     "reviews": 102,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3754,12 +3754,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.2",
     "reviews": 221,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3782,12 +3782,12 @@ export const products = [
     "originalPrice": 219.78,
     "rating": "4.1",
     "reviews": 204,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3810,12 +3810,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.5",
     "reviews": 91,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3838,12 +3838,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.3",
     "reviews": 31,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3866,12 +3866,12 @@ export const products = [
     "originalPrice": 281.24,
     "rating": "4.6",
     "reviews": 276,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3894,12 +3894,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.3",
     "reviews": 32,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3922,12 +3922,12 @@ export const products = [
     "originalPrice": 199.52,
     "rating": "5.0",
     "reviews": 82,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3950,12 +3950,12 @@ export const products = [
     "originalPrice": 239.88,
     "rating": "4.1",
     "reviews": 225,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3978,12 +3978,12 @@ export const products = [
     "originalPrice": 289.28,
     "rating": "4.0",
     "reviews": 10,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4006,12 +4006,12 @@ export const products = [
     "originalPrice": 284.56,
     "rating": "4.8",
     "reviews": 449,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4034,12 +4034,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.2",
     "reviews": 357,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -4062,12 +4062,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.0",
     "reviews": 489,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -4090,12 +4090,12 @@ export const products = [
     "originalPrice": 172.76,
     "rating": "4.6",
     "reviews": 64,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4118,12 +4118,12 @@ export const products = [
     "originalPrice": 285.26,
     "rating": "4.4",
     "reviews": 257,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4146,12 +4146,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.5",
     "reviews": 455,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -4174,12 +4174,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.9",
     "reviews": 283,
-    "image": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -4202,12 +4202,12 @@ export const products = [
     "originalPrice": 278.95,
     "rating": "4.6",
     "reviews": 139,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4230,12 +4230,12 @@ export const products = [
     "originalPrice": 292.73,
     "rating": "4.3",
     "reviews": 495,
-    "image": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-    "imageUrl": "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
+    "image": "/images/contact-lens.svg",
+    "imageUrl": "/images/contact-lens.svg",
     "images": [
-      "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80",
-      "https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80"
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg",
+      "/images/contact-lens.svg"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
