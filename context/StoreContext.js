@@ -130,16 +130,17 @@ export function StoreProvider({ children }) {
                 try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
               }
               if (p.category === 'contact-lenses') {
-                const colors = ['blue', 'purple', 'green', 'orange', 'teal'];
-                // Deterministic color based on length of name so it's consistent
-                const colorIdx = (p.name.length + p.id.toString().charCodeAt(0)) % colors.length;
-                const contactSvg = `/images/contact-lens-${colors[colorIdx]}.svg`;
+                // Use the 4 realistic contact lens photos we generated
+                const realImages = ['1', '2', '3', '4'];
+                // Deterministic mapping based on length of name so it's consistent
+                const imgIdx = (p.name.length + p.id.toString().charCodeAt(0)) % realImages.length;
+                const contactImg = `/images/real-contact-${realImages[imgIdx]}.png`;
                 
                 if (p.imageUrl && p.imageUrl.includes('unsplash')) {
-                  p.imageUrl = contactSvg;
+                  p.imageUrl = contactImg;
                 }
                 if (p.images && Array.isArray(p.images)) {
-                  p.images = p.images.map(img => (typeof img === 'string' && img.includes('unsplash')) ? contactSvg : img);
+                  p.images = p.images.map(img => (typeof img === 'string' && img.includes('unsplash')) ? contactImg : img);
                 }
               }
               return p;
