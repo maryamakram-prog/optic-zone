@@ -74,7 +74,7 @@ export default function ProductCard({ product }) {
             setImgSrc(FALLBACK_IMAGE);
             setImgLoading(false);
           }}
-          style={{ filter: product.hueRotate ? `hue-rotate(${product.hueRotate}deg)` : 'none' }}
+          style={{ filter: `hue-rotate(${((product.name || '').length * 27 + (typeof product.id === 'string' ? product.id.charCodeAt(0) : product.id || 0) * 13) % 360}deg)` }}
           className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-108 ${imgLoading ? 'opacity-0' : 'opacity-100'}`}
           loading="lazy"
         />
