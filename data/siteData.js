@@ -27,8 +27,8 @@ export const categories = [
     id: 4,
     name: 'Contact Lenses',
     slug: 'contact-lenses',
-    image: 'https://images.unsplash.com/photo-1585553616435-2dc0a54e271d?w=600&q=80',
-    images: ['https://images.unsplash.com/photo-1585553616435-2dc0a54e271d?w=600&q=80', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
+    image: 'https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80',
+    images: ['https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
     count: 98,
   },
   {
@@ -53,6 +53,7 @@ export const products = [
   {
     id: 'a1111111-1111-1111-1111-111111111111',
     name: 'Classic Aviator Pro',
+    gender: 'men',
     price: 189.99,
     originalPrice: 249.99,
     rating: 4.8,
@@ -66,6 +67,7 @@ export const products = [
   {
     id: 'a2222222-2222-2222-2222-222222222222',
     name: 'Titanium Round Frame',
+    gender: 'women',
     price: 159.99,
     originalPrice: null,
     rating: 4.6,
@@ -79,6 +81,7 @@ export const products = [
   {
     id: 'a3333333-3333-3333-3333-333333333333',
     name: 'Retro Cat Eye',
+    gender: 'women',
     price: 129.99,
     originalPrice: 179.99,
     rating: 4.7,
@@ -92,6 +95,7 @@ export const products = [
   {
     id: 'a4444444-4444-4444-4444-444444444444',
     name: 'Digital Shield Blue',
+    gender: 'men',
     price: 99.99,
     originalPrice: null,
     rating: 4.9,
@@ -105,6 +109,7 @@ export const products = [
   {
     id: 'a5555555-5555-5555-5555-555555555555',
     name: 'Luxury Wayfarer',
+    gender: 'men',
     price: 219.99,
     originalPrice: 299.99,
     rating: 4.5,
@@ -118,6 +123,7 @@ export const products = [
   {
     id: 'a6666666-6666-6666-6666-666666666666',
     name: 'Minimalist Wire Frame',
+    gender: 'women',
     price: 139.99,
     originalPrice: null,
     rating: 4.4,
@@ -144,6 +150,7 @@ export const products = [
   {
     id: 'a8888888-8888-8888-8888-888888888888',
     name: 'Oversized Glamour',
+    gender: 'women',
     price: 199.99,
     originalPrice: 259.99,
     rating: 4.6,
@@ -157,12 +164,13 @@ export const products = [
   {
     id: 'a9999999-9999-9999-9999-999999999999',
     name: 'MoistDaily Hydration (30 Pack)',
+    type: 'daily',
     price: 39.99,
     originalPrice: 49.99,
     rating: 4.8,
     reviews: 124,
-    image: 'https://images.unsplash.com/photo-1585553616435-2dc0a54e271d?w=600&q=80',
-    images: ['https://images.unsplash.com/photo-1585553616435-2dc0a54e271d?w=600&q=80', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
+    image: 'https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80',
+    images: ['https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
     badge: 'Popular',
     category: 'contact-lenses',
     is_hidden: false,
@@ -170,12 +178,13 @@ export const products = [
   {
     id: 'b1010101-1010-1010-1010-101010101010',
     name: 'UltraVision Monthly Comfort',
+    type: 'monthly',
     price: 54.99,
     originalPrice: null,
     rating: 4.7,
     reviews: 86,
-    image: 'https://images.unsplash.com/photo-1590611936760-eeb9bc5937db?w=600&q=80',
-    images: ['https://images.unsplash.com/photo-1590611936760-eeb9bc5937db?w=600&q=80', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
+    image: 'https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80',
+    images: ['https://images.unsplash.com/photo-1574549839446-281b37b12d5f?w=600&q=80', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
     badge: 'Best Seller',
     category: 'contact-lenses',
     is_hidden: false,

@@ -32,6 +32,8 @@ function ProductsContent() {
   const isSale = searchParams.get('isSale') === 'true';
   const isNew = searchParams.get('isNew') === 'true';
   const isBestSeller = searchParams.get('isBestSeller') === 'true';
+  const searchParamsGender = searchParams.get('gender');
+  const searchParamsType = searchParams.get('type');
 
   const { products, loading } = useStore();
   const [sortBy, setSortBy] = useState('featured');
@@ -61,9 +63,12 @@ function ProductsContent() {
     }
 
     // Special tag filters from URL
+    // Special tag filters from URL
     if (isSale) result = result.filter(p => p.badge === 'Sale' || p.isSale || p.originalPrice);
     if (isNew) result = result.filter(p => p.badge === 'New' || p.isNew);
     if (isBestSeller) result = result.filter(p => p.badge === 'Best Seller');
+    if (searchParamsGender) result = result.filter(p => p.gender?.toLowerCase() === searchParamsGender.toLowerCase());
+    if (searchParamsType) result = result.filter(p => p.type?.toLowerCase() === searchParamsType.toLowerCase());
 
     // Price range filter
     const range = PRICE_RANGES[priceRange];
@@ -84,7 +89,7 @@ function ProductsContent() {
       if (sortBy === 'rating') return (Number(b.rating) || 0) - (Number(a.rating) || 0);
       return 0;
     });
-  }, [products, searchParamsCategory, activeCategory, searchQuery, sortBy, priceRange, isSale, isNew, isBestSeller]);
+  }, [products, searchParamsCategory, activeCategory, searchQuery, sortBy, priceRange, isSale, isNew, isBestSeller, searchParamsGender, searchParamsType]);
 
   const pageTitle = searchQuery
     ? `Search results for "${searchQuery}"`

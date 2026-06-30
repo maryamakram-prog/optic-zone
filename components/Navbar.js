@@ -411,7 +411,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-border animate-slide-down bg-white">
+          <div className="lg:hidden border-t border-border animate-slide-down bg-white max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar">
             <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
               {NAV_ITEMS.map((item) => (
                 <div key={item.label}>
