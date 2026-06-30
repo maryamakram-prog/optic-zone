@@ -124,7 +124,7 @@ export function StoreProvider({ children }) {
         const { data, error } = await supabase.from('products').select('*').order('id');
         if (!error) {
           products = data
-            .filter(p => p.name !== 'Retro Clubmaster')
+            .filter(p => p.name !== 'Retro Clubmaster' && p.name !== 'Cycling Performance')
             .map(p => {
               if (typeof p.images === 'string') {
                 try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
