@@ -285,16 +285,13 @@ export default function ProductDetailPage() {
             {/* Colors */}
             {product.category !== 'contact-lenses' && (
               <div className="flex items-center gap-4 mb-6">
+                <span className="text-sm font-bold text-charcoal">Color:</span>
                 <div className="flex gap-2">
-                  {(product.colors?.length > 0 ? product.colors : ['#1F2937', '#9CA3AF', '#D1D5DB']).map((c, i) => (
-                    <button 
-                      key={i} 
-                      className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === i ? "border-[#CD9950] ring-2 ring-white ring-inset shadow-md" : "border-transparent"}`} 
-                      onClick={() => setSelectedColor(i)} 
-                      style={{ background: c }} 
-                      aria-label={`Color ${i+1}`}
-                    />
-                  ))}
+                  <div 
+                    className="w-8 h-8 rounded-full border-2 border-[#CD9950] ring-2 ring-white ring-inset shadow-md"
+                    style={{ background: product.frameColor?.toLowerCase().includes('black') ? '#1F2937' : product.frameColor?.toLowerCase().includes('gold') ? '#D4AF37' : product.frameColor?.toLowerCase().includes('silver') ? '#C0C0C0' : product.frameColor?.toLowerCase().includes('tortoise') ? '#8B4513' : product.frameColor?.toLowerCase().includes('clear') ? '#F3F4F6' : '#9CA3AF' }} 
+                    aria-label={product.frameColor}
+                  />
                 </div>
                 <span className="text-dark-gray text-sm">{product.frameColor || 'Shiny Black'}</span>
               </div>
