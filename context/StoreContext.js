@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { products as staticProducts, reviews as staticReviews } from '@/data/siteData';
 
@@ -13,7 +13,6 @@ const staticCoupons = [
   { id: 2, code: 'SUMMER20', type: 'percent', value: 20, active: true },
   { id: 3, code: 'OP15X', type: 'fixed', value: 15, active: true }
 ];
-
 
 const mapOrder = (o) => {
   if (!o) return null;
@@ -42,20 +41,30 @@ const mapOrder = (o) => {
   };
 };
 
+const getIsSupabaseConfigured = () =>
+  !!(process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder'));
+
 export function StoreProvider({ children }) {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [dbSchemaErrors, setDbSchemaErrors] = useState([]);
-  const [state, setState] = useState({
+  const [dbSchemaErrors] = useState([]);
+
+  // ── Public state (loads immediately, no auth needed) ────────────────────
+  const [publicState, setPublicState] = useState({
     products: [],
-    orders: [],
-    appointments: [],
     coupons: [],
     reviews: [],
+    lensDiscounts: [],
+    publicLoading: true,
+  });
+
+  // ── User/admin state (loads after auth resolves) ─────────────────────────
+  const [userState, setUserState] = useState({
+    orders: [],
+    appointments: [],
     customers: [],
     wishlist: [],
     recentlyViewed: [],
-    lensDiscounts: [],
-    loading: true,
   });
 
   const [settings, setSettings] = useState({
@@ -66,17 +75,20 @@ export function StoreProvider({ children }) {
     primaryColor: 'default'
   });
 
-  // Load settings on mount
+  // Load settings and local-stored wishlist/recent on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
         const savedSettings = localStorage.getItem(SETTINGS_KEY);
-        if (savedSettings) {
-          setSettings(JSON.parse(savedSettings));
-        }
+        if (savedSettings) setSettings(JSON.parse(savedSettings));
       } catch (e) {
         console.error('Error loading settings:', e);
       }
+      let localWishlist = [];
+      let localRecent = [];
+      try { localWishlist = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch {}
+      try { localRecent = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch {}
+      setUserState(prev => ({ ...prev, wishlist: localWishlist, recentlyViewed: localRecent }));
     }
   }, []);
 
@@ -90,34 +102,16 @@ export function StoreProvider({ children }) {
     });
   };
 
+  // ── PHASE 1: Fetch public data immediately (no auth needed) ──────────────
   useEffect(() => {
-    let localWishlist = [];
-    let localRecent = [];
-    if (typeof window !== 'undefined') {
-      try { localWishlist = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch {}
-      try { localRecent = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch {}
-    }
-
-    const fetchData = async () => {
-      setState(prev => ({ ...prev, loading: true }));
-      
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-      if (!isSupabaseConfigured) {
-        setIsAdmin(false);
-        setState({
+    const fetchPublicData = async () => {
+      if (!getIsSupabaseConfigured()) {
+        setPublicState({
           products: staticProducts,
-          orders: [],
-          appointments: [],
           coupons: staticCoupons,
           reviews: staticReviews,
-          customers: [],
-          wishlist: localWishlist,
-          recentlyViewed: localRecent,
           lensDiscounts: [],
-          loading: false
+          publicLoading: false,
         });
         return;
       }
@@ -135,153 +129,153 @@ export function StoreProvider({ children }) {
           supabase.from('lens_discounts').select('*')
         ]);
 
-        const { data: { session } } = await supabase.auth.getSession();
-        let orders = [];
-        let appointments = [];
-        let customersList = [];
-
-        if (session) {
-          let role = 'customer';
-          try {
-            const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
-            if (profile?.role) role = profile.role;
-          } catch (e) {}
-
-          const isUserAdmin = role === 'admin' || session.user.email === 'admin@opticzone.com';
-          setIsAdmin(isUserAdmin);
-
-          if (isUserAdmin) {
-            const [
-              { data: allOrders },
-              { data: allAppointments },
-              { data: allProfiles }
-            ] = await Promise.all([
-              supabase.from('orders').select('*, order_items(*, products(*), prescriptions(*))').order('created_at', { ascending: false }),
-              supabase.from('appointments').select('*').order('appointment_date', { ascending: false }),
-              supabase.from('profiles').select('*')
-            ]);
-            orders = allOrders || [];
-            appointments = allAppointments || [];
-            customersList = allProfiles || [];
-          } else {
-            const [
-              { data: userOrders },
-              { data: userAppointments }
-            ] = await Promise.all([
-              supabase.from('orders').select('*, order_items(*, products(*), prescriptions(*))').eq('user_id', session.user.id).order('created_at', { ascending: false }),
-              supabase.from('appointments').select('*').eq('user_id', session.user.id).order('appointment_date', { ascending: false })
-            ]);
-            orders = userOrders || [];
-            appointments = userAppointments || [];
-            try {
-              const { data: myProfile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-              if (myProfile) customersList = [myProfile];
-            } catch {}
-          }
-        } else {
-          setIsAdmin(false);
-        }
-
-        // Check for schema mismatches
-        const errors = [];
-        try {
-          const { error: rxError } = await supabase.from('prescriptions').select('id').limit(1);
-          if (rxError && (rxError.message.includes('does not exist') || rxError.code === 'PGRST116' || rxError.message.includes('not find'))) {
-            errors.push('Table "public.prescriptions" is missing. Please run supabase_update_to_uuid.sql in the Supabase SQL Editor.');
-          }
-        } catch (e) {
-          errors.push('Table "public.prescriptions" is missing.');
-        }
-
-        try {
-          const { error: hiddenError } = await supabase.from('products').select('is_hidden').limit(1);
-          if (hiddenError && (hiddenError.message.includes('is_hidden') || hiddenError.message.includes('schema cache') || hiddenError.message.includes('does not exist') || hiddenError.message.includes('not find'))) {
-            errors.push('Column "is_hidden" is missing from the "products" table. Please run supabase_update_to_uuid.sql in the Supabase SQL Editor.');
-          }
-        } catch (e) {
-          errors.push('Column "is_hidden" is missing from table "products".');
-        }
-
-        if (products && products[0] && typeof products[0].id === 'number') {
-          errors.push('Product ID column type is "integer" instead of "UUID". Please run supabase_update_to_uuid.sql in the Supabase SQL Editor.');
-        }
-        setDbSchemaErrors(errors);
-
-        setState({
+        setPublicState({
           products: (products && products.length > 0) ? products : staticProducts,
-          orders: (orders || []).map(mapOrder),
-          appointments: appointments || [],
           coupons: (coupons && coupons.length > 0) ? coupons : staticCoupons,
           reviews: (reviews && reviews.length > 0) ? reviews : staticReviews,
-          customers: (customersList && customersList.length > 0) ? customersList.map(c => ({
-            ...c,
-            name: c.first_name || c.last_name ? `${c.first_name || ''} ${c.last_name || ''}`.trim() : 'Unnamed User'
-          })) : [],
-          wishlist: localWishlist,
-          recentlyViewed: localRecent,
           lensDiscounts: lensDiscounts || [],
-          loading: false
+          publicLoading: false,
         });
       } catch (err) {
-        console.error('Error fetching from Supabase, using mock data fallback:', err);
-        setIsAdmin(false);
-        setDbSchemaErrors([`Failed to query database: ${err.message || 'Database connection error'}. Falling back to offline mock data.`]);
-        setState({
+        console.error('Error fetching public data, using fallback:', err);
+        setPublicState({
           products: staticProducts,
-          orders: [],
-          appointments: [],
           coupons: staticCoupons,
           reviews: staticReviews,
-          customers: [],
-          wishlist: localWishlist,
-          recentlyViewed: localRecent,
           lensDiscounts: [],
-          loading: false
+          publicLoading: false,
         });
       }
     };
 
-    fetchData();
+    fetchPublicData();
+  }, []);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+  // ── PHASE 2: Fetch user/admin data after auth resolves ───────────────────
+  const fetchUserData = async (session) => {
+    if (!session || !getIsSupabaseConfigured()) {
+      setIsAdmin(false);
+      setUserState(prev => ({ ...prev, orders: [], appointments: [], customers: [] }));
+      return;
+    }
+
+    try {
+      let role = 'customer';
+      try {
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+        if (profile?.role) role = profile.role;
+      } catch (e) {}
+
+      const isUserAdmin = role === 'admin' || session.user.email === 'admin@opticzone.com';
+      setIsAdmin(isUserAdmin);
+
+      if (isUserAdmin) {
+        const [
+          { data: allOrders },
+          { data: allAppointments },
+          { data: allProfiles }
+        ] = await Promise.all([
+          supabase.from('orders').select('*, order_items(*, products(*), prescriptions(*))').order('created_at', { ascending: false }),
+          supabase.from('appointments').select('*').order('appointment_date', { ascending: false }),
+          supabase.from('profiles').select('*')
+        ]);
+        setUserState(prev => ({
+          ...prev,
+          orders: (allOrders || []).map(mapOrder),
+          appointments: allAppointments || [],
+          customers: (allProfiles || []).map(c => ({
+            ...c,
+            name: c.first_name || c.last_name
+              ? `${c.first_name || ''} ${c.last_name || ''}`.trim()
+              : 'Unnamed User'
+          })),
+        }));
+      } else {
+        const [{ data: userOrders }, { data: userAppointments }] = await Promise.all([
+          supabase.from('orders').select('*, order_items(*, products(*), prescriptions(*))').eq('user_id', session.user.id).order('created_at', { ascending: false }),
+          supabase.from('appointments').select('*').eq('user_id', session.user.id).order('appointment_date', { ascending: false })
+        ]);
+        let myProfile = null;
+        try {
+          const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+          if (data) myProfile = data;
+        } catch {}
+
+        setUserState(prev => ({
+          ...prev,
+          orders: (userOrders || []).map(mapOrder),
+          appointments: userAppointments || [],
+          customers: myProfile
+            ? [{ ...myProfile, name: `${myProfile.first_name || ''} ${myProfile.last_name || ''}`.trim() }]
+            : [],
+        }));
+      }
+    } catch (err) {
+      console.error('Error fetching user data:', err);
+      setUserState(prev => ({ ...prev, orders: [], appointments: [], customers: [] }));
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      if (!getIsSupabaseConfigured()) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      await fetchUserData(session);
+    };
+    init();
+
+    // Only re-fetch user-specific data on auth changes — NOT the full product catalog
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
-        fetchData();
+        await fetchUserData(session);
       } else if (event === 'SIGNED_OUT') {
         setIsAdmin(false);
-        fetchData();
+        setUserState(prev => ({ ...prev, orders: [], appointments: [], customers: [] }));
       }
     });
 
     return () => { subscription.unsubscribe(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ── Derived state with memoization ───────────────────────────────────────
+  const mappedProducts = useMemo(() => {
+    return publicState.products.map(p => {
+      if (p.lens_discount_id && publicState.lensDiscounts) {
+        const discount = publicState.lensDiscounts.find(ld => ld.id === p.lens_discount_id);
+        if (discount) return { ...p, lens_discount: discount };
+      }
+      return p;
+    });
+  }, [publicState.products, publicState.lensDiscounts]);
+
+  const visibleProducts = useMemo(() => {
+    return isAdmin ? mappedProducts : mappedProducts.filter(p => !p.is_hidden);
+  }, [mappedProducts, isAdmin]);
+
   const toggleWishlist = (id) => {
-    const inList = state.wishlist.includes(id);
-    const newList = inList ? state.wishlist.filter(w => w !== id) : [...state.wishlist, id];
-    setState(prev => ({ ...prev, wishlist: newList }));
+    const inList = userState.wishlist.includes(id);
+    const newList = inList ? userState.wishlist.filter(w => w !== id) : [...userState.wishlist, id];
+    setUserState(prev => ({ ...prev, wishlist: newList }));
     if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(newList));
   };
 
   const addRecentlyViewed = (id) => {
-    const filtered = state.recentlyViewed.filter(r => r !== id);
+    const filtered = userState.recentlyViewed.filter(r => r !== id);
     const newList = [id, ...filtered].slice(0, 8);
-    setState(prev => ({ ...prev, recentlyViewed: newList }));
+    setUserState(prev => ({ ...prev, recentlyViewed: newList }));
     if (typeof window !== 'undefined') localStorage.setItem(RECENT_KEY, JSON.stringify(newList));
   };
 
   const addReview = async (review) => {
-    const isSupabaseConfigured = 
-      process.env.NEXT_PUBLIC_SUPABASE_URL && 
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-      
     const payload = {
       ...review,
       id: typeof window !== 'undefined' && window.crypto?.randomUUID ? window.crypto.randomUUID() : 'review-' + Date.now(),
       created_at: new Date().toISOString()
     };
 
-    if (!isSupabaseConfigured) {
-      setState(prev => ({ ...prev, reviews: [payload, ...prev.reviews] }));
+    if (!getIsSupabaseConfigured()) {
+      setPublicState(prev => ({ ...prev, reviews: [payload, ...prev.reviews] }));
       return;
     }
 
@@ -299,26 +293,23 @@ export function StoreProvider({ children }) {
       };
       const { data, error } = await supabase.from('reviews').insert([dbPayload]).select();
       if (!error && data) {
-        setState(prev => ({ ...prev, reviews: [data[0], ...prev.reviews] }));
+        setPublicState(prev => ({ ...prev, reviews: [data[0], ...prev.reviews] }));
       }
     } catch (e) { console.error(e); }
   };
 
-  const mappedProducts = state.products.map(p => {
-    if (p.lens_discount_id && state.lensDiscounts) {
-      const discount = state.lensDiscounts.find(ld => ld.id === p.lens_discount_id);
-      if (discount) {
-        return { ...p, lens_discount: discount };
-      }
-    }
-    return p;
-  });
-
-  const visibleProducts = isAdmin ? mappedProducts : mappedProducts.filter(p => !p.is_hidden);
-
   const value = {
-    ...state,
+    // Merge public + user state for backward compatibility
     products: visibleProducts,
+    orders: userState.orders,
+    appointments: userState.appointments,
+    coupons: publicState.coupons,
+    reviews: publicState.reviews,
+    customers: userState.customers,
+    wishlist: userState.wishlist,
+    recentlyViewed: userState.recentlyViewed,
+    lensDiscounts: publicState.lensDiscounts,
+    loading: publicState.publicLoading,
     isAdmin,
     settings,
     dbSchemaErrors,
@@ -326,14 +317,11 @@ export function StoreProvider({ children }) {
     toggleWishlist,
     addRecentlyViewed,
     addReview,
-    addOrder: async (orderData) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
+    addOrder: async (orderData) => {
       const localId = `ord-${Math.random().toString(36).substring(2, 9)}`;
       const nowString = new Date().toISOString();
-      
+
       const localPayload = {
         id: localId,
         user_id: null,
@@ -356,18 +344,14 @@ export function StoreProvider({ children }) {
         }))
       };
 
-      if (!isSupabaseConfigured) {
-        setState(prev => ({
-          ...prev,
-          orders: [localPayload, ...prev.orders]
-        }));
+      if (!getIsSupabaseConfigured()) {
+        setUserState(prev => ({ ...prev, orders: [localPayload, ...prev.orders] }));
         return { data: localPayload, error: null };
       }
 
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        
-        // Save prescriptions first
+
         const itemsWithPrescription = [];
         for (const item of orderData.items) {
           let dbPrescriptionId = null;
@@ -389,23 +373,15 @@ export function StoreProvider({ children }) {
               file_url: item.prescription.file_url || null,
               is_saved: false
             };
-
             const { data: newRx, error: rxError } = await supabase
-              .from('prescriptions')
-              .insert([rxPayload])
-              .select()
-              .single();
-
+              .from('prescriptions').insert([rxPayload]).select().single();
             if (rxError) {
-              console.error('Error inserting prescription for order item:', rxError.message || JSON.stringify(rxError), rxError);
+              console.error('Error inserting prescription:', rxError.message || JSON.stringify(rxError));
             } else if (newRx) {
               dbPrescriptionId = newRx.id;
             }
           }
-          itemsWithPrescription.push({
-            ...item,
-            dbPrescriptionId
-          });
+          itemsWithPrescription.push({ ...item, dbPrescriptionId });
         }
 
         const orderInsertPayload = {
@@ -419,11 +395,7 @@ export function StoreProvider({ children }) {
         };
 
         const { data: newOrder, error: orderError } = await supabase
-          .from('orders')
-          .insert([orderInsertPayload])
-          .select()
-          .single();
-
+          .from('orders').insert([orderInsertPayload]).select().single();
         if (orderError) throw orderError;
 
         const orderItemsPayload = itemsWithPrescription.map(item => ({
@@ -434,59 +406,40 @@ export function StoreProvider({ children }) {
           prescription_id: item.dbPrescriptionId
         }));
 
-        const { error: itemsError } = await supabase
-          .from('order_items')
-          .insert(orderItemsPayload);
-
+        const { error: itemsError } = await supabase.from('order_items').insert(orderItemsPayload);
         if (itemsError) throw itemsError;
 
         const { data: fullOrder } = await supabase
-          .from('orders')
-          .select('*, order_items(*, products(*), prescriptions(*))')
-          .eq('id', newOrder.id)
-          .single();
+          .from('orders').select('*, order_items(*, products(*), prescriptions(*))').eq('id', newOrder.id).single();
 
         const processedOrder = mapOrder(fullOrder || newOrder);
-
-        setState(prev => ({
-          ...prev,
-          orders: [processedOrder, ...prev.orders]
-        }));
-
+        setUserState(prev => ({ ...prev, orders: [processedOrder, ...prev.orders] }));
         return { data: processedOrder, error: null };
       } catch (err) {
-        console.error('Error inserting order:', err.message || JSON.stringify(err), err);
-        // Fallback to local
+        console.error('Error inserting order:', err.message || JSON.stringify(err));
         const guestPayload = { ...localPayload };
-        setState(prev => ({
-          ...prev,
-          orders: [guestPayload, ...prev.orders]
-        }));
+        setUserState(prev => ({ ...prev, orders: [guestPayload, ...prev.orders] }));
         return { data: guestPayload, error: err };
       }
     },
-    
-    addProduct: async (product) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
+    addProduct: async (product) => {
       const { id, created_at, ...cleanProduct } = product;
 
-      if (!isSupabaseConfigured) {
-        const newProduct = { 
-          id: typeof window !== 'undefined' && window.crypto?.randomUUID ? window.crypto.randomUUID() : 'local-' + Date.now(), 
+      if (!getIsSupabaseConfigured()) {
+        const newProduct = {
+          id: typeof window !== 'undefined' && window.crypto?.randomUUID ? window.crypto.randomUUID() : 'local-' + Date.now(),
           is_hidden: false,
-          ...cleanProduct 
+          ...cleanProduct
         };
-        setState(prev => ({ ...prev, products: [...prev.products, newProduct] }));
+        setPublicState(prev => ({ ...prev, products: [...prev.products, newProduct] }));
         return { data: [newProduct], error: null };
       }
 
       try {
         const { data, error } = await supabase.from('products').insert([cleanProduct]).select();
         if (!error && data) {
-          setState(prev => ({ ...prev, products: [...prev.products, data[0]] }));
+          setPublicState(prev => ({ ...prev, products: [...prev.products, data[0]] }));
         }
         return { data, error };
       } catch (err) {
@@ -495,12 +448,8 @@ export function StoreProvider({ children }) {
     },
 
     updateProduct: async (product) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-      if (!isSupabaseConfigured) {
-        setState(prev => ({
+      if (!getIsSupabaseConfigured()) {
+        setPublicState(prev => ({
           ...prev,
           products: prev.products.map(p => p.id === product.id ? product : p)
         }));
@@ -511,7 +460,7 @@ export function StoreProvider({ children }) {
         const { id, created_at, ...updates } = product;
         const { data, error } = await supabase.from('products').update(updates).eq('id', id).select();
         if (!error && data) {
-          setState(prev => ({ ...prev, products: prev.products.map(p => p.id === id ? data[0] : p) }));
+          setPublicState(prev => ({ ...prev, products: prev.products.map(p => p.id === id ? data[0] : p) }));
         }
         return { data, error };
       } catch (err) {
@@ -520,19 +469,15 @@ export function StoreProvider({ children }) {
     },
 
     deleteProduct: async (id) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-      if (!isSupabaseConfigured) {
-        setState(prev => ({ ...prev, products: prev.products.filter(p => p.id !== id) }));
+      if (!getIsSupabaseConfigured()) {
+        setPublicState(prev => ({ ...prev, products: prev.products.filter(p => p.id !== id) }));
         return { error: null };
       }
 
       try {
         const { error } = await supabase.from('products').delete().eq('id', id);
         if (!error) {
-          setState(prev => ({ ...prev, products: prev.products.filter(p => p.id !== id) }));
+          setPublicState(prev => ({ ...prev, products: prev.products.filter(p => p.id !== id) }));
         }
         return { error };
       } catch (err) {
@@ -541,12 +486,8 @@ export function StoreProvider({ children }) {
     },
 
     updateOrderStatus: async (id, status) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-      if (!isSupabaseConfigured) {
-        setState(prev => ({
+      if (!getIsSupabaseConfigured()) {
+        setUserState(prev => ({
           ...prev,
           orders: prev.orders.map(o => o.id === id ? { ...o, status } : o)
         }));
@@ -556,7 +497,7 @@ export function StoreProvider({ children }) {
       try {
         const { data, error } = await supabase.from('orders').update({ status }).eq('id', id).select();
         if (!error && data) {
-          setState(prev => ({
+          setUserState(prev => ({
             ...prev,
             orders: prev.orders.map(o => o.id === id ? mapOrder({ ...o, ...data[0] }) : o)
           }));
@@ -568,20 +509,16 @@ export function StoreProvider({ children }) {
     },
 
     addAppointment: async (appointment) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-      if (!isSupabaseConfigured) {
+      if (!getIsSupabaseConfigured()) {
         const newApt = { id: `apt-${Date.now()}`, ...appointment, status: 'pending' };
-        setState(prev => ({ ...prev, appointments: [...prev.appointments, newApt] }));
+        setUserState(prev => ({ ...prev, appointments: [...prev.appointments, newApt] }));
         return { data: [newApt], error: null };
       }
 
       try {
         const { data, error } = await supabase.from('appointments').insert([appointment]).select();
         if (!error && data) {
-          setState(prev => ({ ...prev, appointments: [...prev.appointments, data[0]] }));
+          setUserState(prev => ({ ...prev, appointments: [...prev.appointments, data[0]] }));
         }
         return { data, error };
       } catch (err) {
@@ -590,12 +527,8 @@ export function StoreProvider({ children }) {
     },
 
     updateAppointmentStatus: async (id, status) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-      if (!isSupabaseConfigured) {
-        setState(prev => ({
+      if (!getIsSupabaseConfigured()) {
+        setUserState(prev => ({
           ...prev,
           appointments: prev.appointments.map(a => a.id === id ? { ...a, status } : a)
         }));
@@ -605,7 +538,7 @@ export function StoreProvider({ children }) {
       try {
         const { data, error } = await supabase.from('appointments').update({ status }).eq('id', id).select();
         if (!error && data) {
-          setState(prev => ({ ...prev, appointments: prev.appointments.map(a => a.id === id ? data[0] : a) }));
+          setUserState(prev => ({ ...prev, appointments: prev.appointments.map(a => a.id === id ? data[0] : a) }));
         }
         return { data, error };
       } catch (err) {
@@ -614,19 +547,15 @@ export function StoreProvider({ children }) {
     },
 
     addCoupon: async (couponData) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-      
-      if (!isSupabaseConfigured) {
+      if (!getIsSupabaseConfigured()) {
         const newCoupon = { id: Date.now(), ...couponData, active: true };
-        setState(prev => ({ ...prev, coupons: [newCoupon, ...prev.coupons] }));
+        setPublicState(prev => ({ ...prev, coupons: [newCoupon, ...prev.coupons] }));
         return { data: newCoupon, error: null };
       }
       try {
         const { data, error } = await supabase.from('coupons').insert([couponData]).select();
         if (error) throw error;
-        if (data) setState(prev => ({ ...prev, coupons: [data[0], ...prev.coupons] }));
+        if (data) setPublicState(prev => ({ ...prev, coupons: [data[0], ...prev.coupons] }));
         return { data: data[0], error: null };
       } catch (err) {
         console.error('Error adding coupon:', err);
@@ -635,12 +564,8 @@ export function StoreProvider({ children }) {
     },
 
     updateCoupon: async (id, updates) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-      
-      if (!isSupabaseConfigured) {
-        setState(prev => ({
+      if (!getIsSupabaseConfigured()) {
+        setPublicState(prev => ({
           ...prev,
           coupons: prev.coupons.map(c => c.id === id ? { ...c, ...updates } : c)
         }));
@@ -649,7 +574,7 @@ export function StoreProvider({ children }) {
       try {
         const { error } = await supabase.from('coupons').update(updates).eq('id', id);
         if (error) throw error;
-        setState(prev => ({
+        setPublicState(prev => ({
           ...prev,
           coupons: prev.coupons.map(c => c.id === id ? { ...c, ...updates } : c)
         }));
@@ -661,24 +586,14 @@ export function StoreProvider({ children }) {
     },
 
     deleteCoupon: async (id) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-      
-      if (!isSupabaseConfigured) {
-        setState(prev => ({
-          ...prev,
-          coupons: prev.coupons.filter(c => c.id !== id)
-        }));
+      if (!getIsSupabaseConfigured()) {
+        setPublicState(prev => ({ ...prev, coupons: prev.coupons.filter(c => c.id !== id) }));
         return { error: null };
       }
       try {
         const { error } = await supabase.from('coupons').delete().eq('id', id);
         if (error) throw error;
-        setState(prev => ({
-          ...prev,
-          coupons: prev.coupons.filter(c => c.id !== id)
-        }));
+        setPublicState(prev => ({ ...prev, coupons: prev.coupons.filter(c => c.id !== id) }));
         return { error: null };
       } catch (err) {
         console.error('Error deleting coupon:', err);
@@ -687,12 +602,8 @@ export function StoreProvider({ children }) {
     },
 
     updateProfileRole: async (profileId, role) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-      
-      if (!isSupabaseConfigured) {
-        setState(prev => ({
+      if (!getIsSupabaseConfigured()) {
+        setUserState(prev => ({
           ...prev,
           customers: prev.customers.map(c => c.id === profileId ? { ...c, role } : c)
         }));
@@ -701,7 +612,7 @@ export function StoreProvider({ children }) {
       try {
         const { error } = await supabase.from('profiles').update({ role }).eq('id', profileId);
         if (error) throw error;
-        setState(prev => ({
+        setUserState(prev => ({
           ...prev,
           customers: prev.customers.map(c => c.id === profileId ? { ...c, role } : c)
         }));
@@ -713,24 +624,14 @@ export function StoreProvider({ children }) {
     },
 
     deleteProfile: async (profileId) => {
-      const isSupabaseConfigured = 
-        process.env.NEXT_PUBLIC_SUPABASE_URL && 
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-      
-      if (!isSupabaseConfigured) {
-        setState(prev => ({
-          ...prev,
-          customers: prev.customers.filter(c => c.id !== profileId)
-        }));
+      if (!getIsSupabaseConfigured()) {
+        setUserState(prev => ({ ...prev, customers: prev.customers.filter(c => c.id !== profileId) }));
         return { error: null };
       }
       try {
         const { error } = await supabase.from('profiles').delete().eq('id', profileId);
         if (error) throw error;
-        setState(prev => ({
-          ...prev,
-          customers: prev.customers.filter(c => c.id !== profileId)
-        }));
+        setUserState(prev => ({ ...prev, customers: prev.customers.filter(c => c.id !== profileId) }));
         return { error: null };
       } catch (err) {
         console.error('Error deleting profile:', err);

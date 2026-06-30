@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const HERO_SLIDES = [
   {
@@ -50,6 +50,14 @@ const TRUST_BADGES = [
 export default function Hero() {
   const [slide, setSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  // Defer video loading until after first paint to avoid blocking page load
+  const [videoMounted, setVideoMounted] = useState(false);
+
+  useEffect(() => {
+    // Load video only after the page has rendered
+    const videoTimer = setTimeout(() => setVideoMounted(true), 800);
+    return () => clearTimeout(videoTimer);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -132,7 +140,8 @@ export default function Hero() {
               <div className={`relative transition-all duration-300 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
                 {/* Main image / video */}
                 <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-white/30 border border-white/60 h-[420px]">
-                  {current.video ? (
+                  {current.video && videoMounted ? (
+                    // Video only mounts 800ms after first paint to avoid blocking LCP
                     <video
                       src={current.video}
                       autoPlay
@@ -147,6 +156,8 @@ export default function Hero() {
                       src={current.image}
                       alt="Premium eyewear collection"
                       className="w-full h-[420px] object-cover"
+                      fetchPriority={slide === 0 ? 'high' : 'low'}
+                      loading={slide === 0 ? 'eager' : 'lazy'}
                       onError={e => { e.target.src = 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=900&q=80'; }}
                     />
                   )}

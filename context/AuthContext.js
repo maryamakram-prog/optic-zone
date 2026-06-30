@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 
 const AuthContext = createContext(null);
@@ -9,41 +9,47 @@ export function AuthProvider({ children }) {
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Shared helper — fetch profile, determine role, set user/admin state
+  const applySession = useCallback(async (session) => {
+    if (!session?.user) {
+      setUser(null);
+      setAdmin(null);
+      return;
+    }
+
+    let profile = null;
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+      if (!error) profile = data;
+    } catch (e) {
+      console.error('Error fetching profile:', e);
+    }
+
+    const isUserAdmin =
+      profile?.role === 'admin' ||
+      session.user.user_metadata?.role === 'admin' ||
+      session.user.email === 'admin@opticzone.com';
+
+    if (isUserAdmin) {
+      setAdmin(profile || {
+        id: session.user.id,
+        email: session.user.email,
+        first_name: session.user.user_metadata?.first_name || 'System',
+        last_name: session.user.user_metadata?.last_name || 'Admin',
+        role: 'admin'
+      });
+      setUser(null);
+    } else {
+      setUser(profile || session.user);
+      setAdmin(null);
+    }
+  }, []);
+
   useEffect(() => {
     const initSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          let profile = null;
-          try {
-            const { data, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-            if (!error) profile = data;
-          } catch (e) {
-            console.error('Error fetching profile:', e);
-          }
-
-          const isUserAdmin = profile?.role === 'admin' || 
-                              session.user.user_metadata?.role === 'admin' || 
-                              session.user.email === 'admin@opticzone.com';
-
-          if (isUserAdmin) {
-            setAdmin(profile || {
-              id: session.user.id,
-              email: session.user.email,
-              first_name: session.user.user_metadata?.first_name || 'System',
-              last_name: session.user.user_metadata?.last_name || 'Admin',
-              role: 'admin'
-            });
-            setUser(null);
-          } else {
-            setUser(profile || session.user);
-            setAdmin(null);
-          }
-        } else {
-          // No user logged in
-          setUser(null);
-          setAdmin(null);
-        }
+        await applySession(session);
       } catch (err) {
         console.error('Error in initSession:', err);
       } finally {
@@ -54,32 +60,8 @@ export function AuthProvider({ children }) {
     initSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        let profile = null;
-        try {
-          const { data, error } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-          if (!error) profile = data;
-        } catch (e) {
-          console.error('Error fetching profile:', e);
-        }
-
-        const isUserAdmin = profile?.role === 'admin' || 
-                            session.user.user_metadata?.role === 'admin' || 
-                            session.user.email === 'admin@opticzone.com';
-
-        if (isUserAdmin) {
-          setAdmin(profile || {
-            id: session.user.id,
-            email: session.user.email,
-            first_name: session.user.user_metadata?.first_name || 'System',
-            last_name: session.user.user_metadata?.last_name || 'Admin',
-            role: 'admin'
-          });
-          setUser(null);
-        } else {
-          setUser(profile || session.user);
-          setAdmin(null);
-        }
+      if (event === 'SIGNED_IN') {
+        await applySession(session);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setAdmin(null);
@@ -87,7 +69,7 @@ export function AuthProvider({ children }) {
     });
 
     return () => { subscription.unsubscribe(); };
-  }, []);
+  }, [applySession]);
 
   const loginUser = async (email, password) => {
     try {

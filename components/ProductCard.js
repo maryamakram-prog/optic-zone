@@ -19,11 +19,6 @@ export default function ProductCard({ product }) {
     setImgLoading(true);
   }, [product.imageUrl, product.image]);
 
-  useEffect(() => {
-    if (imgRef.current && imgRef.current.complete) {
-      setImgLoading(false);
-    }
-  }, [imgSrc]);
 
   const badgeColors = {
     'Best Seller': 'bg-accent text-white',
@@ -64,6 +59,7 @@ export default function ProductCard({ product }) {
             setImgLoading(false);
           }}
           className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-108 ${imgLoading ? 'opacity-0' : 'opacity-100'}`}
+          loading="lazy"
         />
         {product.badge && !isDiscounted && (
           <span className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${badgeColors[product.badge]}`}>
