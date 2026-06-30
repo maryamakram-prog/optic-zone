@@ -27,8 +27,8 @@ export const categories = [
     id: 4,
     name: 'Contact Lenses',
     slug: 'contact-lenses',
-    image: '/images/real-contact-1.png',
-    images: ['/images/real-contact-4.png', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
+    image: '/images/color-contact-1.png',
+    images: ['/images/color-contact-5.png', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&q=80', 'https://images.unsplash.com/photo-1577803645773-f96470509666?w=600&q=80'],
     count: 98,
   },
   {
@@ -2858,12 +2858,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.8",
     "reviews": 172,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -2886,12 +2886,12 @@ export const products = [
     "originalPrice": 190.91,
     "rating": "4.1",
     "reviews": 337,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -2914,12 +2914,12 @@ export const products = [
     "originalPrice": 179.93,
     "rating": "4.1",
     "reviews": 310,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -2942,12 +2942,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.8",
     "reviews": 395,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -2970,12 +2970,12 @@ export const products = [
     "originalPrice": 187.62,
     "rating": "4.7",
     "reviews": 131,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -2998,12 +2998,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.3",
     "reviews": 71,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3026,12 +3026,12 @@ export const products = [
     "originalPrice": 243.58,
     "rating": "4.6",
     "reviews": 291,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3054,12 +3054,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.0",
     "reviews": 180,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3082,12 +3082,12 @@ export const products = [
     "originalPrice": 276.16,
     "rating": "4.7",
     "reviews": 147,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3110,12 +3110,12 @@ export const products = [
     "originalPrice": 150.93,
     "rating": "4.4",
     "reviews": 212,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3138,12 +3138,12 @@ export const products = [
     "originalPrice": null,
     "rating": "5.0",
     "reviews": 203,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3166,12 +3166,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.8",
     "reviews": 346,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3194,12 +3194,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.2",
     "reviews": 305,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3222,12 +3222,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.6",
     "reviews": 20,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3250,12 +3250,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.7",
     "reviews": 32,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3278,12 +3278,12 @@ export const products = [
     "originalPrice": 245.54,
     "rating": "4.2",
     "reviews": 391,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3306,12 +3306,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.6",
     "reviews": 173,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3334,12 +3334,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.7",
     "reviews": 290,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3362,12 +3362,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.4",
     "reviews": 36,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3390,12 +3390,12 @@ export const products = [
     "originalPrice": 236.92,
     "rating": "4.6",
     "reviews": 36,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3418,12 +3418,12 @@ export const products = [
     "originalPrice": 161.94,
     "rating": "4.5",
     "reviews": 12,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3446,12 +3446,12 @@ export const products = [
     "originalPrice": 228.32,
     "rating": "4.8",
     "reviews": 452,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3474,12 +3474,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.4",
     "reviews": 53,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3502,12 +3502,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.1",
     "reviews": 477,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3530,12 +3530,12 @@ export const products = [
     "originalPrice": 197.73,
     "rating": "4.8",
     "reviews": 397,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3558,12 +3558,12 @@ export const products = [
     "originalPrice": 280.71,
     "rating": "4.0",
     "reviews": 353,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3586,12 +3586,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.7",
     "reviews": 308,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3614,12 +3614,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.9",
     "reviews": 460,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3642,12 +3642,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.0",
     "reviews": 220,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3670,12 +3670,12 @@ export const products = [
     "originalPrice": 264.64,
     "rating": "4.4",
     "reviews": 95,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3698,12 +3698,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.8",
     "reviews": 199,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3726,12 +3726,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.7",
     "reviews": 102,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3754,12 +3754,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.2",
     "reviews": 221,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "Best Seller",
     "category": "contact-lenses",
@@ -3782,12 +3782,12 @@ export const products = [
     "originalPrice": 219.78,
     "rating": "4.1",
     "reviews": 204,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3810,12 +3810,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.5",
     "reviews": 91,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3838,12 +3838,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.3",
     "reviews": 31,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -3866,12 +3866,12 @@ export const products = [
     "originalPrice": 281.24,
     "rating": "4.6",
     "reviews": 276,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3894,12 +3894,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.3",
     "reviews": 32,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -3922,12 +3922,12 @@ export const products = [
     "originalPrice": 199.52,
     "rating": "5.0",
     "reviews": 82,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3950,12 +3950,12 @@ export const products = [
     "originalPrice": 239.88,
     "rating": "4.1",
     "reviews": 225,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -3978,12 +3978,12 @@ export const products = [
     "originalPrice": 289.28,
     "rating": "4.0",
     "reviews": 10,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4006,12 +4006,12 @@ export const products = [
     "originalPrice": 284.56,
     "rating": "4.8",
     "reviews": 449,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4034,12 +4034,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.2",
     "reviews": 357,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -4062,12 +4062,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.0",
     "reviews": 489,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": "New",
     "category": "contact-lenses",
@@ -4090,12 +4090,12 @@ export const products = [
     "originalPrice": 172.76,
     "rating": "4.6",
     "reviews": 64,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4118,12 +4118,12 @@ export const products = [
     "originalPrice": 285.26,
     "rating": "4.4",
     "reviews": 257,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4146,12 +4146,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.5",
     "reviews": 455,
-    "image": "/images/real-contact-1.png",
-    "imageUrl": "/images/real-contact-3.png",
+    "image": "/images/color-contact-4.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png"
+      "/images/color-contact-5.png",
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -4174,12 +4174,12 @@ export const products = [
     "originalPrice": null,
     "rating": "4.9",
     "reviews": 283,
-    "image": "/images/real-contact-2.png",
-    "imageUrl": "/images/real-contact-4.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-4.png",
     "images": [
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png",
-      "/images/real-contact-4.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-1.png",
+      "/images/color-contact-5.png"
     ],
     "badge": null,
     "category": "contact-lenses",
@@ -4202,12 +4202,12 @@ export const products = [
     "originalPrice": 278.95,
     "rating": "4.6",
     "reviews": 139,
-    "image": "/images/real-contact-3.png",
-    "imageUrl": "/images/real-contact-1.png",
+    "image": "/images/color-contact-2.png",
+    "imageUrl": "/images/color-contact-2.png",
     "images": [
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png",
-      "/images/real-contact-1.png"
+      "/images/color-contact-3.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-3.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",
@@ -4230,12 +4230,12 @@ export const products = [
     "originalPrice": 292.73,
     "rating": "4.3",
     "reviews": 495,
-    "image": "/images/real-contact-4.png",
-    "imageUrl": "/images/real-contact-2.png",
+    "image": "/images/color-contact-1.png",
+    "imageUrl": "/images/color-contact-5.png",
     "images": [
-      "/images/real-contact-4.png",
-      "/images/real-contact-3.png",
-      "/images/real-contact-2.png"
+      "/images/color-contact-2.png",
+      "/images/color-contact-4.png",
+      "/images/color-contact-1.png"
     ],
     "badge": "Sale",
     "category": "contact-lenses",

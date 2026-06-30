@@ -130,11 +130,11 @@ export function StoreProvider({ children }) {
                 try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
               }
               if (p.category === 'contact-lenses') {
-                // Use the 4 realistic contact lens photos we generated
-                const realImages = ['1', '2', '3', '4'];
+                // Use the 5 colored contact lens photos we generated
+                const coloredImages = ['1', '2', '3', '4', '5'];
                 // Deterministic mapping based on length of name so it's consistent
-                const imgIdx = (p.name.length + p.id.toString().charCodeAt(0)) % realImages.length;
-                const contactImg = `/images/real-contact-${realImages[imgIdx]}.png`;
+                const imgIdx = (p.name.length + p.id.toString().charCodeAt(0)) % coloredImages.length;
+                const contactImg = `/images/color-contact-${coloredImages[imgIdx]}.png`;
                 
                 if (p.imageUrl && p.imageUrl.includes('unsplash')) {
                   p.imageUrl = contactImg;
