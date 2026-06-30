@@ -33,6 +33,9 @@ export default function GoogleOneTap() {
               router.push('/account');
             } else {
               console.error('Google sign-in error:', error.message);
+              if (error.message?.includes('provider is not enabled')) {
+                alert('Google Sign-In is not enabled in Supabase! Please go to your Supabase Dashboard -> Authentication -> Providers and enable Google.');
+              }
             }
           } catch (e) {
             console.error('Google One Tap error:', e);

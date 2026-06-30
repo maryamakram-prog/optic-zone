@@ -24,6 +24,11 @@ export default function GoogleSignInButton({ label = 'Continue with Google', cla
       // Supabase will redirect the user to Google — nothing else needed here
     } catch (err) {
       console.error('Google sign-in failed:', err.message);
+      if (err.message?.includes('provider is not enabled')) {
+        alert('Google Sign-In is not enabled in Supabase! Please go to your Supabase Dashboard -> Authentication -> Providers and enable Google.');
+      } else {
+        alert(`Sign-in failed: ${err.message}`);
+      }
       setLoading(false);
     }
   };
