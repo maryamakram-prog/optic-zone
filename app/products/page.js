@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { useStore } from '@/context/StoreContext';
 import ProductCard from '@/components/ProductCard';
 import { useSearchParams } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 
 const PRICE_RANGES = [
