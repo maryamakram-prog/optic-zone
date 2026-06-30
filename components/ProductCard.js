@@ -19,6 +19,12 @@ export default function ProductCard({ product }) {
     setImgLoading(true);
   }, [product.imageUrl, product.image]);
 
+  useEffect(() => {
+    if (imgRef.current && imgRef.current.complete) {
+      setImgLoading(false);
+    }
+  }, [imgSrc]);
+
 
   const badgeColors = {
     'Best Seller': 'bg-accent text-white',
