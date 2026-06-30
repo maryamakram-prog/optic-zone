@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   price DECIMAL(10, 2) NOT NULL,
   category TEXT NOT NULL,
   "imageUrl" TEXT,
+  images JSONB,
   description TEXT,
   "inStock" BOOLEAN DEFAULT TRUE,
   "frameShape" TEXT,

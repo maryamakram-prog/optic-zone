@@ -66,16 +66,18 @@ export default function ProductDetailPage() {
   const product = products?.find(p => String(p.id).substring(0, 8) === String(params.id).substring(0, 8));
   const isContactLens = product?.category === 'contact-lenses';
 
-  const [detailImgSrc, setDetailImgSrc] = useState(product?.imageUrl || product?.image || FALLBACK_IMAGE);
+  const galleryImages = product?.images?.length ? product.images : [product?.imageUrl || product?.image || FALLBACK_IMAGE];
+  const [detailImgSrc, setDetailImgSrc] = useState(galleryImages[0]);
   const [detailImgLoading, setDetailImgLoading] = useState(true);
   const detailImgRef = useRef(null);
 
   useEffect(() => {
     if (product) {
-      setDetailImgSrc(product.imageUrl || product.image || FALLBACK_IMAGE);
+      const initialImage = product?.images?.length ? product.images[0] : (product.imageUrl || product.image || FALLBACK_IMAGE);
+      setDetailImgSrc(initialImage);
       setDetailImgLoading(true);
     }
-  }, [product?.imageUrl, product?.image]);
+  }, [product?.images, product?.imageUrl, product?.image]);
 
   useEffect(() => {
     if (detailImgRef.current && detailImgRef.current.complete) {
@@ -208,6 +210,26 @@ export default function ProductDetailPage() {
                 {product.isNew && <span className="bg-green-500 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg">New</span>}
               </div>
             </div>
+
+            {/* Thumbnails */}
+            {galleryImages.length > 1 && (
+              <div className="flex items-center gap-3 mt-4 overflow-x-auto pb-2 custom-scrollbar">
+                {galleryImages.map((img, i) => (
+                  <button 
+                    key={i} 
+                    onClick={() => {
+                      if (detailImgSrc !== img) {
+                        setDetailImgLoading(true);
+                        setDetailImgSrc(img);
+                      }
+                    }}
+                    className={`w-20 h-20 shrink-0 rounded-xl border-2 transition-all p-1 bg-white flex items-center justify-center ${detailImgSrc === img ? 'border-accent shadow-sm' : 'border-mid-gray/30 hover:border-accent/50'}`}
+                  >
+                    <img src={img} alt={`Thumbnail ${i+1}`} className="w-full h-full object-cover rounded-lg" />
+                  </button>
+                ))}
+              </div>
+            )}
 
             {product.colors && product.colors.length > 0 && (
               <div className="flex items-center justify-center gap-4 mt-6">
