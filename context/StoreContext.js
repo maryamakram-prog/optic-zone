@@ -122,7 +122,14 @@ export function StoreProvider({ children }) {
 
       try {
         const { data, error } = await supabase.from('products').select('*').order('id');
-        if (!error) products = data;
+        if (!error) {
+          products = data.map(p => {
+            if (typeof p.images === 'string') {
+              try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
+            }
+            return p;
+          });
+        }
       } catch (e) { console.warn('products fetch failed:', e.message); }
 
       try {
