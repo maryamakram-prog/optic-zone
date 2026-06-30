@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';
 import { AuthProvider } from '@/context/AuthContext';
 import { StoreProvider } from '@/context/StoreContext';
 import { CartProvider } from '@/context/CartContext';
-import GoogleOneTap from '@/components/GoogleOneTap';
+
 
 export const metadata = {
   title: 'Optic Zone — Eyeglasses, Sunglasses & Contact Lenses',
@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <StoreProvider>
             <CartProvider>
-              <GoogleOneTap />
+
               <Navbar />
               <main className="min-h-screen">{children}</main>
               <Footer />

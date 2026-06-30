@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
-import GoogleSignInButton from '@/components/GoogleSignInButton';
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -55,18 +55,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          <div className="mb-6">
-            <GoogleSignInButton label="Sign in with Google" />
-          </div>
 
-          <div className="relative flex items-center justify-center mb-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-dark-gray/20"></div>
-            </div>
-            <div className="relative px-4 bg-white/70 backdrop-blur-md text-sm text-dark-gray/60 font-semibold rounded-full">
-              OR CONTINUE WITH EMAIL
-            </div>
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
