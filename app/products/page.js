@@ -25,6 +25,25 @@ const CATEGORIES = [
   { label: 'Reading', value: 'reading' },
 ];
 
+const GENDERS = [
+  { label: 'All', value: '' },
+  { label: 'Men', value: 'men' },
+  { label: 'Women', value: 'women' },
+  { label: 'Kids', value: 'kids' },
+  { label: 'Unisex', value: 'unisex' },
+];
+
+const SHAPES = [
+  { label: 'All', value: '' },
+  { label: 'Round', value: 'round' },
+  { label: 'Square', value: 'square' },
+  { label: 'Rectangle', value: 'rectangle' },
+  { label: 'Aviator', value: 'aviator' },
+  { label: 'Cat-Eye', value: 'cat-eye' },
+  { label: 'Oval', value: 'oval' },
+  { label: 'Geometric', value: 'geometric' },
+];
+
 function ProductsContent() {
   const searchParams = useSearchParams();
   const searchParamsCategory = searchParams.get('category');
@@ -35,10 +54,14 @@ function ProductsContent() {
   const searchParamsGender = searchParams.get('gender');
   const searchParamsType = searchParams.get('type');
 
+  const searchParamsFaceShape = searchParams.get('faceShape');
+
   const { products, loading } = useStore();
   const [sortBy, setSortBy] = useState('featured');
   const [priceRange, setPriceRange] = useState(0);
   const [activeCategory, setActiveCategory] = useState(searchParamsCategory || '');
+  const [activeGender, setActiveGender] = useState(searchParamsGender || '');
+  const [activeShape, setActiveShape] = useState(searchParamsFaceShape || '');
   const [showFilters, setShowFilters] = useState(false);
 
   const displayProducts = useMemo(() => {
@@ -63,12 +86,20 @@ function ProductsContent() {
     }
 
     // Special tag filters from URL
-    // Special tag filters from URL
     if (isSale) result = result.filter(p => p.badge === 'Sale' || p.isSale || p.originalPrice);
     if (isNew) result = result.filter(p => p.badge === 'New' || p.isNew);
     if (isBestSeller) result = result.filter(p => p.badge === 'Best Seller');
-    if (searchParamsGender) result = result.filter(p => p.gender?.toLowerCase() === searchParamsGender.toLowerCase());
     if (searchParamsType) result = result.filter(p => p.type?.toLowerCase() === searchParamsType.toLowerCase());
+
+    // Gender Filter
+    if (activeGender) {
+      result = result.filter(p => p.gender?.toLowerCase() === activeGender.toLowerCase());
+    }
+
+    // Shape Filter
+    if (activeShape) {
+      result = result.filter(p => p.frameShape?.toLowerCase() === activeShape.toLowerCase());
+    }
 
     // Price range filter
     const range = PRICE_RANGES[priceRange];
@@ -89,7 +120,7 @@ function ProductsContent() {
       if (sortBy === 'rating') return (Number(b.rating) || 0) - (Number(a.rating) || 0);
       return 0;
     });
-  }, [products, searchParamsCategory, activeCategory, searchQuery, sortBy, priceRange, isSale, isNew, isBestSeller, searchParamsGender, searchParamsType]);
+  }, [products, searchParamsCategory, activeCategory, searchQuery, sortBy, priceRange, isSale, isNew, isBestSeller, searchParamsType, activeGender, activeShape]);
 
   const pageTitle = searchQuery
     ? `Search results for "${searchQuery}"`
@@ -148,6 +179,46 @@ function ProductsContent() {
                 }`}
               >
                 {range.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Gender Filter */}
+        <div className="bg-white rounded-2xl border border-border p-5 shadow-sm">
+          <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider mb-4">Gender</h3>
+          <div className="space-y-1">
+            {GENDERS.map(g => (
+              <button
+                key={g.value}
+                onClick={() => setActiveGender(g.value)}
+                className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                  (activeGender || '') === g.value
+                    ? 'bg-accent text-white font-semibold'
+                    : 'text-charcoal-light hover:bg-ebd-blue-light hover:text-accent'
+                }`}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Shape Filter */}
+        <div className="bg-white rounded-2xl border border-border p-5 shadow-sm">
+          <h3 className="text-sm font-bold text-charcoal uppercase tracking-wider mb-4">Frame Shape</h3>
+          <div className="space-y-1">
+            {SHAPES.map(s => (
+              <button
+                key={s.value}
+                onClick={() => setActiveShape(s.value)}
+                className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                  (activeShape || '') === s.value
+                    ? 'bg-accent text-white font-semibold'
+                    : 'text-charcoal-light hover:bg-ebd-blue-light hover:text-accent'
+                }`}
+              >
+                {s.label}
               </button>
             ))}
           </div>

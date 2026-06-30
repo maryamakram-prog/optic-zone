@@ -1,3 +1,5 @@
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images JSONB;
+
 -- Generated 150 Products for Optic Zone
 
 INSERT INTO public.products (
@@ -3450,3 +3452,4 @@ INSERT INTO public.products (
   495, 
   false
 );
+
