@@ -130,8 +130,8 @@ export function StoreProvider({ children }) {
                 try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
               }
               if (p.category === 'contact-lenses') {
-                // Use the 5 colored contact lens photos we generated
-                const coloredImages = ['1', '2', '3', '4', '5'];
+                // Use the 13 colored contact lens photos we generated
+                const coloredImages = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
                 // Deterministic mapping based on length of name so it's consistent
                 const imgIdx = (p.name.length + p.id.toString().charCodeAt(0)) % coloredImages.length;
                 const contactImg = `/images/color-contact-${coloredImages[imgIdx]}.png`;
