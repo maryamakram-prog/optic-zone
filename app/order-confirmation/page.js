@@ -85,7 +85,14 @@ export default function OrderConfirmationPage() {
                 return (
                   <div key={idx} className="p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center bg-white">
                     <div className="w-20 h-20 shrink-0 bg-light-gray rounded-xl overflow-hidden border border-mid-gray/20">
-                      <img src={imageUrl} alt={item.products?.name || item.name} className="w-full h-full object-cover" />
+                      <img 
+                        src={imageUrl} 
+                        alt={item.products?.name || item.name} 
+                        className="w-full h-full object-cover" 
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => { e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="%23f3f4f6"><rect width="100" height="100" fill="%23f3f4f6"/><path d="M20 40 Q35 25 50 40 Q65 25 80 40" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="35" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="65" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><path d="M42.5 55 L57.5 55" stroke="%239ca3af" stroke-width="3" fill="none"/></svg>'; }}
+                      />
                     </div>
                     <div className="flex-1">
                       <h4 className="font-bold text-charcoal">{item.products?.name || item.name || 'Premium Frame'}</h4>

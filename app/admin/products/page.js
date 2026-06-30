@@ -353,7 +353,7 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="py-4">
                     {p.imageUrl ? (
-                      <img src={p.imageUrl} alt={p.name} className="w-12 h-9 object-cover rounded-lg border border-mid-gray/50 shadow-sm" onError={e => { e.target.style.display = 'none'; }} />
+                      <img src={p.imageUrl} alt={p.name} loading="lazy" decoding="async" className="w-12 h-9 object-cover rounded-lg border border-mid-gray/50 shadow-sm" onError={e => { e.target.style.display = 'none'; }} />
                     ) : (
                       <span className="text-xl">👓</span>
                     )}
