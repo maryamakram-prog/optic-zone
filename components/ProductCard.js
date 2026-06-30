@@ -43,7 +43,17 @@ export default function ProductCard({ product }) {
       className="group bg-white rounded-2xl border border-mid-gray/30 overflow-hidden hover-lift block cursor-pointer"
     >
       {/* Image */}
-      <div className="relative aspect-square overflow-hidden bg-light-gray flex items-center justify-center">
+      <div 
+        className="relative aspect-square overflow-hidden bg-light-gray flex items-center justify-center"
+        onMouseEnter={() => {
+          if (product.images && product.images.length > 1) {
+            setImgSrc(product.images[1]);
+          }
+        }}
+        onMouseLeave={() => {
+          setImgSrc(product.imageUrl || product.image || FALLBACK_IMAGE);
+        }}
+      >
         {imgLoading && (
           <div className="absolute inset-0 bg-light-gray/40 animate-pulse flex items-center justify-center z-10">
             <div className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin"></div>
