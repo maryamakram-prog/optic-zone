@@ -91,7 +91,7 @@ export default function OrderConfirmationPage() {
                         className="w-full h-full object-cover" 
                         loading="lazy"
                         decoding="async"
-                        style={{ filter: imageUrl.includes('color-contact') ? `hue-rotate(${((item.products?.name || item.name || '').length * 27 + (typeof (item.product_id || item.id) === 'string' ? (item.product_id || item.id).charCodeAt(0) : (item.product_id || item.id || 0)) * 13) % 360}deg)` : 'none' }}
+                        style={{ filter: `hue-rotate(${((item.products?.name || item.name || '').length * 27 + (typeof (item.product_id || item.id) === 'string' ? (item.product_id || item.id).charCodeAt(0) : (item.product_id || item.id || 0)) * 13) % 360}deg)` }}
                         onError={(e) => { e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="%23f3f4f6"><rect width="100" height="100" fill="%23f3f4f6"/><path d="M20 40 Q35 25 50 40 Q65 25 80 40" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="35" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><circle cx="65" cy="55" r="15" stroke="%239ca3af" stroke-width="3" fill="none"/><path d="M42.5 55 L57.5 55" stroke="%239ca3af" stroke-width="3" fill="none"/></svg>'; }}
                       />
                     </div>

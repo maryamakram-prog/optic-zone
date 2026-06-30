@@ -129,15 +129,15 @@ export function StoreProvider({ children }) {
               if (typeof p.images === 'string') {
                 try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
               }
+              // Add a unique hue rotation to EVERY product to multiply the visual inventory
+              p.hueRotate = (p.name.length * 27 + (typeof p.id === 'string' ? p.id.charCodeAt(0) : p.id) * 13) % 360;
+
               if (p.category === 'contact-lenses') {
                 // Use the 13 colored contact lens photos we generated
                 const coloredImages = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
                 // Deterministic mapping based on length of name so it's consistent
                 const imgIdx = (p.name.length + p.id.toString().charCodeAt(0)) % coloredImages.length;
                 const contactImg = `/images/color-contact-${coloredImages[imgIdx]}.png`;
-                
-                // Add a unique hue rotation so EVERY single product looks like a completely different color
-                p.hueRotate = (p.name.length * 27 + (typeof p.id === 'string' ? p.id.charCodeAt(0) : p.id) * 13) % 360;
                 
                 if (p.imageUrl && p.imageUrl.includes('unsplash')) {
                   p.imageUrl = contactImg;
