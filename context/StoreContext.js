@@ -136,6 +136,9 @@ export function StoreProvider({ children }) {
                 const imgIdx = (p.name.length + p.id.toString().charCodeAt(0)) % coloredImages.length;
                 const contactImg = `/images/color-contact-${coloredImages[imgIdx]}.png`;
                 
+                // Add a unique hue rotation so EVERY single product looks like a completely different color
+                p.hueRotate = (p.name.length * 27 + (typeof p.id === 'string' ? p.id.charCodeAt(0) : p.id) * 13) % 360;
+                
                 if (p.imageUrl && p.imageUrl.includes('unsplash')) {
                   p.imageUrl = contactImg;
                 }

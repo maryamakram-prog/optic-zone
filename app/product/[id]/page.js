@@ -189,6 +189,7 @@ export default function ProductDetailPage() {
                      setDetailImgSrc(FALLBACK_IMAGE);
                      setDetailImgLoading(false);
                    }}
+                   style={{ filter: product.hueRotate ? `hue-rotate(${product.hueRotate}deg)` : 'none' }}
                    className={`w-full h-full object-cover rounded-2xl transition-all duration-300 ${detailImgLoading ? 'opacity-0' : 'opacity-100'}`} 
                  />
               ) : (
@@ -225,7 +226,7 @@ export default function ProductDetailPage() {
                     }}
                     className={`w-20 h-20 shrink-0 rounded-xl border-2 transition-all p-1 bg-white flex items-center justify-center ${detailImgSrc === img ? 'border-accent shadow-sm' : 'border-mid-gray/30 hover:border-accent/50'}`}
                   >
-                    <img src={img} alt={`Thumbnail ${i+1}`} className="w-full h-full object-cover rounded-lg" />
+                    <img src={img} alt={`Thumbnail ${i+1}`} className="w-full h-full object-cover rounded-lg" style={{ filter: product.hueRotate ? `hue-rotate(${product.hueRotate}deg)` : 'none' }} />
                   </button>
                 ))}
               </div>
