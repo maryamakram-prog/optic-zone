@@ -123,7 +123,7 @@ export function StoreProvider({ children }) {
       try {
         const { data, error } = await supabase.from('products').select('*').order('id');
         if (!error) {
-          let dbProducts = data.filter(p => p.name !== 'Retro Clubmaster' && p.name !== 'Cycling Performance' && !p.name.includes('Gamer Shield Optics') && p.name !== 'Compact Foldables');
+          let dbProducts = data.filter(p => p.name !== 'Retro Clubmaster' && p.name !== 'Cycling Performance' && !p.name.includes('Gamer Shield Optics') && p.name !== 'Compact Foldables' && p.name !== 'Tom Ford Classic Rectangle');
           const dbProductNames = new Set(dbProducts.map(p => p.name));
           const newStaticProducts = staticProducts.filter(p => (p.category === 'blue-light' || p.category === 'reading') && !dbProductNames.has(p.name));
           dbProducts = [...dbProducts, ...newStaticProducts];
@@ -136,7 +136,8 @@ export function StoreProvider({ children }) {
               // Enrich every single product with multiple images and proper filtering
               const staticP = staticProducts.find(sp => sp.name === p.name);
               if (staticP) {
-                if (!p.images || p.images.length < 2) p.images = staticP.images;
+                p.images = staticP.images;
+                p.imageUrl = staticP.imageUrl || staticP.image || p.imageUrl;
                 p.frameShape = p.frameShape || staticP.frameShape || 'round';
                 p.frameMaterial = p.frameMaterial || staticP.frameMaterial || 'Mixed';
                 p.frameColor = p.frameColor || staticP.frameColor || 'Clear';
@@ -186,8 +187,17 @@ export function StoreProvider({ children }) {
         // If table doesn't exist, silently ignore — not critical for browsing
       } catch (e) { console.warn('lens_discounts table unavailable, skipping:', e.message); }
 
+      const rawProducts = (products && products.length > 0) ? products : staticProducts;
+      const finalProducts = rawProducts.filter(p => {
+        const name = p.name || '';
+        return name !== 'Retro Clubmaster' 
+            && name !== 'Cycling Performance' 
+            && !name.includes('Gamer Shield Optics') 
+            && name !== 'Compact Foldables';
+      });
+
       setPublicState({
-        products: (products && products.length > 0) ? products : staticProducts,
+        products: finalProducts,
         coupons: (coupons && coupons.length > 0) ? coupons : staticCoupons,
         reviews: (reviews && reviews.length > 0) ? reviews : staticReviews,
         lensDiscounts,
