@@ -123,11 +123,30 @@ export function StoreProvider({ children }) {
       try {
         const { data, error } = await supabase.from('products').select('*').order('id');
         if (!error) {
-          products = data
-            .filter(p => p.name !== 'Retro Clubmaster' && p.name !== 'Cycling Performance')
-            .map(p => {
+          let dbProducts = data.filter(p => p.name !== 'Retro Clubmaster' && p.name !== 'Cycling Performance' && !p.name.includes('Gamer Shield Optics') && p.name !== 'Compact Foldables');
+          const dbProductNames = new Set(dbProducts.map(p => p.name));
+          const newStaticProducts = staticProducts.filter(p => (p.category === 'blue-light' || p.category === 'reading') && !dbProductNames.has(p.name));
+          dbProducts = [...dbProducts, ...newStaticProducts];
+
+          products = dbProducts.map(p => {
               if (typeof p.images === 'string') {
                 try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
+              }
+              
+              // Enrich every single product with multiple images and proper filtering
+              const staticP = staticProducts.find(sp => sp.name === p.name);
+              if (staticP) {
+                if (!p.images || p.images.length < 2) p.images = staticP.images;
+                p.frameShape = p.frameShape || staticP.frameShape || 'round';
+                p.frameMaterial = p.frameMaterial || staticP.frameMaterial || 'Mixed';
+                p.frameColor = p.frameColor || staticP.frameColor || 'Clear';
+                p.gender = p.gender || staticP.gender || 'unisex';
+              } else {
+                if (!p.images || p.images.length < 2) p.images = [p.imageUrl, p.imageUrl, p.imageUrl].filter(Boolean);
+                p.frameShape = p.frameShape || 'round';
+                p.frameMaterial = p.frameMaterial || 'Mixed';
+                p.frameColor = p.frameColor || 'Clear';
+                p.gender = p.gender || 'unisex';
               }
               // Add a unique hue rotation to EVERY product to multiply the visual inventory
               p.hueRotate = (p.name.length * 27 + (typeof p.id === 'string' ? p.id.charCodeAt(0) : p.id) * 13) % 360;

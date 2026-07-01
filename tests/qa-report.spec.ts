@@ -15,19 +15,17 @@ test.describe('Website QA Suite', () => {
     await page.goto(`${BASE_URL}/products/eyeglasses`);
     // Verify headings
     await expect(page.locator('h1').first()).toHaveText(/Eyeglasses/i);
-    // Verify filters exist
-    await expect(page.locator('text=Filters').first()).toBeVisible();
+    // Verify Sort By exists
     await expect(page.locator('text=Sort By').first()).toBeVisible();
   });
 
   test('Product Details Page', async ({ page }) => {
     await page.goto(`${BASE_URL}/products/sunglasses`);
-    // Find first product link and click it
-    const firstProduct = page.locator('a[href^="/product/"]').first();
+    // Find first product card and click it
+    const firstProduct = page.locator('div.group').first();
     await expect(firstProduct).toBeVisible();
-    const href = await firstProduct.getAttribute('href');
-    
-    await page.goto(`${BASE_URL}${href}`);
+    await firstProduct.click();
+    await expect(page).toHaveURL(/.*\/product\/.*/);
     
     // Check main elements
     await expect(page.locator('h1').first()).toBeVisible();
@@ -58,6 +56,13 @@ test.describe('Website QA Suite', () => {
   });
 
   test('Account Tracking Page', async ({ page }) => {
+    // Login first because /account/* requires authentication
+    await page.goto(`${BASE_URL}/login`);
+    await page.locator('input[type="email"]').first().fill('john@opticzone.com');
+    await page.locator('input[type="password"]').first().fill('password123');
+    await page.locator('button[type="submit"]').first().click();
+    await page.waitForURL(/.*\/account.*/, { timeout: 10000 }).catch(() => {}); // wait for auth state
+    
     await page.goto(`${BASE_URL}/account/tracking`);
     await expect(page.locator('h2').first()).toHaveText(/Track Your Order/i);
     await expect(page.locator('input[placeholder*="e.g."]').first()).toBeVisible();

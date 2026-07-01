@@ -17,7 +17,6 @@ INSERT INTO public.products (
 -- Blue Light Glasses
 ('Screen Saver Pro', 'Felix Gray', 95.00, 'blue-light', 'unisex', 'Square', 'Acetate', 'Clear', 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?w=800&q=80', 'Advanced blue light blocking technology to reduce digital eye strain.', 4.9, 450, true, false, false),
 ('Digital Essential', 'Warby Parker', 115.00, 'blue-light', 'women', 'Round', 'Acetate', 'Pink Crystal', 'https://images.unsplash.com/photo-1582142407894-ec85a1260a46?w=800&q=80', 'Stylish protection against computer screens and artificial light.', 4.6, 88, false, false, false),
-('Gamer Shield Optics', 'Gunnar', 75.99, 'blue-light', 'men', 'Rectangle', 'Plastic', 'Carbon', 'https://images.unsplash.com/photo-1555505019-8c3f1c4aba5f?w=800&q=80', 'High-performance eyewear designed specifically for marathon gaming sessions.', 4.7, 210, false, true, false),
 
 -- Kids Glasses
 ('Indestructible Flex', 'Miraflex', 85.00, 'kids', 'kids', 'Oval', 'Silicone', 'Blue', 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&q=80', 'Flexible, unbreakable frames perfect for active toddlers and kids.', 4.9, 320, true, false, false),
@@ -34,4 +33,9 @@ INSERT INTO public.products (
 
 -- Reading Glasses
 ('Executive Readers', 'Peepers', 25.00, 'reading', 'unisex', 'Rectangle', 'Acetate', 'Tortoise', 'https://images.unsplash.com/photo-1483412468200-72182dbbc544?w=800&q=80', 'Classic rectangular reading glasses perfect for the office.', 4.5, 310, false, false, false),
-('Compact Foldables', 'Foster Grant', 30.00, 'reading', 'unisex', 'Round', 'Metal', 'Gunmetal', 'https://images.unsplash.com/photo-1590494165264-1ebe3602eb80?w=800&q=80', 'Ultra-compact reading glasses that fold up to fit in your pocket.', 4.8, 120, false, true, false);
+('Compact Foldables', 'Foster Grant', 30.00, 'reading', 'unisex', 'Round', 'Metal', 'Gunmetal', 'https://images.unsplash.com/photo-1590494165264-1ebe3602eb80?w=800&q=80', 'Ultra-compact reading glasses that fold up to fit in your pocket.', 4.8, 120, false, true, false),
+('Screen Savior Elite', 'Felix Gray', 110.00, 'blue-light', 'unisex', 'Square', 'Acetate', 'Clear', 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?w=800&q=80', 'Advanced blue light blocking technology for long work hours.', 4.8, 145, true, false, false),
+('Digital Comfort Pro', 'Warby Parker', 95.00, 'blue-light', 'women', 'Round', 'Metal', 'Rose Gold', 'https://images.unsplash.com/photo-1582142407894-ec85a1260a46?w=800&q=80', 'Stylish protection against computer screens and artificial light.', 4.6, 88, false, false, true),
+('Gamer Focus X', 'Oakley', 135.00, 'blue-light', 'men', 'Rectangle', 'TR90', 'Matte Black', 'https://images.unsplash.com/photo-1556306535-0f09a537f0a3?w=800&q=80', 'High-performance eyewear designed specifically for marathon gaming sessions.', 4.9, 320, false, true, false),
+('Minimalist Blue Block', 'Zenni', 45.00, 'blue-light', 'unisex', 'Oval', 'Mixed', 'Tortoise', 'https://images.unsplash.com/photo-1508296695146-257a814050b4?w=800&q=80', 'Simple, effective, and affordable blue light blocking glasses.', 4.5, 65, false, false, false),
+('Kids Screen Shield', 'Ray-Ban', 85.00, 'blue-light', 'kids', 'Round', 'Acetate', 'Blue', 'https://images.unsplash.com/photo-1518349619113-03114f06124a?w=800&q=80', 'Protect your childs eyes from harmful blue light emitted by tablets and computers.', 4.7, 110, false, false, false);;
